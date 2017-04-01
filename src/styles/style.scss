@@ -1,0 +1,124 @@
+@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700');
+
+$background: #F5F5FA;
+$header-background: #fff;
+$main: #fbfbfb;
+$border-color: #ebebf4;
+$hover: #f0f0f6;
+$button-color: #fff;
+
+$tip-button-color: #43b79e;
+$tip-button-border-color: #CCE6DF;
+
+$light-text: #666;
+$medium-light-text: #444;
+
+$header-padding: 14px;
+$header-font-size: 18px;
+
+html, body {
+  background: $main;
+  color: #000;
+  font: 16px 'Source Sans Pro', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+#root {
+  margin: auto;
+  padding: 0 0 40px 0;
+}
+
+main {
+  margin: auto;
+  padding: 0 18px;
+  max-width: 900px;
+}
+
+.sidebar {
+  background: $main;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  padding: 0 80px 0 32px;
+  li {
+    font-size: 20px;
+    padding: 8px 0;
+  }
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  padding: 0 3px;
+}
+
+.selected {
+  background: #f13232;
+  color: #fff;
+}
+
+:focus {
+  outline: none;
+}
+
+::-moz-focus-inner {
+  border: 0;
+}
+
+ul {
+  padding: 0;
+}
+
+li {
+  list-style: none;
+  padding: 4px;
+  margin: 4px 0;
+  border-radius: 3px;
+  border: 1px solid #e4e4e4;
+}
+
+.dot-separator {
+  display: inline;
+  margin: 0 5px;
+  &:before {
+    content: '·';
+  }
+}
+
+button {
+  cursor: pointer;
+}
+
+input, textarea {
+  display: block;
+}
+
+label {
+  input {
+    display: inline;
+  }
+}
+
+button, input, textarea, select {
+  font: inherit;
+  box-sizing: border-box;
+  font-size: 13px;
+  margin: 14px 0;
+  padding: 10px;
+  outline: none;
+  background: $button-color;
+  border-radius: 3px;
+  border: 1px solid $border-color - rgb(20,20,20);
+  color: #b0b0ca - rgb(20,20,20);
+  width: 100%;
+  &:hover {
+    color: #b0b0ca - rgb(30,30,30);
+    border-color: $border-color - rgb(30,30,30);
+  }
+  &:focus:not(button) {
+    color: $light-text;
+    border-color: $border-color - rgb(50,50,50);
+  }
+}
