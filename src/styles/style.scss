@@ -154,6 +154,7 @@ button, input, textarea, select {
     }
     .position {
       background: $light-color;
+      background: linear-gradient(to right, #10b98a, #293ca0);
     }
     .bar {
       top: -3px;
@@ -162,6 +163,9 @@ button, input, textarea, select {
 }
 
 .modules {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-around;
   .wrapper.open {
     position: relative;
     overflow: hidden;
@@ -176,6 +180,9 @@ button, input, textarea, select {
       left: 0;
       background: #2b3854;
     }
+    .module {
+      float: left;
+    }
   }
   .module, .create {
     cursor: default;
@@ -183,7 +190,6 @@ button, input, textarea, select {
     text-align: center;
     background: $main;
     box-shadow: 0 0 8px $shadow-color;
-    float: left;
     overflow: hidden;
     border-radius: 4px;
     padding-left: 3px;
@@ -234,6 +240,7 @@ button, input, textarea, select {
       .volume {
         border-radius: 2px 4px 4px 4px;
         background: $light-color;
+        background: linear-gradient(to right, #10b98a, #293ca0);
       }
     }
   }
@@ -244,6 +251,7 @@ button, input, textarea, select {
     &::before {
       content: '+';
       background: #2b3854;
+      background: linear-gradient(to right, #10b98a, #293ca0);
       box-sizing: border-box;
       display: block;
       position: relative;
