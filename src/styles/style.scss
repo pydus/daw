@@ -162,10 +162,26 @@ button, input, textarea, select {
 }
 
 .modules {
+  .wrapper.open {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    .playlist {
+      position: absolute;
+      border-radius: 4px;
+      margin: 12px;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      background: #2b3854;
+    }
+  }
   .module, .create {
     cursor: default;
     margin: 12px;
     text-align: center;
+    background: $main;
     box-shadow: 0 0 8px $shadow-color;
     float: left;
     overflow: hidden;
@@ -213,8 +229,8 @@ button, input, textarea, select {
     }
     &:hover {
       transform: scale(1.05);
-      padding-left: 6px;
-      margin-left:  9px;
+      padding-left: 10px;
+      margin-left:  5px;
       .volume {
         border-radius: 2px 4px 4px 4px;
         background: $light-color;

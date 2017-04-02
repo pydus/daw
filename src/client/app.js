@@ -5,25 +5,50 @@ import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom';
 import Signup from './signup';
 import Login from './login';
 
-const Module = (props) => {
+const EffectSection = () => {
   return(
-    <div className="module">
-      <div className="volume"></div>
-      <div className="square">
-        <h1>{props.name}</h1>
-        <div className="effects">
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-        </div>
-      </div>
+    <div className="effects">
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
     </div>
   );
+};
+
+class Module extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {isOpen: false};
+    this.toggle = this.toggle.bind(this);
+  }
+
+  toggle(e) {
+    if (e.target.className === 'square' || e.target.tagName === 'H1') {
+      this.setState((prevState, props) => {
+        return {isOpen: prevState.isOpen ? false : true};
+      });
+    }
+  }
+
+  render() {
+    return(
+      <div className={'wrapper ' + (this.state.isOpen ? 'open' : '')}>
+        <div className="playlist"></div>
+        <div className="module" onClick={this.toggle}>
+          <div className="volume"></div>
+          <div className="square">
+            <h1>{this.props.name}</h1>
+            <EffectSection/>
+          </div>
+        </div>
+      </div>
+    );
+  }
 };
 
 const ModuleSection = () => {
