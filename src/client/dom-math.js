@@ -9,16 +9,18 @@ const geometricFilter = (fn, elements) => {
   return arr;
 };
 
-const elementsAtHeight = (elements, height) => {
-  return geometricFilter((el, rect) => rect.top === height, elements);
+const elementsAtSameHeight = (elements, el) => {
+  const r = el.getBoundingClientRect();
+  return geometricFilter((el, rect) => rect.top === r.top, elements);
 };
 
-const elementsLeftOf = (elements, x) => {
-  return geometricFilter((el, rect) => rect.left < x, elements);
+const elementsLeftOf = (elements, el) => {
+  const r = el.getBoundingClientRect();
+  return geometricFilter((el, rect) => rect.left < r.left, elements);
 };
 
 export default {
   geometricFilter: geometricFilter,
-  elementsAtHeight: elementsAtHeight,
+  elementsAtSameHeight: elementsAtSameHeight,
   elementsLeftOf: elementsLeftOf
 };
