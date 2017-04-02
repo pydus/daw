@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700');
 
-$background: #F5F5FA;
+$background: #22304e;
 $header-background: #fff;
 $main: #17233a;
 $border-color: #ebebf4;
@@ -22,8 +22,10 @@ $shadow-color: #0b1e30;
 
 $light-color: #8f98b9;
 
+$main-gradient: linear-gradient(to right, #10b98a, #293ca0);
+
 html, body {
-  background: $main;
+  background: $background;
   color: #fff;
   font: 19px 'Source Sans Pro', sans-serif;
   margin: 0;
@@ -154,7 +156,7 @@ button, input, textarea, select {
     }
     .position {
       background: $light-color;
-      background: linear-gradient(to right, #10b98a, #293ca0);
+      background: $main-gradient;
     }
     .bar {
       top: -3px;
@@ -166,22 +168,24 @@ button, input, textarea, select {
   display: flex;
   flex-flow: row wrap;
   justify-content: space-around;
-  .wrapper.open {
-    position: relative;
-    overflow: hidden;
-    width: 100%;
-    .playlist {
-      position: absolute;
-      border-radius: 4px;
-      margin: 12px;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      left: 0;
-      background: #2b3854;
-    }
-    .module {
-      float: left;
+  .wrapper {
+    &.open {
+      position: relative;
+      width: 100%;
+      .playlist {
+        box-shadow: 0 0 8px $shadow-color;
+        position: absolute;
+        border-radius: 4px;
+        margin: 12px;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        background: #2b3854;
+      }
+      .module {
+        float: left;
+      }
     }
   }
   .module, .create {
@@ -189,8 +193,8 @@ button, input, textarea, select {
     margin: 12px;
     text-align: center;
     background: $main;
-    box-shadow: 0 0 8px $shadow-color;
     overflow: hidden;
+    box-shadow: 0 0 8px $shadow-color;
     border-radius: 4px;
     padding-left: 3px;
     position: relative;
@@ -203,7 +207,7 @@ button, input, textarea, select {
       left: 0;
       right: 4px;
       bottom: 0;
-      background: #4e516f;
+      background: $main-gradient;
       height: 70px;
       border-radius: 4px;
       z-index: 0;
@@ -240,18 +244,18 @@ button, input, textarea, select {
       .volume {
         border-radius: 2px 4px 4px 4px;
         background: $light-color;
-        background: linear-gradient(to right, #10b98a, #293ca0);
+        background: $main-gradient;
       }
     }
   }
   .create {
-    background: none;
+    background: $main;
     font-size: 3em;
     color: $main;
     &::before {
       content: '+';
       background: #2b3854;
-      background: linear-gradient(to right, #10b98a, #293ca0);
+      background: $main-gradient;
       box-sizing: border-box;
       display: block;
       position: relative;

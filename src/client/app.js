@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom';
 import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom';
 import Signup from './signup';
 import Login from './login';
+import DOMMath from './dom-math';
 
 const EffectSection = () => {
   return(
@@ -25,10 +26,39 @@ class Module extends React.Component {
     super(props);
     this.state = {isOpen: false};
     this.toggle = this.toggle.bind(this);
+    this.reorder = this.reorder.bind(this);
+    this.elementAfter = undefined;
+  }
+
+  reorder(module) {
+    const rec = node => node.className === 'modules' ? node : rec(node.parentNode);
+    const modules = rec(module);
+    const wrapper = module.parentNode;
+
+    if (this.state.isOpen) {
+      modules.removeChild(wrapper);
+      modules.insertBefore(wrapper, this.elementAfter);
+    } else {
+      const rect = wrapper.getBoundingClientRect();
+      const modulesAtSameHeight = DOMMath.elementsAtHeight(modules.children, rect.top);
+      const left = DOMMath.elementsLeftOf(modulesAtSameHeight, rect.left);
+      this.elementAfter = wrapper.nextSibling;
+
+      if (left.length > 0) {
+        modules.removeChild(wrapper);
+        modules.insertBefore(wrapper, left[0]);
+      }
+    }
+
   }
 
   toggle(e) {
     if (e.target.className === 'square' || e.target.tagName === 'H1') {
+      const module = e.target.className === 'square' ?
+        e.target.parentNode : e.target.parentNode.parentNode;
+
+      this.reorder(module);
+      
       this.setState((prevState, props) => {
         return {isOpen: prevState.isOpen ? false : true};
       });
