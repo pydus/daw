@@ -1,6 +1,7 @@
 'use strict';
 import React from 'react';
 import EffectSection from './effect-section';
+import Playlist from './playlist';
 
 export default class Module extends React.Component {
   constructor(props) {
@@ -35,6 +36,11 @@ export default class Module extends React.Component {
           <div className="square">
             <h1>{this.props.name}</h1>
             <EffectSection/>
+            <div className="panel">
+              <div></div>
+              <div></div>
+              <div></div>
+            </div>
           </div>
         </div>
       </div>

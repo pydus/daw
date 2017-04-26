@@ -8,6 +8,7 @@ export default class Slot extends React.Component {
     this.state = {menu: false};
     this.toggleMenu = this.toggleMenu.bind(this);
     this.handleMouseLeave = this.handleMouseLeave.bind(this);
+    this.onSelect = this.onSelect.bind(this);
   }
 
   toggleMenu() {
@@ -20,11 +21,15 @@ export default class Slot extends React.Component {
     this.setState({menu: false});
   }
 
+  onSelect(effectName) {
+    this.setState({menu: false});
+  }
+
   render() {
     return (
       <div onMouseLeave={this.handleMouseLeave}>
         <div onClick={this.toggleMenu} className="slot"></div>
-        {this.state.menu && <Menu/>}
+        {this.state.menu && <Menu onSelect={this.onSelect}/>}
       </div>
     );
   }

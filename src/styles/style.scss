@@ -217,7 +217,7 @@ button, input, textarea, select {
       background: #2b3854;
       height: 184px;
       width: 184px;
-      padding: 12px;
+      padding-top: 12px;
       .effects {
         > div {
           position: relative;
@@ -233,7 +233,7 @@ button, input, textarea, select {
           background: $main;
           float: left;
           &:hover {
-            transform: scale(1.05);
+            transform: scale(1.02);
           }
         }
         .menu {
@@ -258,10 +258,29 @@ button, input, textarea, select {
           }
         }
       }
+      .panel {
+        position: relative;
+        bottom: -3px;
+        background: #212f4a;
+        border-bottom-left-radius: inherit;
+        border-bottom-right-radius: inherit;
+        height: 48px;
+        overflow: hidden;
+        > div {
+          box-sizing: border-box;
+          height: 100%;
+          padding: 8px;
+          float: right;
+          width: 61px;
+          &:hover {
+            background: #25334e;
+          }
+        }
+      }
     }
     &:hover {
       z-index: 3;
-      transform: scale(1.05);
+      transform: scale(1.02);
       padding-left: 10px;
       margin-left:  5px;
       .volume {
