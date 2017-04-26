@@ -1,17 +1,18 @@
 'use strict';
 import React from 'react';
+import Slot from './slot';
 
 const EffectSection = () => {
   return(
     <div className="effects">
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
+      <Slot/>
+      <Slot/>
+      <Slot/>
+      <Slot/>
+      <Slot/>
+      <Slot/>
+      <Slot/>
+      <Slot/>
     </div>
   );
 };
