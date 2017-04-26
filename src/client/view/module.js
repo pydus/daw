@@ -28,9 +28,9 @@ export default class Module extends React.Component {
   }
 
   render() {
-    return(
+    return (
       <div className={'wrapper ' + (this.state.isOpen ? 'open' : '')}>
-        <div className="playlist"></div>
+        <Playlist/>
         <div className="module" onClick={this.toggle}>
           <div className="volume"></div>
           <div className="square">

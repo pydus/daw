@@ -3,7 +3,7 @@ import React from 'react';
 import Slot from './slot';
 
 const EffectSection = () => {
-  return(
+  return (
     <div className="effects">
       <Slot/>
       <Slot/>
