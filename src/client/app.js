@@ -4,8 +4,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Root from './components/root';
 import { createStore } from 'redux';
-
-const reducers = () => {};
+import reducers from './reducers';
 
 const store = createStore(reducers);
 

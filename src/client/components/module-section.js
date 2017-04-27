@@ -2,8 +2,12 @@
 import React from 'react';
 import Module from './module';
 import DOMMath from './dom-math';
+import { connect } from 'react-redux';
+import { createModule } from '../actions';
 
-export default class ModuleSection extends React.Component {
+export default connect((state) => ({
+  modules: state.modules
+}))(class ModuleSection extends React.Component {
   constructor(props) {
     super(props);
     this.state = {modules: [], name: ''};
@@ -76,4 +80,4 @@ export default class ModuleSection extends React.Component {
       </div>
     );
   }
-};
+});
