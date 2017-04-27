@@ -6,7 +6,6 @@ import Playlist from './playlist';
 export default class Module extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {isOpen: false};
     this.toggle = this.toggle.bind(this);
   }
 
@@ -15,21 +14,17 @@ export default class Module extends React.Component {
       const module = e.target.className === 'square' ?
         e.target.parentNode : e.target.parentNode.parentNode;
 
-      if (this.state.isOpen) {
+      if (this.props.isOpen) {
         this.props.onClose(module.parentNode, this);
       } else {
         this.props.onOpen(module.parentNode, this);
       }
-
-      this.setState((prevState, props) => {
-        return {isOpen: prevState.isOpen ? false : true};
-      });
     }
   }
 
   render() {
     return (
-      <div className={'wrapper ' + (this.state.isOpen ? 'open' : '')}>
+      <div className={'wrapper ' + (this.props.isOpen ? 'open' : '')}>
         <Playlist/>
         <div className="module" onClick={this.toggle}>
           <div className="volume"></div>

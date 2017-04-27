@@ -38,6 +38,14 @@ export const removeModule = (id) => {
   };
 };
 
+export const moveModule = (id, n) => {
+  return {
+    type: 'MOVE_MODULE',
+    id,
+    n
+  };
+};
+
 export const renameModule = (id, name) => {
   return {
     type: 'RENAME_MODULE',
