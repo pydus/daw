@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "bundle": "webpack",
+    "bundle": "webpack -p",
     "dev": "webpack-dev-server --content-base public --hot",
     "start": "node bin/www"
   },

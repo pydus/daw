@@ -20,16 +20,7 @@ module.exports = {
       loaders: ['style-loader', 'css-loader', 'sass-loader']
     }
   ]},
-  plugins: [
-    new webpack.optimize.UglifyJsPlugin({
-      compress: {
-        warnings: false
-      },
-        output: {
-          comments: false
-      }
-    })
-  ],
+  plugins: [],
   devServer: {
     host: '127.0.0.1'
   }
