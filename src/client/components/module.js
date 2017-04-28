@@ -7,6 +7,7 @@ export default class Module extends React.Component {
   constructor(props) {
     super(props);
     this.toggle = this.toggle.bind(this);
+    this.onFileChange = this.onFileChange.bind(this);
   }
 
   toggle(e) {
@@ -22,9 +23,15 @@ export default class Module extends React.Component {
     }
   }
 
+  onFileChange(e) {
+    const file = e.target.files[0];
+    console.log(URL.createObjectURL(file));
+  }
+
   render() {
     return (
       <div className={'wrapper ' + (this.props.isOpen ? 'open' : '')}>
+        <audio></audio>
         <Playlist/>
         <div className="module" onClick={this.toggle}>
           <div className="volume"></div>
@@ -32,9 +39,14 @@ export default class Module extends React.Component {
             <h1>{this.props.name}</h1>
             <EffectSection/>
             <div className="panel">
-              <div></div>
-              <div></div>
-              <div></div>
+              <div>S</div>
+              <div>
+                -
+                <label>
+                  <input type="file" onChange={this.onFileChange}/>
+                </label>
+              </div>
+              <div>M</div>
             </div>
           </div>
         </div>

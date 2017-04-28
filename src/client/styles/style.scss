@@ -106,7 +106,7 @@ label {
   }
 }
 
-button, input, textarea, select {
+button, input:not([type="file"]), textarea, select {
   font: inherit;
   box-sizing: border-box;
   font-size: 13px;
@@ -205,7 +205,7 @@ button, input, textarea, select {
       right: 4px;
       bottom: 0;
       background: $main-gradient;
-      height: 70px;
+      height: 80%;
       border-radius: 4px;
       z-index: 0;
     }
@@ -227,8 +227,9 @@ button, input, textarea, select {
           font-size: 0.6em;
           padding: 8px;
           margin: 3px;
-          width: 18px;
-          height: 18px;
+          margin-bottom: 0;
+          width: 19px;
+          height: 19px;
           border-radius: 2px;
           background: $main;
           float: left;
@@ -259,19 +260,34 @@ button, input, textarea, select {
         }
       }
       .panel {
-        position: relative;
-        bottom: -3px;
+        position: absolute;
+        bottom: -1px;
+        left: 0;
+        right: 0;
         background: #212f4a;
         border-bottom-left-radius: inherit;
         border-bottom-right-radius: inherit;
         height: 48px;
         overflow: hidden;
         > div {
+          color: #a6b2ca;
+          position: relative;
           box-sizing: border-box;
           height: 100%;
-          padding: 8px;
-          float: right;
+          padding: 16px;
+          font-size: 13px;
+          float: left;
           width: 61px;
+          label {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            input[type="file"] {
+              display: none;
+            }
+          }
           &:hover {
             background: #25334e;
           }

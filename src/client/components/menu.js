@@ -19,6 +19,7 @@ export default class Menu extends React.Component {
     const items = [
       'Equalizer',
       'Compressor',
+      'Multiband Compressor',
       'Reverb'
     ].map(el => <li key={el}>{el}</li>);
 
