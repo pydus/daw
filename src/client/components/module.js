@@ -7,7 +7,7 @@ export default class Module extends React.Component {
   constructor(props) {
     super(props);
     this.toggle = this.toggle.bind(this);
-    this.onFileChange = this.onFileChange.bind(this);
+    this.onSourceChange = this.onSourceChange.bind(this);
   }
 
   toggle(e) {
@@ -16,23 +16,25 @@ export default class Module extends React.Component {
         e.target.parentNode : e.target.parentNode.parentNode;
 
       if (this.props.isOpen) {
-        this.props.onClose(module.parentNode, this);
+        this.props.onClose(module.parentNode, this.props.id);
       } else {
-        this.props.onOpen(module.parentNode, this);
+        this.props.onOpen(module.parentNode, this.props.id);
       }
     }
   }
 
-  onFileChange(e) {
+  onSourceChange(e) {
     const file = e.target.files[0];
-    console.log(URL.createObjectURL(file));
+    //const url = URL.createObjectURL(file);
+    this.props.onSourceChange(this.props.id, file);
+    // TODO change audio element src to file url
   }
 
   render() {
     return (
       <div className={'wrapper ' + (this.props.isOpen ? 'open' : '')}>
         <audio></audio>
-        <Playlist/>
+        <Playlist bufferSource={this.props.bufferSource}/>
         <div className="module" onClick={this.toggle}>
           <div className="volume"></div>
           <div className="square">
@@ -43,7 +45,7 @@ export default class Module extends React.Component {
               <div>
                 -
                 <label>
-                  <input type="file" onChange={this.onFileChange}/>
+                  <input type="file" onChange={this.onSourceChange}/>
                 </label>
               </div>
               <div>M</div>

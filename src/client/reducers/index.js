@@ -1,6 +1,8 @@
 'use strict';
 import { combineReducers } from 'redux';
 
+const ctx = new AudioContext();
+
 const song = (
     state = {playing: false, tempo: 120, position: 0},
     action
@@ -28,29 +30,70 @@ const getIndexById = (id, array) => {
   return -1;
 };
 
+const connectToEffects = (node, effects) => {
+  let last = node;
+  effects.forEach((effect) => {
+    if (effect) {
+      last.connect(effect);
+      effect.disconnect();
+      last = effect;
+    }
+  });
+  return last;
+};
+
+const addFileToModule = (file, module) => {
+  const currentBufferSource = module.bufferSource;
+  const source =  currentBufferSource ?
+    currentBufferSource : ctx.createBufferSource();
+  module.source = file;
+  module.bufferSource = source;
+
+  const fileReader = new FileReader();
+  fileReader.readAsArrayBuffer(file);
+
+  const handleBuffer = (buffer) => {
+    source.buffer = buffer;
+    const last = connectToEffects(source, module.effects);
+    last.connect(ctx.destination);
+  };
+
+  fileReader.onload = (e) => {
+    const arrayBuffer = e.target.result;
+    ctx.decodeAudioData(arrayBuffer, handleBuffer);
+  };
+};
+
+const createModule = (id, name) => ({
+  id: id,
+  name: name ? name : '',
+  effects: [],
+  source: null,
+  bufferSource: null,
+  audioData: null,
+  isOpen: false
+});
+
 const modulesById = (state = {}, action) => {
-  let newState;
+  const newState = Object.assign({}, state);
+  const module = newState[action.id];
+
   switch (action.type) {
     case 'CREATE_MODULE':
       return Object.assign({}, state, {
-        [action.id]: {
-          id: action.id,
-          name: action.name ? action.name : '',
-          effects: [],
-          isOpen: false
-        }
+        [action.id]: createModule(action.id, action.name)
       });
     case 'REMOVE_MODULE':
-      newState = Object.assign({}, state);
       delete newState[action.id];
       return newState;
     case 'RENAME_MODULE':
-      newState = Object.assign({}, state);
-      newState[action.id].name = action.name;
+      module.name = action.name;
       return newState;
     case 'TOGGLE_EXPAND_MODULE':
-      newState = Object.assign({}, state);
-      newState[action.id].isOpen = !newState[action.id].isOpen;
+      module.isOpen = !module.isOpen;
+      return newState;
+    case 'SET_SOURCE':
+      addFileToModule(action.file, module);
       return newState;
     case 'MOVE_MODULE':
     default:
@@ -62,7 +105,9 @@ const modules = (
     state = {modules: [], modulesById: {}},
     action
   ) => {
-  let newModules, index;
+  const newModules = [...state.modules];
+  let index;
+
   switch (action.type) {
     case 'CREATE_MODULE':
       return {
@@ -70,7 +115,6 @@ const modules = (
         modulesById: modulesById(state.modulesById, action)
       };
     case 'REMOVE_MODULE':
-      newModules = [...state.modules];
       index = getIndexById(action.id, newModules);
       newModules.splice(index, 1);
       return {
@@ -78,7 +122,6 @@ const modules = (
         modulesById: modulesById(state.modulesById, action)
       };
     case 'MOVE_MODULE':
-      newModules = [...state.modules];
       index = getIndexById(action.id, newModules);
       newModules.splice(index + action.n, 0, newModules.splice(index, 1)[0]);
       return Object.assign({}, state, {
@@ -86,6 +129,7 @@ const modules = (
       });
     case 'RENAME_MODULE':
     case 'TOGGLE_EXPAND_MODULE':
+    case 'SET_SOURCE':
       return Object.assign({}, state, {
         modulesById: modulesById(state.modulesById, action)
       });
@@ -94,9 +138,23 @@ const modules = (
   }
 };
 
+const clips = (state = [], action) => {
+  switch (action.type) {
+    case 'CREATE_CLIP':
+      const clip = {
+        id: action.id,
+        file: action.file
+      };
+      return [...state, clip];
+    default:
+      return state;
+  }
+};
+
 const reducers = combineReducers({
   song,
-  modules
+  modules,
+  clips
 });
 
 export default reducers;

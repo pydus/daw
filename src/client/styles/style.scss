@@ -179,6 +179,35 @@ button, input:not([type="file"]), textarea, select {
         bottom: 0;
         left: 0;
         background: #2b3854;
+        .wrapper {
+          position: absolute;
+          overflow-x: scroll;
+          overflow-y: hidden;
+          height: 100%;
+          left: 190px;
+          right: 0;
+          .channels {
+            height: 100%;
+            .channel {
+              white-space: nowrap;
+              height: 50%;
+              &:nth-of-type(1) {
+                .segment {
+                  align-self: flex-end;
+                }
+              }
+              .segments {
+                display: flex;
+                height: 100%;
+                .segment {
+                  background: #10b98a;
+                  
+                  width: 1px;
+                }
+              }
+            }
+          }
+        }
       }
       .module {
         float: left;
@@ -189,6 +218,7 @@ button, input:not([type="file"]), textarea, select {
     cursor: default;
     margin: 12px;
     text-align: center;
+    color: #a6b2ca;
     background: #212f4a;
     box-shadow: 0 0 8px $shadow-color;
     border-radius: 4px;
@@ -205,7 +235,7 @@ button, input:not([type="file"]), textarea, select {
       right: 4px;
       bottom: 0;
       background: $main-gradient;
-      height: 80%;
+      height: 85%;
       border-radius: 4px;
       z-index: 0;
     }
@@ -244,6 +274,7 @@ button, input:not([type="file"]), textarea, select {
           top: 36px;
           left: 0px;
           ul {
+            overflow: hidden;
             background: $main;
             border-radius: 3px;
             text-align: left;
@@ -270,7 +301,6 @@ button, input:not([type="file"]), textarea, select {
         height: 48px;
         overflow: hidden;
         > div {
-          color: #a6b2ca;
           position: relative;
           box-sizing: border-box;
           height: 100%;
