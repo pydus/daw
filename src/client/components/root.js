@@ -5,21 +5,12 @@ import Signup from './signup';
 import Login from './login';
 import ModuleSection from './module-section';
 import { Provider } from 'react-redux';
-
-const SongPosition = () => {
-  return (
-    <div className="song-position">
-      <div className="bar">
-        <div className="position"></div>
-      </div>
-    </div>
-  );
-};
+import Header from './header';
 
 const App = () => {
   return (
     <main>
-      <SongPosition/>
+      <Header/>
       <ModuleSection/>
     </main>
   );
