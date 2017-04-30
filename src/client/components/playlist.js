@@ -46,7 +46,7 @@ export default class Playlist extends React.Component {
   drawSegment(n, width, value, padding) {
     const canvas = this.refs.canvas;
     const ctx = canvas.getContext('2d');
-    ctx.strokeStyle = '#10b98a';
+    ctx.strokeStyle = '#12e6ba';
     ctx.lineWidth = width - padding;
     this.drawLine(
       width * n, canvas.height / 2 - value * canvas.height,

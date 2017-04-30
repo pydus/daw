@@ -1,11 +1,16 @@
 @import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700');
 
-$background: #1a263e;
 $header-background: #fff;
-$main: #17233a;
 $border-color: #ebebf4;
 $hover: #f0f0f6;
 $button-color: #fff;
+
+$background: #1e2944;
+$main: #17233a;
+$secondary: #334165;
+$third: #263556;
+
+$light-grey: #676794;
 
 $tip-button-color: #43b79e;
 $tip-button-border-color: #CCE6DF;
@@ -22,7 +27,9 @@ $shadow-color: #0b1e30;
 
 $light-color: #8f98b9;
 
-$main-gradient: linear-gradient(to right, #10b98a, #293ca0);
+$text-color: #dce4f3;
+
+$main-gradient: linear-gradient(to right, #12e6ba, #3047d2);
 
 html, body {
   background: $background;
@@ -133,7 +140,7 @@ button, input:not([type="file"]), textarea, select {
   padding: 4px;
   margin: 24px 0;
   .bar {
-    background: #2b3854;
+    background: $secondary;
     box-shadow: 0 0 8px $shadow-color;
     position: relative;
     border-radius: 2px;
@@ -143,7 +150,7 @@ button, input:not([type="file"]), textarea, select {
     }
     .position {
       border-radius: 4px;
-      background: #4e516f;
+      background: $light-grey;
       width: 400px;
     }
   }
@@ -181,7 +188,7 @@ button, input:not([type="file"]), textarea, select {
         right: 0;
         bottom: 0;
         left: 0;
-        background: #2b3854;
+        background: $secondary;
         .wrapper {
           position: absolute;
           overflow-x: scroll;
@@ -205,8 +212,8 @@ button, input:not([type="file"]), textarea, select {
     cursor: default;
     margin: 12px;
     text-align: center;
-    color: #a6b2ca;
-    background: #212f4a;
+    color: $text-color;
+    background: $third;
     box-shadow: 0 0 8px $shadow-color;
     border-radius: 4px;
     padding-left: 3px;
@@ -231,7 +238,7 @@ button, input:not([type="file"]), textarea, select {
       position: relative;
       z-index: 1;
       border-radius: 4px;
-      background: #2b3854;
+      background: $secondary;
       height: 184px;
       width: 184px;
       padding-top: 12px;
@@ -282,7 +289,7 @@ button, input:not([type="file"]), textarea, select {
         bottom: -1px;
         left: 0;
         right: 0;
-        background: #212f4a;
+        background: $third;
         border-bottom-left-radius: inherit;
         border-bottom-right-radius: inherit;
         height: 48px;
@@ -306,7 +313,7 @@ button, input:not([type="file"]), textarea, select {
             }
           }
           &:hover {
-            background: #25334e;
+            background: #2b3b5e;
           }
         }
       }
@@ -329,7 +336,7 @@ button, input:not([type="file"]), textarea, select {
     color: $main;
     &::before {
       content: '+';
-      background: #2b3854;
+      background: $secondary;
       background: $main-gradient;
       box-sizing: border-box;
       display: block;
