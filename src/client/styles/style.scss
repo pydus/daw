@@ -15,6 +15,7 @@ $lighter-grey: #8f98b9;
 $shadow-color: #0b1e30;
 $text-color: #dce4f3;
 $main-gradient: linear-gradient(to right, #12e6ba, #3047d2);
+$reverse-gradient: linear-gradient(to right, #3047d2, #12e6ba);
 
 $song-position-height: 12px;
 
@@ -122,35 +123,38 @@ button, input:not([type="file"]), textarea, select {
   }
 }
 
-.song-position {
-  height: $song-position-height;
-  padding: 4px;
+header {
   margin: 24px 0;
-  .bar {
-    background: $secondary;
-    box-shadow: 0 0 8px $shadow-color;
-    position: relative;
-    border-radius: 2px;
-    overflow: hidden;
-    &, .position {
-      height: $song-position-height;
-    }
-    .position {
-      border-radius: 4px;
-      background: $light-grey;
-      width: 400px;
-    }
-  }
-  &:hover {
-    .bar, .position {
-      height: $song-position-height + 6px;
-    }
-    .position {
-      background: $lighter-grey;
-      background: $main-gradient;
-    }
+  .song-position {
+    height: $song-position-height;
+    padding: 4px;
     .bar {
-      top: -3px;
+      background: $secondary;
+      box-shadow: 0 0 8px $shadow-color;
+      position: relative;
+      border-radius: 2px;
+      overflow: hidden;
+      &, .position {
+        height: $song-position-height;
+      }
+      .position {
+        border-radius: 2px;
+        background: $light-grey;
+        background: $reverse-gradient;
+        width: 400px;
+      }
+    }
+    &:hover {
+      .bar, .position {
+        height: $song-position-height + 4px;
+      }
+      .position {
+        background: $lighter-grey;
+        background: $reverse-gradient;
+      }
+      .bar {
+        top: -2px;
+      }
     }
   }
 }
