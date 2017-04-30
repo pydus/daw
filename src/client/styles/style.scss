@@ -2,34 +2,21 @@
 
 $header-background: #fff;
 $border-color: #ebebf4;
-$hover: #f0f0f6;
 $button-color: #fff;
+$light-text: #666;
 
 $background: #1e2944;
 $main: #17233a;
 $secondary: #334165;
 $third: #263556;
-
 $light-grey: #676794;
-
-$tip-button-color: #43b79e;
-$tip-button-border-color: #CCE6DF;
-
-$light-text: #666;
-$medium-light-text: #444;
-
-$header-padding: 14px;
-$header-font-size: 18px;
-
-$song-position-height: 12px;
+$lighter-grey: #8f98b9;
 
 $shadow-color: #0b1e30;
-
-$light-color: #8f98b9;
-
 $text-color: #dce4f3;
-
 $main-gradient: linear-gradient(to right, #12e6ba, #3047d2);
+
+$song-position-height: 12px;
 
 html, body {
   background: $background;
@@ -159,7 +146,7 @@ button, input:not([type="file"]), textarea, select {
       height: $song-position-height + 6px;
     }
     .position {
-      background: $light-color;
+      background: $lighter-grey;
       background: $main-gradient;
     }
     .bar {
@@ -325,7 +312,7 @@ button, input:not([type="file"]), textarea, select {
       margin-left:  5px;
       .volume {
         border-radius: 2px 4px 4px 4px;
-        background: $light-color;
+        background: $lighter-grey;
         background: $main-gradient;
       }
     }
