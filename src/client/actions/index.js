@@ -1,5 +1,6 @@
 'use strict';
-import { loadBuffer } from '../module';
+import { ctx } from '../app';
+
 let nextModuleId = 0;
 let nextClipId = 0;
 
@@ -67,6 +68,15 @@ export const setBuffer = (id, buffer) => ({
   id,
   buffer
 });
+
+const loadBuffer = (file, cb) => {
+  const fileReader = new FileReader();
+  fileReader.readAsArrayBuffer(file);
+  fileReader.onload = (e) => {
+    const arrayBuffer = e.target.result;
+    ctx.decodeAudioData(arrayBuffer, cb);
+  };
+};
 
 export const SET_SOURCE = 'SET_SOURCE';
 export const setSource = (id, file) => (
