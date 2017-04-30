@@ -4,7 +4,7 @@ import React from 'react';
 export default class Playlist extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {left: [], right: []};
+    this.state = {willDraw: true};
   }
 
   componentDidUpdate() {
@@ -92,16 +92,21 @@ export default class Playlist extends React.Component {
     const canvas = this.refs.canvas;
     const ctx = canvas.getContext('2d');
 
-    if (canvas.offsetWidth === 0) {
+    if (
+      canvas.offsetWidth === 0 ||
+      !this.props.bufferSource ||
+      !this.props.bufferSource.buffer
+    ) {
       return false;
     }
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const buffer = this.props.bufferSource.buffer;
+    const segmentDuration = 1000;
 
-    if (this.props.bufferSource && this.props.bufferSource.buffer) {
-      const buffer = this.props.bufferSource.buffer;
-      const segmentDuration = 1000;
+    if (this.state.willDraw) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
       this.drawWaveform(buffer, segmentDuration);
+      this.setState({willDraw: false});
     }
   }
 
