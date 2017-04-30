@@ -4,11 +4,19 @@ import React from 'react';
 export default class Playlist extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {willDraw: true};
+    this.state = {hasDrawn: false}
   }
 
   componentDidUpdate() {
     this.updateCanvas();
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    const canvas = this.refs.canvas;
+    if (nextProps.width !== this.props.width || !this.state.hasDrawn) {
+      return true;
+    }
+    return false;
   }
 
   resize(width) {
@@ -92,21 +100,18 @@ export default class Playlist extends React.Component {
     const canvas = this.refs.canvas;
     const ctx = canvas.getContext('2d');
 
-    if (
-      canvas.offsetWidth === 0 ||
-      !this.props.bufferSource ||
-      !this.props.bufferSource.buffer
-    ) {
+    if (!this.props.bufferSource || !this.props.bufferSource.buffer) {
       return false;
     }
 
     const buffer = this.props.bufferSource.buffer;
     const segmentDuration = 1000;
 
-    if (this.state.willDraw) {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      this.drawWaveform(buffer, segmentDuration);
-      this.setState({willDraw: false});
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    this.drawWaveform(buffer, segmentDuration);
+
+    if (!this.state.hasDrawn) {
+      this.setState({hasDrawn: true});
     }
   }
 
