@@ -26,7 +26,9 @@ export default class Module extends React.Component {
 
   onSourceChange(e) {
     const file = e.target.files[0];
-    this.props.onSourceChange(this.props.module.id, file);
+    if (file) {
+      this.props.onSourceChange(this.props.module.id, file);
+    }
   }
 
   onWiden(width) {
