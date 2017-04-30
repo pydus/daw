@@ -19,11 +19,12 @@ export default connect((state) => ({
 }))(class ModuleSection extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {modules: [], name: ''};
+    this.state = {widestPlaylist: 0};
     this.onOpen = this.onOpen.bind(this);
     this.onClose = this.onClose.bind(this);
     this.createModule = this.createModule.bind(this);
     this.onSourceChange = this.onSourceChange.bind(this);
+    this.onWiden = this.onWiden.bind(this);
   }
 
   componentDidMount() {
@@ -53,6 +54,12 @@ export default connect((state) => ({
     this.props.dispatch(setSource(id, file));
   }
 
+  onWiden(width) {
+    if (width > this.state.widestPlaylist) {
+      this.setState({widestPlaylist: width});
+    }
+  }
+
   render() {
     const modulesList = this.props.modules.map(key => (
       this.props.modulesById[key]
@@ -61,13 +68,12 @@ export default connect((state) => ({
     const modules = modulesList.map(el => (
       <Module
         key={el.id}
-        id={el.id}
-        name={el.name}
-        bufferSource={el.bufferSource}
-        isOpen={el.isOpen}
+        module={el}
         onOpen={this.onOpen}
         onClose={this.onClose}
         onSourceChange={this.onSourceChange}
+        onWiden={this.onWiden}
+        playlistWidth={this.state.widestPlaylist}
       />
     ));
 

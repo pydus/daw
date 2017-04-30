@@ -8,6 +8,7 @@ export default class Module extends React.Component {
     super(props);
     this.toggle = this.toggle.bind(this);
     this.onSourceChange = this.onSourceChange.bind(this);
+    this.onWiden = this.onWiden.bind(this);
   }
 
   toggle(e) {
@@ -15,30 +16,35 @@ export default class Module extends React.Component {
       const module = e.target.className === 'square' ?
         e.target.parentNode : e.target.parentNode.parentNode;
 
-      if (this.props.isOpen) {
-        this.props.onClose(module.parentNode, this.props.id);
+      if (this.props.module.isOpen) {
+        this.props.onClose(module.parentNode, this.props.module.id);
       } else {
-        this.props.onOpen(module.parentNode, this.props.id);
+        this.props.onOpen(module.parentNode, this.props.module.id);
       }
     }
   }
 
   onSourceChange(e) {
     const file = e.target.files[0];
-    //const url = URL.createObjectURL(file);
-    this.props.onSourceChange(this.props.id, file);
-    // TODO change audio element src to file url
+    this.props.onSourceChange(this.props.module.id, file);
+  }
+
+  onWiden(width) {
+    this.props.onWiden(width);
   }
 
   render() {
     return (
-      <div className={'wrapper ' + (this.props.isOpen ? 'open' : '')}>
-        <audio></audio>
-        <Playlist bufferSource={this.props.bufferSource}/>
+      <div className={'wrapper ' + (this.props.module.isOpen ? 'open' : '')}>
+        <Playlist
+          bufferSource={this.props.module.bufferSource}
+          onWiden={this.onWiden}
+          width={this.props.playlistWidth}
+        />
         <div className="module" onClick={this.toggle}>
           <div className="volume"></div>
           <div className="square">
-            <h1>{this.props.name}</h1>
+            <h1>{this.props.module.name}</h1>
             <EffectSection/>
             <div className="panel">
               <div>S</div>
