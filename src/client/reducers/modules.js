@@ -35,10 +35,11 @@ const connectToEffects = (node, effects) => {
 };
 
 const wireUp = (module) => {
-  const source = module.bufferSource;
-  const last = connectToEffects(source, module.effects);
+  const newModule = Object.assign({}, module);
+  const {bufferSource, effects} = newModule;
+  const last = connectToEffects(bufferSource, effects);
   last.connect(ctx.destination);
-  return module;
+  return newModule;
 };
 
 const modulesById = (state = {}, action) => {
