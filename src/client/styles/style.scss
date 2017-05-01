@@ -13,7 +13,7 @@ $light-grey: #676794;
 $lighter-grey: #8f98b9;
 
 $shadow-color: #0b1e30;
-$text-color: #dce4f3;
+$panel-text-color: #e0e6f1;
 $main-gradient: linear-gradient(to right, #12e6ba, #3047d2);
 $reverse-gradient: linear-gradient(to right, #3047d2, #12e6ba);
 
@@ -221,13 +221,13 @@ header {
     cursor: default;
     margin: 12px;
     text-align: center;
-    color: $text-color;
     background: $third;
     box-shadow: 0 0 8px $shadow-color;
     border-radius: 4px;
     padding-left: 3px;
     position: relative;
     h1 {
+      color: #fff;
       font-size: .9em;
       margin: 0 0 10px 0;
       min-height: 21px;
@@ -294,6 +294,7 @@ header {
         }
       }
       .panel {
+        color: $panel-text-color;
         position: absolute;
         bottom: -1px;
         left: 0;
