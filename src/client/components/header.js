@@ -8,7 +8,7 @@ export default connect((state) => ({
 }))(class Header extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {rect: null, positionRatio: 0};
+    this.state = {rect: null, position: 0};
     this.onMouseMove = this.onMouseMove.bind(this);
     this.onMouseDown = this.onMouseDown.bind(this);
     this.onMouseUp = this.onMouseUp.bind(this);
@@ -21,34 +21,27 @@ export default connect((state) => ({
 
   onMouseDown(e) {
     const rect = e.currentTarget.getBoundingClientRect();
-    this.setState({
-      rect: rect,
-      positionRatio: (e.clientX - rect.left) / rect.width
-    });
+    const position = this.props.song.beats * (e.clientX - rect.left) / rect.width;
+    this.setState({rect: rect, position});
+    this.props.dispatch(setPosition(position));
   }
 
   onMouseMove(e) {
     if (this.state.rect) {
-      this.setState(
-        {positionRatio: (e.clientX - this.state.rect.left) / this.state.rect.width}
-      );
+      const position = this.props.song.beats *
+        (e.clientX - this.state.rect.left) / this.state.rect.width;
+      this.setState({position});
+      this.props.dispatch(setPosition(position));
     }
   }
 
   onMouseUp(e) {
     this.setState({rect: null});
-    const position = this.props.song.beats * this.state.positionRatio;
-    this.props.dispatch(setPosition(position));
+    this.props.dispatch(setPosition(this.state.position));
   }
 
   render() {
-    let width;
-
-    if (this.state.rect) {
-      width = this.state.positionRatio * 100 + '%';
-    } else {
-      width = this.props.song.position / this.props.song.beats * 100 + '%';
-    }
+    const width = this.props.song.position / this.props.song.beats * 100 + '%';
 
     return (
       <header>
