@@ -186,6 +186,7 @@ header {
         bottom: 0;
         left: 0;
         background: $secondary;
+        overflow: hidden;
         .wrapper {
           position: absolute;
           overflow-x: scroll;
