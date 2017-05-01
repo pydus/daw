@@ -194,6 +194,14 @@ header {
           height: 100%;
           left: 190px;
           right: 0;
+          &::-webkit-scrollbar {
+            background-color: $secondary;
+            height: 16px;
+          }
+          &::-webkit-scrollbar-thumb {
+            background-color: $third;
+            border-radius: 2px;
+          }
           canvas {
             display: block;
             width: 100%;
