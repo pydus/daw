@@ -1,6 +1,7 @@
 'use strict';
 import React from 'react';
 import Module from './module';
+import HiddenModule from './hidden-module';
 import DOMMath from './dom-math';
 import { connect } from 'react-redux';
 import {
@@ -81,6 +82,10 @@ export default connect((state) => ({
       <div className="modules">
         {modules}
         <div className="create" onClick={this.createModule}></div>
+        <HiddenModule/>
+        <HiddenModule/>
+        <HiddenModule/>
+        <HiddenModule/>
       </div>
     );
   }
