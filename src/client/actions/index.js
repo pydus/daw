@@ -4,6 +4,10 @@ import { ctx } from '../app';
 let nextModuleId = 0;
 let nextClipId = 0;
 
+/**
+ * Song
+ */
+
 export const SET_PLAYING = 'SET_PLAYING';
 export const setPlaying = (playing) => ({
   type: SET_PLAYING,
@@ -16,11 +20,21 @@ export const setTempo = (tempo) => ({
   tempo
 });
 
+export const SET_BEATS = 'SET_BEATS';
+export const setBeats = (beats) => ({
+  type: SET_BEATS,
+  beats
+});
+
 export const SET_POSITION = 'SET_POSITION';
 export const setPosition = (position) => ({
   type: SET_POSITION,
   position
 });
+
+/**
+ * Modules
+ */
 
 export const CREATE_MODULE = 'CREATE_MODULE';
 export const createModule = (name) => ({
@@ -87,6 +101,10 @@ export const setSource = (id, file) => (
     });
   }
 );
+
+/**
+ * Clips
+ */
 
 export const CREATE_CLIP = 'CREATE_CLIP';
 export const createClip = (file) => ({
