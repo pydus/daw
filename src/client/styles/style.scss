@@ -20,12 +20,15 @@ $reverse-gradient: linear-gradient(to right, #3047d2, #12e6ba);
 $song-position-height: 12px;
 
 html, body {
-  user-select: none;
   background: $background;
   color: #fff;
   font: 19px 'Source Sans Pro', sans-serif;
   margin: 0;
   padding: 0;
+  -ms-user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 #root {
