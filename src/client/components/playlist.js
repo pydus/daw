@@ -91,7 +91,7 @@ export default class Playlist extends React.Component {
 
   drawPosition(beat) {
     const canvas = this.refs.canvas;
-    this.setLine(1, '#fff');
+    this.setLine(2, '#465a7b');
     const x = Math.round(canvas.width * beat / this.props.song.beats);
     this.drawLine(x, 0, x, canvas.height);
   }
