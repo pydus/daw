@@ -53,7 +53,7 @@ export default class Module extends React.Component {
             <div className="panel">
               <div>S</div>
               <div>
-                -
+                <div className="tag"></div>
                 <label>
                   <input type="file" onChange={this.onSourceChange}/>
                 </label>

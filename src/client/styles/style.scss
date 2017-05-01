@@ -312,6 +312,19 @@ header {
           font-size: 13px;
           float: left;
           width: 61px;
+          .tag {
+            background: #12e6ba;
+            width: 6px;
+            height: 6px;
+            border-radius: 1px;
+            margin: 6px auto;
+            &.none {
+              background: #fff;
+              width: 2px;
+              height: 2px;
+              margin: 8px auto;
+            }
+          }
           label {
             position: absolute;
             left: 0;
