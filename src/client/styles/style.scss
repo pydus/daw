@@ -20,6 +20,7 @@ $reverse-gradient: linear-gradient(to right, #3047d2, #12e6ba);
 $song-position-height: 12px;
 
 html, body {
+  user-select: none;
   background: $background;
   color: #fff;
   font: 19px 'Source Sans Pro', sans-serif;
@@ -164,6 +165,10 @@ header {
   flex-flow: row wrap;
   justify-content: space-around;
   .wrapper {
+    &.hidden {
+      visibility: hidden;
+      height: 0;
+    }
     canvas {
       display: none;
     }
@@ -185,7 +190,7 @@ header {
           overflow-x: scroll;
           overflow-y: hidden;
           height: 100%;
-          left: 200px;
+          left: 190px;
           right: 0;
           canvas {
             display: block;
