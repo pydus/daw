@@ -4,19 +4,7 @@ import React from 'react';
 export default class Playlist extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {hasDrawn: false}
-  }
-
-  componentDidUpdate() {
-    this.updateCanvas();
-  }
-
-  shouldComponentUpdate(nextProps, nextState) {
-    const canvas = this.refs.canvas;
-    if (nextProps.width !== this.props.width || !this.state.hasDrawn) {
-      return true;
-    }
-    return false;
+    this.state = {hasDrawn: false, imageData: null};
   }
 
   resize(width) {
@@ -34,6 +22,13 @@ export default class Playlist extends React.Component {
     }
   }
 
+  setLine(width, color) {
+    const canvas = this.refs.canvas;
+    const ctx = canvas.getContext('2d');
+    ctx.strokeStyle = color;
+    ctx.lineWidth = width;
+  }
+
   drawLine(fromX, fromY, toX, toY) {
     const canvas = this.refs.canvas;
     const ctx = canvas.getContext('2d');
@@ -45,9 +40,7 @@ export default class Playlist extends React.Component {
 
   drawSegment(n, width, value, padding) {
     const canvas = this.refs.canvas;
-    const ctx = canvas.getContext('2d');
-    ctx.strokeStyle = '#12e6ba';
-    ctx.lineWidth = width - padding;
+    this.setLine(width - padding, '#12e6ba');
     this.drawLine(
       width * n, canvas.height / 2 - value * canvas.height,
       width * n, canvas.height / 2 + value * canvas.height
@@ -96,7 +89,32 @@ export default class Playlist extends React.Component {
     this.drawSegments(buffer, numberOfSegments, 5, 1, 1);
   }
 
-  updateCanvas() {
+  drawPosition(beat) {
+    const canvas = this.refs.canvas;
+    this.setLine(1, '#fff');
+    const x = Math.round(canvas.width * beat / this.props.song.beats);
+    this.drawLine(x, 0, x, canvas.height);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const canvas = this.refs.canvas;
+
+    if (nextProps.width !== this.props.width || !this.state.hasDrawn) {
+      this.setState({willDrawWaveform: true});
+    }
+
+    if (
+      nextProps.isOpen && (
+        nextProps.song.position !== this.props.song.position ||
+        nextProps.isOpen && !this.props.isOpen ||
+        !this.state.hasDrawn
+      )
+    ) {
+      this.setState({willDrawPosition: true});
+    }
+  }
+
+  componentDidUpdate() {
     const canvas = this.refs.canvas;
     const ctx = canvas.getContext('2d');
 
@@ -107,8 +125,20 @@ export default class Playlist extends React.Component {
     const buffer = this.props.bufferSource.buffer;
     const segmentDuration = 1000;
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    this.drawWaveform(buffer, segmentDuration);
+    if (this.state.willDrawWaveform || this.state.willDrawPosition) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      if (this.state.willDrawWaveform) {
+        this.drawWaveform(buffer, segmentDuration);
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        this.setState({willDrawWaveform: false, imageData});
+      } else if (this.state.imageData) {
+        ctx.putImageData(this.state.imageData, 0, 0);
+      }
+
+      this.drawPosition(this.props.song.position);
+      this.setState({willDrawPosition: false});
+    }
 
     if (!this.state.hasDrawn) {
       this.setState({hasDrawn: true});

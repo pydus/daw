@@ -42,6 +42,8 @@ export default class Module extends React.Component {
           bufferSource={this.props.module.bufferSource}
           onWiden={this.onWiden}
           width={this.props.playlistWidth}
+          song={this.props.song}
+          isOpen={this.props.module.isOpen}
         />
         <div className="module" onClick={this.toggle}>
           <div className="volume"></div>

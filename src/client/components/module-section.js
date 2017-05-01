@@ -16,7 +16,8 @@ import {
 
 export default connect((state) => ({
   modules: state.modules.modules,
-  modulesById: state.modules.modulesById
+  modulesById: state.modules.modulesById,
+  song: state.song
 }))(class ModuleSection extends React.Component {
   constructor(props) {
     super(props);
@@ -75,6 +76,7 @@ export default connect((state) => ({
         onSourceChange={this.onSourceChange}
         onWiden={this.onWiden}
         playlistWidth={this.state.widestPlaylist}
+        song={this.props.song}
       />
     ));
 
