@@ -23,7 +23,12 @@ export default connect((state) => ({
 }))(class ModuleSection extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {widestPlaylist: 0, draggingId: -1, highlighted: {}};
+    this.state = {
+      widestPlaylist: 0,
+      draggingId: -1,
+      highlighted: {},
+      offsets: {}
+    };
     this.onOpen = this.onOpen.bind(this);
     this.onClose = this.onClose.bind(this);
     this.createModule = this.createModule.bind(this);
@@ -53,15 +58,26 @@ export default connect((state) => ({
     this.props.dispatch(toggleExpandModule(id));
     const modulesAtSameHeight = DOMMath.elementsAtSameHeight(module.parentNode.children, module);
     const modulesLeft = DOMMath.elementsLeftOf(modulesAtSameHeight, module);
-
+    const offset = -1 * modulesLeft.length;
     if (modulesLeft.length > 0) {
-      this.props.dispatch(moveModule(id, -1 * modulesLeft.length));
+      this.props.dispatch(moveModule(id, offset));
+      this.setState((prevState) => {
+        prevState.offsets[id] = offset;
+        return {offsets: prevState.offsets};
+      });
     }
   }
 
   onClose(module, id) {
     this.props.dispatch(toggleExpandModule(id));
-    // TODO Move back moved module
+    const offset = this.state.offsets[id];
+    if (offset && offset !== 0) {
+      this.props.dispatch(moveModule(id, -1 * offset));
+      this.setState((prevState) => {
+        prevState.offsets[id] = 0;
+        return {offsets: prevState.offsets};
+      });
+    }
   }
 
   onSourceChange(id, file) {
