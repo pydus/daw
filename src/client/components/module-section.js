@@ -54,10 +54,10 @@ export default connect((state) => ({
     this.props.dispatch(route(action.id, 0));
   }
 
-  onOpen(module, id) {
+  onOpen(wrapper, id) {
     this.props.dispatch(toggleExpandModule(id));
-    const modulesAtSameHeight = DOMMath.elementsAtSameHeight(module.parentNode.children, module);
-    const modulesLeft = DOMMath.elementsLeftOf(modulesAtSameHeight, module);
+    const modulesAtSameHeight = DOMMath.elementsAtSameHeight(wrapper.parentNode.children, wrapper);
+    const modulesLeft = DOMMath.elementsLeftOf(modulesAtSameHeight, wrapper);
     const offset = -1 * modulesLeft.length;
     if (modulesLeft.length > 0) {
       this.props.dispatch(moveModule(id, offset));
@@ -68,9 +68,10 @@ export default connect((state) => ({
     }
   }
 
-  onClose(module, id) {
+  onClose(wrapper, id) {
     this.props.dispatch(toggleExpandModule(id));
     const offset = this.state.offsets[id];
+
     if (offset && offset !== 0) {
       this.props.dispatch(moveModule(id, -1 * offset));
       this.setState((prevState) => {

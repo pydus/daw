@@ -19,13 +19,11 @@ export default class Module extends React.Component {
 
   toggle(e) {
     if (e.target.className === 'square' || e.target.tagName === 'H1') {
-      const module = e.target.className === 'square' ?
-        e.target.parentNode : e.target.parentNode.parentNode;
-
+      const wrapper = this.refs.wrapper;
       if (this.props.module.isOpen) {
-        this.props.onClose(module.parentNode, this.props.module.id);
+        this.props.onClose(wrapper, this.props.module.id);
       } else {
-        this.props.onOpen(module.parentNode, this.props.module.id);
+        this.props.onOpen(wrapper, this.props.module.id);
       }
     }
   }
@@ -78,7 +76,7 @@ export default class Module extends React.Component {
     ));
 
     return (
-      <div className={'wrapper ' + (this.props.module.isOpen ? 'open' : '')}>
+      <div className={'wrapper ' + (this.props.module.isOpen ? 'open' : '')} ref="wrapper">
         <Playlist
           bufferSource={this.props.module.bufferSource}
           onWiden={this.onWiden}
