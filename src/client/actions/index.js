@@ -83,6 +83,20 @@ export const setBuffer = (id, buffer) => ({
   buffer
 });
 
+export const ROUTE = 'ROUTE';
+export const route = (id, destination) => ({
+  type: ROUTE,
+  id,
+  destination
+});
+
+export const UNROUTE = 'UNROUTE';
+export const unroute = (id, destination) => ({
+  type: UNROUTE,
+  id,
+  destination
+});
+
 const loadBuffer = (file, cb) => {
   const fileReader = new FileReader();
   fileReader.readAsArrayBuffer(file);

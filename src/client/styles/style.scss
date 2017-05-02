@@ -180,6 +180,7 @@ header {
       position: relative;
       width: 100%;
       .playlist {
+        background: $third;
         box-shadow: 0 0 8px $shadow-color;
         position: absolute;
         border-radius: 4px;
@@ -188,21 +189,20 @@ header {
         right: 0;
         bottom: 0;
         left: 0;
-        background: $secondary;
         overflow: hidden;
         .wrapper {
           position: absolute;
           overflow-x: scroll;
           overflow-y: hidden;
           height: 100%;
-          left: 190px;
+          left: 192px;
           right: 0;
           &::-webkit-scrollbar {
-            background-color: $secondary;
+            background-color: $third;
             height: 16px;
           }
           &::-webkit-scrollbar-thumb {
-            background-color: $third;
+            background-color: $secondary;
             border-radius: 2px;
           }
           canvas {
@@ -224,7 +224,7 @@ header {
     background: $third;
     box-shadow: 0 0 8px $shadow-color;
     border-radius: 4px;
-    padding-left: 3px;
+    padding: 0 3px;
     position: relative;
     h1 {
       color: #fff;
@@ -241,6 +241,29 @@ header {
       height: 85%;
       border-radius: 4px;
       z-index: 0;
+    }
+    .tags {
+      position: absolute;
+      top: 12px;
+      right: 0;
+      padding: 4px 0 4px 20px;
+      .tag {
+        margin: 2px 0;
+        height: 12px;
+        width: 3px;
+        border-radius: 1px;
+        background: #fff;
+        &:hover {
+          border-right: 2px solid #fff;
+          margin-right: -2px;
+        }
+      }
+      &:hover {
+        margin-right: -14px;
+        .tag {
+          width: 18px;
+        }
+      }
     }
     .square {
       box-sizing: border-box;
@@ -296,7 +319,7 @@ header {
       .panel {
         color: $panel-text-color;
         position: absolute;
-        bottom: -1px;
+        bottom: 0px;
         left: 0;
         right: 0;
         background: $third;
@@ -339,6 +362,13 @@ header {
             background: #2b3b5e;
           }
         }
+      }
+      .circle {
+        background: $main;
+        width: 40px;
+        height: 40px;
+        border-radius: 20px;
+        margin: 38px auto 0 auto;
       }
     }
     &:hover {

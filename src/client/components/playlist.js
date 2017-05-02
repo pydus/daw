@@ -117,13 +117,12 @@ export default class Playlist extends React.Component {
   componentDidUpdate() {
     const canvas = this.refs.canvas;
     const ctx = canvas.getContext('2d');
+    const buffer = this.props.bufferSource.buffer;
+    const segmentDuration = 1000;
 
     if (!this.props.bufferSource || !this.props.bufferSource.buffer) {
       return false;
     }
-
-    const buffer = this.props.bufferSource.buffer;
-    const segmentDuration = 1000;
 
     if (this.state.willDrawWaveform || this.state.willDrawPosition) {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -145,7 +144,7 @@ export default class Playlist extends React.Component {
     }
   }
 
-  render () {
+  render() {
     return (
       <div className="playlist">
         <div className="wrapper">

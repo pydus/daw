@@ -11,7 +11,9 @@ import {
   moveModule,
   removeModule,
   setSource,
-  createClip
+  createClip,
+  route,
+  unroute
 } from '../actions';
 
 export default connect((state) => ({
@@ -21,20 +23,30 @@ export default connect((state) => ({
 }))(class ModuleSection extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {widestPlaylist: 0};
+    this.state = {widestPlaylist: 0, draggingId: -1, highlighted: {}};
     this.onOpen = this.onOpen.bind(this);
     this.onClose = this.onClose.bind(this);
     this.createModule = this.createModule.bind(this);
     this.onSourceChange = this.onSourceChange.bind(this);
     this.onWiden = this.onWiden.bind(this);
+    this.onUnroute = this.onUnroute.bind(this);
+    this.onMouseDown = this.onMouseDown.bind(this);
+    this.onMouseUp = this.onMouseUp.bind(this);
+    this.onMouseMove = this.onMouseMove.bind(this);
   }
 
   componentDidMount() {
     this.props.dispatch(createModule('Master'));
+    window.addEventListener('mouseup', () => {
+      this.stopHighlighting();
+      this.setState({draggingId: -1});
+    });
+    window.addEventListener('mousemove', this.onMouseMove);
   }
 
   createModule() {
-    this.props.dispatch(createModule());
+    const action = this.props.dispatch(createModule());
+    this.props.dispatch(route(action.id, 0));
   }
 
   onOpen(module, id) {
@@ -62,23 +74,77 @@ export default connect((state) => ({
     }
   }
 
+  onUnroute(source, destination) {
+    this.props.dispatch(unroute(source, destination));
+  }
+
+  highlightAvailableDestinations(source) {
+    const highlighted = {};
+    this.props.modules.forEach(id => {
+      const destination = this.props.modulesById[id];
+      highlighted[id] = (
+        source !== 0 &&
+        id !== source &&
+        destination.sources.indexOf(source) === -1 &&
+        destination.destinations.indexOf(source) === -1
+      );
+    });
+    this.setState({highlighted});
+  }
+
+  stopHighlighting() {
+    const highlighted = {};
+    for (let key in this.state.highlighted) {
+      highlighted[key] = false;
+    }
+    this.setState({highlighted});
+  }
+
+  onMouseDown(id) {
+    this.setState({draggingId: id});
+  }
+
+  onMouseMove() {
+    if (this.state.draggingId !== -1) {
+      this.highlightAvailableDestinations(this.state.draggingId);
+    }
+  }
+
+  onMouseUp(id) {
+    const draggingId = this.state.draggingId;
+    if (draggingId !== -1 && draggingId !== id) {
+      this.props.dispatch(route(draggingId, id));
+      this.setState({draggingId: -1});
+    }
+  }
+
   render() {
     const modulesList = this.props.modules.map(key => (
       this.props.modulesById[key]
     ));
 
-    const modules = modulesList.map(el => (
-      <Module
-        key={el.id}
-        module={el}
-        onOpen={this.onOpen}
-        onClose={this.onClose}
-        onSourceChange={this.onSourceChange}
-        onWiden={this.onWiden}
-        playlistWidth={this.state.widestPlaylist}
-        song={this.props.song}
-      />
-    ));
+    const modules = modulesList.map(el => {
+      const destinationModules = el.destinations.map(id => (
+        this.props.modulesById[id]
+      ));
+      return (
+        <Module
+          key={el.id}
+          isHighlighted={this.state.highlighted ? this.state.highlighted[el.id] : false}
+          module={el}
+          onOpen={this.onOpen}
+          onClose={this.onClose}
+          onSourceChange={this.onSourceChange}
+          onWiden={this.onWiden}
+          playlistWidth={this.state.widestPlaylist}
+          song={this.props.song}
+          destinationModules={destinationModules}
+          onUnroute={this.onUnroute}
+          onRouteMouseDown={this.onMouseDown}
+          onMouseUp={this.onMouseUp}
+        />
+      );
+    });
 
     return (
       <div className="modules">

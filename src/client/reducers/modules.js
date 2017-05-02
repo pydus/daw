@@ -9,8 +9,35 @@ import {
   RENAME_MODULE,
   TOGGLE_EXPAND_MODULE,
   SET_FILE,
-  SET_BUFFER
+  SET_BUFFER,
+  ROUTE,
+  UNROUTE
 } from '../actions';
+
+let colorIndex = 0;
+
+const colors = [
+  '#12e6ba',
+  '#e6cd12',
+  '#e61269',
+  '#12a0e6',
+  '#e68612',
+  '#dde0e6',
+  '#d112e6',
+  '#45e612',
+  '#8312e6',
+  '#607290',
+  '#bae612',
+  '#b312e6',
+  '#e61212',
+];
+
+const getNextColor = () => {
+  if (colorIndex > colors.length - 1) {
+    colorIndex = 0;
+  }
+  return colors[colorIndex++];
+};
 
 const getIndexById = (id, array) => {
   for (let i = 0; i < array.length; i++) {
@@ -34,11 +61,27 @@ const connectToEffects = (node, effects) => {
   return last;
 };
 
+const connectToDestination = (module) => {
+  module.gain.connect(ctx.destination);
+};
+
+const connectModules = (source, destination) => {
+  source.gain.connect(destination.merger);
+};
+
+const disconnectModules = (source, destination) => {
+  source.gain.disconnect(destination.merger);
+};
+
 const wireUp = (module) => {
   const newModule = Object.assign({}, module);
-  const {bufferSource, effects} = newModule;
-  const last = connectToEffects(bufferSource, effects);
-  last.connect(ctx.destination);
+  const {bufferSource, merger, effects} = newModule;
+
+  bufferSource.disconnect();
+  bufferSource.connect(merger);
+  const last = connectToEffects(merger, effects);
+  last.connect(module.gain);
+
   return newModule;
 };
 
@@ -48,15 +91,26 @@ const modulesById = (state = {}, action) => {
 
   switch (action.type) {
     case CREATE_MODULE:
+      const newModule = wireUp({
+        id: action.id,
+        name: action.name ? action.name : '',
+        effects: [],
+        file: null,
+        merger: ctx.createChannelMerger(),
+        bufferSource: ctx.createBufferSource(),
+        gain: ctx.createGain(),
+        isOpen: false,
+        destinations: [],
+        sources: [],
+        color: getNextColor()
+      });
+
+      if (action.id === 0) {
+        connectToDestination(newModule);
+      }
+
       return Object.assign({}, state, {
-        [action.id]: wireUp({
-          id: action.id,
-          name: action.name ? action.name : '',
-          effects: [],
-          file: null,
-          bufferSource: ctx.createBufferSource(),
-          isOpen: false
-        })
+        [action.id]: newModule
       });
     case REMOVE_MODULE:
       delete newState[action.id];
@@ -82,6 +136,29 @@ const modulesById = (state = {}, action) => {
         param5: {freq: 0, value: 0},
         param6: {freq: 0, value: 0}
       };*/
+    case ROUTE:
+      if (action.id !== action.destination && action.id !== 0) {
+        const destination = newState[action.destination];
+        const destinationIndex = module.destinations.indexOf(action.destination);
+        const sourceIndex = destination.sources.indexOf(action.id);
+        const rerouteIndex = destination.destinations.indexOf(action.id);
+        if (destinationIndex === -1 && sourceIndex === -1 && rerouteIndex === -1) {
+          module.destinations.push(action.destination);
+          destination.sources.push(action.id);
+          connectModules(module, destination);
+        }
+      }
+      return newState;
+    case UNROUTE:
+      const destination = newState[action.destination];
+      const destinationIndex = module.destinations.indexOf(action.destination);
+      const sourceIndex = destination.sources.indexOf(action.id);
+      if (destinationIndex !== -1 && sourceIndex !== -1) {
+        module.destinations.splice(destinationIndex, 1);
+        destination.sources.splice(sourceIndex, 1);
+        disconnectModules(module, newState[action.destination]);
+      }
+      return newState;
     case MOVE_MODULE:
     default:
       return state;
