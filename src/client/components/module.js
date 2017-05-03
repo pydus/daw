@@ -6,7 +6,11 @@ import Playlist from './playlist';
 export default class Module extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {willStyleCircle: false};
+    this.state = {
+      willStyleCircle: false,
+      name: '',
+      isNaming: this.props.module.id !== 0
+    };
     this.toggle = this.toggle.bind(this);
     this.onSourceChange = this.onSourceChange.bind(this);
     this.onWiden = this.onWiden.bind(this);
@@ -15,6 +19,9 @@ export default class Module extends React.Component {
     this.onMouseUp = this.onMouseUp.bind(this);
     this.onMouseEnter = this.onMouseEnter.bind(this);
     this.onMouseLeave = this.onMouseLeave.bind(this);
+    this.handleInputChange = this.handleInputChange.bind(this);
+    this.handKeyDown = this.handKeyDown.bind(this);
+    this.rename = this.rename.bind(this);
   }
 
   toggle(e) {
@@ -61,6 +68,21 @@ export default class Module extends React.Component {
     this.setState({willStyleCircle: false});
   }
 
+  handleInputChange(e) {
+    this.setState({name: e.target.value});
+  }
+
+  rename() {
+    this.props.rename(this.props.module.id, this.state.name);
+    this.setState({isNaming: false});
+  }
+
+  handKeyDown(e) {
+    if (e.key === 'Enter') {
+      this.rename();
+    }
+  }
+
   render() {
     const isMaster = this.props.module.id === 0;
     const isDestination = this.props.module.sources.length > 0;
@@ -96,7 +118,16 @@ export default class Module extends React.Component {
             onMouseEnter={this.onMouseEnter}
             onMouseLeave={this.onMouseLeave}
           >
-            <h1>{this.props.module.name}</h1>
+            {!this.state.isNaming && <h1>{this.props.module.name}</h1>}
+            {this.state.isNaming && (
+              <input
+                autoFocus
+                maxLength="30"
+                onChange={this.handleInputChange}
+                onKeyDown={this.handKeyDown}
+                onBlur={this.rename}
+              />
+            )}
             {!this.props.isHighlighted && (
               <div>
                 <EffectSection/>

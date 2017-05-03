@@ -39,6 +39,7 @@ export default connect((state) => ({
     this.onMouseDown = this.onMouseDown.bind(this);
     this.onMouseUp = this.onMouseUp.bind(this);
     this.onMouseMove = this.onMouseMove.bind(this);
+    this.renameModule = this.renameModule.bind(this);
   }
 
   componentDidMount() {
@@ -57,6 +58,10 @@ export default connect((state) => ({
     this.setState((prevState) => (
       {visibleModules: [...prevState.visibleModules, action.id]}
     ));
+  }
+
+  renameModule(id, name) {
+    this.props.dispatch(renameModule(id, name));
   }
 
   determineModulesPerRow(wrappers) {
@@ -232,6 +237,7 @@ export default connect((state) => ({
           onUnroute={this.onUnroute}
           onRouteMouseDown={this.onMouseDown}
           onMouseUp={this.onMouseUp}
+          rename={this.renameModule}
         />
       );
     });

@@ -227,11 +227,21 @@ header {
     border-radius: 4px;
     padding: 0 3px;
     position: relative;
-    h1 {
+    h1, input, input:focus {
+      max-width: 160px;
+      overflow: hidden;
+      white-space: nowrap;
+      font-weight: bold;
       color: #fff;
       font-size: .9em;
-      margin: 0 0 10px 0;
+      margin: 0 auto 10px auto;
       min-height: 21px;
+    }
+    input {
+      text-align: center;
+      background: none;
+      border: none;
+      padding: 0;
     }
     .volume {
       position: absolute;
