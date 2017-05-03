@@ -27,7 +27,8 @@ export default connect((state) => ({
       widestPlaylist: 0,
       draggingId: -1,
       highlighted: {},
-      offsets: {}
+      modulesPerRow: 0,
+      visibleModules: [...this.props.modules]
     };
     this.onOpen = this.onOpen.bind(this);
     this.onClose = this.onClose.bind(this);
@@ -41,7 +42,7 @@ export default connect((state) => ({
   }
 
   componentDidMount() {
-    this.props.dispatch(createModule('Master'));
+    this.createModule('Master');
     window.addEventListener('mouseup', () => {
       this.stopHighlighting();
       this.setState({draggingId: -1});
@@ -49,36 +50,108 @@ export default connect((state) => ({
     window.addEventListener('mousemove', this.onMouseMove);
   }
 
-  createModule() {
-    const action = this.props.dispatch(createModule());
+  createModule(name) {
+    const moduleName = typeof name === 'string' ? name : '';
+    const action = this.props.dispatch(createModule(moduleName));
     this.props.dispatch(route(action.id, 0));
+    this.setState((prevState) => (
+      {visibleModules: [...prevState.visibleModules, action.id]}
+    ));
+  }
+
+  determineModulesPerRow(wrappers) {
+    let modulesPerRow = 0;
+    wrappers = [...wrappers];
+    for (let i = 0; i < wrappers.length; i++) {
+      const wrapper = wrappers[i];
+      const modulesAtSameHeight = DOMMath.elementsAtSameHeight(wrappers, wrapper);
+      if (modulesAtSameHeight.length > modulesPerRow) {
+        modulesPerRow = modulesAtSameHeight.length;
+      }
+    }
+    this.setState({modulesPerRow});
+  }
+
+  getPositionOnRow(wrapper) {
+    const modulesAtSameHeight = DOMMath.elementsAtSameHeight(wrapper.parentNode.children, wrapper);
+    const modulesLeft = DOMMath.elementsLeftOf(modulesAtSameHeight, wrapper);
+    return modulesLeft.length;
+  }
+
+  getNumberOfModulesOnSameRow(wrapper) {
+    return DOMMath.elementsAtSameHeight(wrapper.parentNode.children, wrapper).length;
+  }
+
+  moveVisible(id, n) {
+    const index = this.state.visibleModules.indexOf(id);
+    this.setState((prevState) => {
+      prevState.visibleModules.splice(
+        index + n, 0, prevState.visibleModules.splice(index, 1)[0]
+      );
+      return {visibleModules: prevState.visibleModules};
+    });
+  }
+
+  moveToBeginningOfRow(wrapper, id) {
+    const positionOnRow = this.getPositionOnRow(wrapper);
+    const offset = -1 * positionOnRow;
+    if (positionOnRow > 0) {
+      this.moveVisible(id, offset);
+    }
+  }
+
+  adjustModulesOnOpen(wrapper, id) {
+    const i = this.state.visibleModules.indexOf(id);
+    const numberOfModulesOnSameRow = this.getNumberOfModulesOnSameRow(wrapper);
+    this.state.visibleModules.forEach(key => {
+      const j = this.state.visibleModules.indexOf(key);
+      if (j > i && this.props.modulesById[key].isOpen) {
+        this.moveVisible(key, -1 * (numberOfModulesOnSameRow - 1));
+      }
+    });
+  }
+
+  adjustModulesOnClose(id) {
+    const i = this.state.visibleModules.indexOf(id);
+    let n = 0;
+    this.state.visibleModules.forEach(key => {
+      const j = this.state.visibleModules.indexOf(key);
+      if (j > i && this.props.modulesById[key].isOpen) {
+        this.moveVisible(key, (i - j) % 5 + n);
+        n++;
+      }
+    });
+  }
+
+  sortClosedModules() {
+    const closedModules = this.props.modules.filter(el => (
+      !this.props.modulesById[el].isOpen
+    ));
+    this.setState((prevState) => {
+      const visibleModules = [];
+      prevState.visibleModules.forEach((el, i) => {
+        if (this.props.modulesById[el].isOpen) {
+          visibleModules.push(el);
+        } else {
+          const nextClosedModule = closedModules.shift();
+          visibleModules.push(nextClosedModule);
+        }
+      });
+      return {visibleModules};
+    });
   }
 
   onOpen(wrapper, id) {
+    this.determineModulesPerRow(wrapper.parentNode.children);
     this.props.dispatch(toggleExpandModule(id));
-    const modulesAtSameHeight = DOMMath.elementsAtSameHeight(wrapper.parentNode.children, wrapper);
-    const modulesLeft = DOMMath.elementsLeftOf(modulesAtSameHeight, wrapper);
-    const offset = -1 * modulesLeft.length;
-    if (modulesLeft.length > 0) {
-      this.props.dispatch(moveModule(id, offset));
-      this.setState((prevState) => {
-        prevState.offsets[id] = offset;
-        return {offsets: prevState.offsets};
-      });
-    }
+    this.moveToBeginningOfRow(wrapper, id);
+    this.adjustModulesOnOpen(wrapper, id);
   }
 
   onClose(wrapper, id) {
     this.props.dispatch(toggleExpandModule(id));
-    const offset = this.state.offsets[id];
-
-    if (offset && offset !== 0) {
-      this.props.dispatch(moveModule(id, -1 * offset));
-      this.setState((prevState) => {
-        prevState.offsets[id] = 0;
-        return {offsets: prevState.offsets};
-      });
-    }
+    this.adjustModulesOnClose(id);
+    this.sortClosedModules();
   }
 
   onSourceChange(id, file) {
@@ -136,7 +209,7 @@ export default connect((state) => ({
   }
 
   render() {
-    const modulesList = this.props.modules.map(key => (
+    const modulesList = this.state.visibleModules.map(key => (
       this.props.modulesById[key]
     ));
 

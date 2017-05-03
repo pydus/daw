@@ -177,7 +177,8 @@ const modules = (state = [], action) => {
       return newState;
     case MOVE_MODULE:
       newState.splice(
-        index + action.n, 0, newState.splice(index, 1)[0]);
+        index + action.n, 0, newState.splice(index, 1)[0]
+      );
       return newState;
     default:
       return state;

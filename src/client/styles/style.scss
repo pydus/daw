@@ -170,6 +170,7 @@ header {
   .wrapper {
     &.hidden {
       visibility: hidden;
+      margin-top: 1px;
       overflow: hidden;
       height: 0;
     }
