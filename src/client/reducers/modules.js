@@ -11,7 +11,9 @@ import {
   SET_FILE,
   SET_BUFFER,
   ROUTE,
-  UNROUTE
+  UNROUTE,
+  ADD_EQ,
+  REMOVE_EFFECT
 } from '../actions';
 
 let colorIndex = 0;
@@ -76,18 +78,38 @@ const disconnectModules = (source, destination) => {
 const wireUp = (module) => {
   const newModule = Object.assign({}, module);
   const {bufferSource, merger, effects} = newModule;
-
   bufferSource.disconnect();
   bufferSource.connect(merger);
   const last = connectToEffects(merger, effects);
   last.connect(module.gain);
-
   return newModule;
 };
 
-const modulesById = (state = {}, action) => {
+const effects = (state = [], action) => {
+  const newState = [...state];
+  switch (action.type) {
+    case REMOVE_EFFECT:
+      newState.splice(action.index, 1);
+      // TODO disconnect effect
+      return newState;
+    case ADD_EQ:
+      newState[action.index] = {
+        param1: {freq: 0, value: 0},
+        param2: {freq: 0, value: 0},
+        param3: {freq: 0, value: 0},
+        param4: {freq: 0, value: 0},
+        param5: {freq: 0, value: 0},
+        param6: {freq: 0, value: 0}
+      };
+      // TODO connect effect
+      return newState;
+    default:
+      return state;
+  }
+};
+
+const module = (state = {}, action) => {
   const newState = Object.assign({}, state);
-  const module = newState[action.id];
 
   switch (action.type) {
     case CREATE_MODULE:
@@ -109,57 +131,82 @@ const modulesById = (state = {}, action) => {
         connectToDestination(newModule);
       }
 
+      return newModule;
+    case RENAME_MODULE:
+      return Object.assign({}, state, {name: action.name});
+    case TOGGLE_EXPAND_MODULE:
+      return Object.assign({}, state, {isOpen: !state.isOpen});
+    case SET_FILE:
+      return Object.assign({}, state, {file: action.file});
+    case SET_BUFFER:
+      newState.bufferSource.buffer = action.buffer;
+      return newState;
+    case ROUTE:
+      if (action.id === state.id) {
+        newState.destinations.push(action.destination);
+      } else {
+        newState.sources.push(action.id);
+      }
+      return newState;
+    case UNROUTE:
+      if (action.id === state.id) {
+        const destinationIndex = state.destinations.indexOf(action.destination);
+        newState.destinations.splice(destinationIndex, 1);
+      } else {
+        const sourceIndex = state.sources.indexOf(action.id);
+        newState.sources.splice(sourceIndex, 1);
+      }
+      return newState;
+    default:
+      return Object.assign({}, state, {effects: effects(state.effects, action)});
+  }
+};
+
+const modulesById = (state = {}, action) => {
+  const newState = Object.assign({}, state);
+
+  switch (action.type) {
+    case CREATE_MODULE:
       return Object.assign({}, state, {
-        [action.id]: newModule
+         [action.id]: module(undefined, action)
       });
     case REMOVE_MODULE:
       delete newState[action.id];
       return newState;
-    case RENAME_MODULE:
-      module.name = action.name;
-      return newState;
-    case TOGGLE_EXPAND_MODULE:
-      module.isOpen = !module.isOpen;
-      return newState;
-    case SET_FILE:
-      module.file = action.file;
-      return newState;
-    case SET_BUFFER:
-      module.bufferSource.buffer = action.buffer;
-      return newState;
-    /*case ADD_EQ:
-      module.effects[action.index] = {
-        param1: {freq: 0, value: 0},
-        param2: {freq: 0, value: 0},
-        param3: {freq: 0, value: 0},
-        param4: {freq: 0, value: 0},
-        param5: {freq: 0, value: 0},
-        param6: {freq: 0, value: 0}
-      };*/
     case ROUTE:
       if (action.id !== action.destination && action.id !== 0) {
+        const source = newState[action.id];
         const destination = newState[action.destination];
-        const destinationIndex = module.destinations.indexOf(action.destination);
+        const destinationIndex = source.destinations.indexOf(action.destination);
         const sourceIndex = destination.sources.indexOf(action.id);
         const rerouteIndex = destination.destinations.indexOf(action.id);
         if (destinationIndex === -1 && sourceIndex === -1 && rerouteIndex === -1) {
-          module.destinations.push(action.destination);
-          destination.sources.push(action.id);
-          connectModules(module, destination);
+          newState[action.id] = module(source, action);
+          newState[action.destination] = module(destination, action);
+          connectModules(source, destination);
         }
       }
       return newState;
     case UNROUTE:
+      const source = newState[action.id];
       const destination = newState[action.destination];
-      const destinationIndex = module.destinations.indexOf(action.destination);
+      const destinationIndex = source.destinations.indexOf(action.destination);
       const sourceIndex = destination.sources.indexOf(action.id);
       if (destinationIndex !== -1 && sourceIndex !== -1) {
-        module.destinations.splice(destinationIndex, 1);
-        destination.sources.splice(sourceIndex, 1);
-        disconnectModules(module, newState[action.destination]);
+        newState[action.id] = module(source, action);
+        newState[action.destination] = module(destination, action);
+        disconnectModules(source, newState[action.destination]);
       }
       return newState;
-    case MOVE_MODULE:
+    case RENAME_MODULE:
+    case TOGGLE_EXPAND_MODULE:
+    case SET_FILE:
+    case SET_BUFFER:
+    case ADD_EQ:
+    case REMOVE_EFFECT:
+      return Object.assign({}, state, {
+        [action.id]: module(state[action.id], action)
+      });
     default:
       return state;
   }

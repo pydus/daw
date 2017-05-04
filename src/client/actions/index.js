@@ -117,6 +117,24 @@ export const setSource = (id, file) => (
 );
 
 /**
+ * Effects
+ */
+
+export const ADD_EQ = 'ADD_EQ';
+export const addEq = (id, index) => ({
+  type: ADD_EQ,
+  id,
+  index
+});
+
+export const REMOVE_EFFECT = 'REMOVE_EFFECT';
+export const removeEffect = (id, index) => ({
+  type: REMOVE_EFFECT,
+  id,
+  index
+});
+
+/**
  * Clips
  */
 

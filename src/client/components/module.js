@@ -20,7 +20,7 @@ export default class Module extends React.Component {
     this.onMouseEnter = this.onMouseEnter.bind(this);
     this.onMouseLeave = this.onMouseLeave.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
-    this.handKeyDown = this.handKeyDown.bind(this);
+    this.handleKeyDown = this.handleKeyDown.bind(this);
     this.rename = this.rename.bind(this);
   }
 
@@ -73,11 +73,11 @@ export default class Module extends React.Component {
   }
 
   rename() {
-    this.props.rename(this.props.module.id, this.state.name);
+    this.props.onRename(this.props.module.id, this.state.name);
     this.setState({isNaming: false});
   }
 
-  handKeyDown(e) {
+  handleKeyDown(e) {
     if (e.key === 'Enter') {
       this.rename();
     }
@@ -124,13 +124,16 @@ export default class Module extends React.Component {
                 autoFocus
                 maxLength="30"
                 onChange={this.handleInputChange}
-                onKeyDown={this.handKeyDown}
+                onKeyDown={this.handleKeyDown}
                 onBlur={this.rename}
               />
             )}
             {!this.props.isHighlighted && (
               <div>
-                <EffectSection/>
+                <EffectSection
+                  id={this.props.module.id}
+                  effects={this.props.module.effects}
+                />
                 <div className="panel">
                   <div>S</div>
                   <div>

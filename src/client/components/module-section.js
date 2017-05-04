@@ -155,6 +155,7 @@ export default connect((state) => ({
 
   onClose(wrapper, id) {
     this.props.dispatch(toggleExpandModule(id));
+    this.props.modulesById[id].isOpen = false;
     this.adjustModulesOnClose(id);
     this.sortClosedModules();
   }
@@ -237,7 +238,7 @@ export default connect((state) => ({
           onUnroute={this.onUnroute}
           onRouteMouseDown={this.onMouseDown}
           onMouseUp={this.onMouseUp}
-          rename={this.renameModule}
+          onRename={this.renameModule}
         />
       );
     });

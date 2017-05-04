@@ -1,5 +1,6 @@
 'use strict';
 import React from 'react';
+import effects from '../effects';
 
 export default class Menu extends React.Component {
   constructor(props) {
@@ -10,18 +11,15 @@ export default class Menu extends React.Component {
   handleClick(e) {
     if (e.target.nodeName === 'LI') {
       if (typeof this.props.onSelect === 'function') {
-        this.props.onSelect(e.target.innerHTML);
+        this.props.onSelect(e.target.id);
       }
     }
   }
 
   render() {
-    const items = [
-      'Equalizer',
-      'Compressor',
-      'Multiband Compressor',
-      'Reverb'
-    ].map(el => <li key={el}>{el}</li>);
+    const items = Object.keys(effects).map(key => (
+      <li key={key} id={key}>{effects[key]}</li>
+    ));
 
     return (
       <div className="menu">
