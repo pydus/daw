@@ -171,6 +171,9 @@ header {
         padding: 5px 8px 6px 8px;
         box-shadow: 0 0 8px $shadow-color;
         text-shadow: 0 0 8px #a0a0a0;
+        &:active {
+          transform: scale(0.97);
+        }
       }
     }
   }
@@ -350,8 +353,8 @@ header {
           border-radius: 2px;
           background: $main;
           float: left;
-          &:hover {
-            transform: scale(1.02);
+          &:active {
+            transform: scale(0.97);
           }
         }
         .menu {
