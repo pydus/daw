@@ -14,12 +14,10 @@ export default class Playlist extends React.Component {
   }
 
   resizeIfNeeded(segmentSectionWidth) {
-    if (segmentSectionWidth > this.props.width) {
-      this.resize(segmentSectionWidth);
-      this.props.onWiden(segmentSectionWidth);
-    } else {
-      this.resize(this.props.width);
-    }
+    const secondsInSong = this.props.song.beats * 60 / this.props.song.tempo;
+    const durationRatio = secondsInSong / this.props.buffer.duration;
+    const width = segmentSectionWidth * durationRatio;
+    this.resize(width);
   }
 
   setLine(width, color) {
@@ -59,8 +57,8 @@ export default class Playlist extends React.Component {
     const left = buffer.getChannelData(0);
     const right = stereo ? buffer.getChannelData(1) : null;
     const maxPointsPerSegment =
-      (numberOfSegments > left.length) ?
-      1 : Math.floor(left.length / numberOfSegments);
+      (numberOfSegments > buffer.length) ?
+      1 : Math.floor(buffer.length / numberOfSegments);
     const pointsPerSegment = 100;
     const step = Math.ceil(maxPointsPerSegment / pointsPerSegment);
 
@@ -68,7 +66,7 @@ export default class Playlist extends React.Component {
 
     let sum = 0, s = 0;
 
-    for (let i = 0, j = 0; i < left.length; i += step, j += step) {
+    for (let i = 0, j = 0; i < buffer.length; i += step, j += step) {
       if (stereo) {
         sum += (Math.abs(left[i]) + Math.abs(right[i])) / 2;
       } else {
@@ -100,7 +98,7 @@ export default class Playlist extends React.Component {
     const canvas = this.refs.canvas;
 
     if (
-      nextProps.width !== this.props.width ||
+      nextProps.song.beats !== this.props.song.beats ||
       !this.state.hasDrawn ||
       nextProps.buffer !== this.props.buffer
     ) {

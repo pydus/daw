@@ -14,7 +14,8 @@ import {
   setSource,
   createClip,
   route,
-  unroute
+  unroute,
+  setBeats
 } from '../actions';
 
 export default connect((state) => ({
@@ -25,7 +26,6 @@ export default connect((state) => ({
   constructor(props) {
     super(props);
     this.state = {
-      widestPlaylist: 0,
       draggingId: -1,
       highlighted: {},
       modulesPerRow: 0,
@@ -35,7 +35,6 @@ export default connect((state) => ({
     this.onClose = this.onClose.bind(this);
     this.createModule = this.createModule.bind(this);
     this.onSourceChange = this.onSourceChange.bind(this);
-    this.onWiden = this.onWiden.bind(this);
     this.onUnroute = this.onUnroute.bind(this);
     this.onMouseDown = this.onMouseDown.bind(this);
     this.onMouseUp = this.onMouseUp.bind(this);
@@ -231,12 +230,6 @@ export default connect((state) => ({
     this.props.dispatch(setSource(id, file));
   }
 
-  onWiden(width) {
-    if (width > this.state.widestPlaylist) {
-      this.setState({widestPlaylist: width});
-    }
-  }
-
   onUnroute(source, destination) {
     this.props.dispatch(unroute(source, destination));
   }
@@ -300,8 +293,6 @@ export default connect((state) => ({
           onOpen={this.onOpen}
           onClose={this.onClose}
           onSourceChange={this.onSourceChange}
-          onWiden={this.onWiden}
-          playlistWidth={this.state.widestPlaylist}
           song={this.props.song}
           destinationModules={destinationModules}
           onUnroute={this.onUnroute}

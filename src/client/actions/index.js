@@ -8,7 +8,7 @@ let nextClipId = 0;
  * Song
  */
 
-const POSITION_UPDATE_INTERVAL = 1000 / 30;
+const POSITION_UPDATE_INTERVAL = 1000 / 60;
 let interval;
 
 const dispatchPosition = (dispatch, position) => {
@@ -24,7 +24,7 @@ const startUpdatingPosition = (dispatch, getState) => {
     const position =
       state.song.position +
       POSITION_UPDATE_INTERVAL / 1000 *
-      state.song.tempo / 3600;
+      state.song.tempo / 60;
     dispatchPosition(dispatch, position);
   }, POSITION_UPDATE_INTERVAL);
 };
@@ -163,10 +163,15 @@ const loadBuffer = (file, cb) => {
 
 export const SET_SOURCE = 'SET_SOURCE';
 export const setSource = (id, file) => (
-  (dispatch) => {
+  (dispatch, getState) => {
     dispatch(setFile(id, file));
     loadBuffer(file, (buffer) => {
       dispatch(setBuffer(id, buffer));
+      const state = getState();
+      const beats = buffer.duration * state.song.tempo / 60;
+      if (beats > state.song.beats) {
+        dispatch(setBeats(beats));
+      }
     });
   }
 );

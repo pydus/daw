@@ -16,7 +16,7 @@ const song = (
     isPlaying: false,
     tempo: 120,
     beatsPerBar: 4,
-    beats: 60,
+    beats: 100,
     position: 0,
     savedPosition: 0,
     loopPosition: 0
@@ -29,7 +29,7 @@ const song = (
     case SET_TEMPO:
       return Object.assign({}, state, {tempo: action.tempo});
     case SET_BEATS:
-      return Object.assign({}, state, {beats: beats});
+      return Object.assign({}, state, {beats: action.beats});
     case SET_POSITION:
       return Object.assign({}, state, {position: (action.position < 0) ? 0 : action.position});
     case SAVE_POSITION:

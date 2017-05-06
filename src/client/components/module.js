@@ -13,7 +13,6 @@ export default class Module extends React.Component {
     };
     this.toggle = this.toggle.bind(this);
     this.onSourceChange = this.onSourceChange.bind(this);
-    this.onWiden = this.onWiden.bind(this);
     this.unroute = this.unroute.bind(this);
     this.onMouseDown = this.onMouseDown.bind(this);
     this.onMouseUp = this.onMouseUp.bind(this);
@@ -58,10 +57,6 @@ export default class Module extends React.Component {
     if (file) {
       this.props.onSourceChange(this.props.module.id, file);
     }
-  }
-
-  onWiden(width) {
-    this.props.onWiden(width);
   }
 
   unroute(source, destination) {
@@ -119,8 +114,6 @@ export default class Module extends React.Component {
       <div className={'wrapper ' + (this.props.module.isOpen ? 'open' : '')} ref="wrapper">
         <Playlist
           buffer={this.props.module.buffer}
-          onWiden={this.onWiden}
-          width={this.props.playlistWidth}
           song={this.props.song}
           isOpen={this.props.module.isOpen}
         />
