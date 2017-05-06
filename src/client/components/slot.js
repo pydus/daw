@@ -7,7 +7,7 @@ export default class Slot extends React.Component {
   constructor(props) {
     super(props);
     this.state = {menu: false};
-    this.toggleMenu = this.toggleMenu.bind(this);
+    this.handleClick = this.handleClick.bind(this);
     this.handleMouseLeave = this.handleMouseLeave.bind(this);
     this.onSelect = this.onSelect.bind(this);
   }
@@ -23,6 +23,14 @@ export default class Slot extends React.Component {
     }));
   }
 
+  handleClick() {
+    if (this.props.effect) {
+      this.props.onOpen(this.props.index);
+    } else {
+      this.toggleMenu();
+    }
+  }
+
   handleMouseLeave() {
     this.setState({menu: false});
   }
@@ -34,11 +42,12 @@ export default class Slot extends React.Component {
 
   render() {
     const slotStyle = this.props.effect ? {background: 'red'} : {};
+
     return (
       <div onMouseLeave={this.handleMouseLeave}>
-        <div onClick={this.toggleMenu} className="slot" style={slotStyle}></div>
+        <div onClick={this.handleClick} className="slot" style={slotStyle}></div>
         {this.state.menu && <Menu onSelect={this.onSelect}/>}
       </div>
     );
   }
-}
+};

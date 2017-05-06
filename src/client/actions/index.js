@@ -120,6 +120,13 @@ export const setSource = (id, file) => (
  * Effects
  */
 
+export const OPEN_EFFECT = 'OPEN_EFFECT';
+export const openEffect = (id, index) => ({
+  type: OPEN_EFFECT,
+  id,
+  index
+});
+
 export const ADD_EQ = 'ADD_EQ';
 export const addEq = (id, index) => ({
   type: ADD_EQ,

@@ -13,7 +13,8 @@ import {
   ROUTE,
   UNROUTE,
   ADD_EQ,
-  REMOVE_EFFECT
+  REMOVE_EFFECT,
+  OPEN_EFFECT
 } from '../actions';
 
 let colorIndex = 0;
@@ -117,6 +118,7 @@ const module = (state = {}, action) => {
         id: action.id,
         name: action.name ? action.name : '',
         effects: [],
+        openEffect: -1,
         file: null,
         merger: ctx.createChannelMerger(),
         bufferSource: ctx.createBufferSource(),
@@ -157,6 +159,12 @@ const module = (state = {}, action) => {
         newState.sources.splice(sourceIndex, 1);
       }
       return newState;
+    case OPEN_EFFECT:
+      const index = (
+          newState.effects[action.index] &&
+          action.index !== newState.openEffect
+        ) ? action.index : -1;
+      return Object.assign({}, state, {openEffect: index});
     default:
       return Object.assign({}, state, {effects: effects(state.effects, action)});
   }
@@ -204,6 +212,7 @@ const modulesById = (state = {}, action) => {
     case SET_BUFFER:
     case ADD_EQ:
     case REMOVE_EFFECT:
+    case OPEN_EFFECT:
       return Object.assign({}, state, {
         [action.id]: module(state[action.id], action)
       });

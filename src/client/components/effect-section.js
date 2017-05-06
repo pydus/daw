@@ -2,7 +2,7 @@
 import React from 'react';
 import Slot from './slot';
 import { connect } from 'react-redux';
-import { addEq } from '../actions';
+import { addEq, openEffect } from '../actions';
 
 const N_SLOTS = 8;
 
@@ -12,6 +12,7 @@ export default connect((state) => ({
   constructor(props) {
     super(props);
     this.add = this.add.bind(this);
+    this.open = this.open.bind(this);
   }
 
   add(effect, index) {
@@ -25,6 +26,11 @@ export default connect((state) => ({
     }
   }
 
+  open(index) {
+    this.props.dispatch(openEffect(this.props.id, index));
+    this.props.onOpen();
+  }
+
   render() {
     const effects = [];
 
@@ -32,7 +38,9 @@ export default connect((state) => ({
       effects[i] = this.props.effects[i];
     }
 
-    const slots = effects.map((el, i) => <Slot key={i} index={i} effect={el} onAdd={this.add}/>);
+    const slots = effects.map((el, i) => (
+      <Slot key={i} index={i} effect={el} onAdd={this.add} onOpen={this.open}/>
+    ));
 
     return (
       <div className="effects">

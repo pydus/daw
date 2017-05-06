@@ -40,6 +40,7 @@ export default connect((state) => ({
     this.onMouseUp = this.onMouseUp.bind(this);
     this.onMouseMove = this.onMouseMove.bind(this);
     this.renameModule = this.renameModule.bind(this);
+    this.onOpenEffect = this.onOpenEffect.bind(this);
   }
 
   componentDidMount() {
@@ -49,6 +50,10 @@ export default connect((state) => ({
       this.setState({draggingId: -1});
     });
     window.addEventListener('mousemove', this.onMouseMove);
+  }
+
+  componentWillReceiveProps(nextProps) {
+
   }
 
   createModule(name) {
@@ -122,7 +127,7 @@ export default connect((state) => ({
     this.state.visibleModules.forEach(key => {
       const j = this.state.visibleModules.indexOf(key);
       if (j > i && this.props.modulesById[key].isOpen) {
-        this.moveVisible(key, (i - j) % 5 + n);
+        this.moveVisible(key, (i - j) % this.state.modulesPerRow + n);
         n++;
       }
     });
@@ -130,12 +135,12 @@ export default connect((state) => ({
 
   sortClosedModules() {
     const closedModules = this.props.modules.filter(el => (
-      !this.props.modulesById[el].isOpen
+      !this.props.modulesById[el].isOpen && this.props.modulesById[el].openEffect === -1
     ));
     this.setState((prevState) => {
       const visibleModules = [];
       prevState.visibleModules.forEach((el, i) => {
-        if (this.props.modulesById[el].isOpen) {
+        if (this.props.modulesById[el].isOpen || this.props.modulesById[el].openEffect !== -1) {
           visibleModules.push(el);
         } else {
           const nextClosedModule = closedModules.shift();
@@ -157,7 +162,68 @@ export default connect((state) => ({
     this.props.dispatch(toggleExpandModule(id));
     this.props.modulesById[id].isOpen = false;
     this.adjustModulesOnClose(id);
-    this.sortClosedModules();
+    if (this.props.modulesById[id].openEffect === -1) {
+      this.sortClosedModules();
+    }
+  }
+
+  isActive(id) {
+    return this.props.modulesById[id].isOpen ||
+      this.props.modulesById[id].openEffect !== -1;
+  }
+
+  adjustModulesOnOpenEffect(id, additionalOffset, close) {
+    let i = this.state.visibleModules.indexOf(id) + additionalOffset;
+    i = (i < 0) ? 0 : i;
+
+    const ns = [];
+
+    this.state.visibleModules.forEach((key, j) => {
+      if (j <= i) return false;
+      if (this.isActive(key)) {
+        let n = 2 * (close ? 1 : -1);
+        n = (j + n <= i) ? 0 : n;
+        if (close) {
+          if (j + n >= this.state.visibleModules.length - 1) {
+            for (let k = j + 1; k < this.state.visibleModules.length; k++) {
+              if (this.isActive(this.state.visibleModules[k])) {
+                n -= k - j + 1;
+              }
+            }
+          }
+          ns.push({id: key, n});
+        } else {
+          this.moveVisible(key, n);
+        }
+      }
+    });
+
+    for (let j = ns.length - 1; j >= 0; j--) {
+      if (
+        !this.props.modulesById[id].isOpen ||
+        !this.props.modulesById[ns[j].id].isOpen
+      ) {
+        this.moveVisible(ns[j].id, ns[j].n);
+      }
+    }
+  }
+
+  onOpenEffect(wrapper, id) {
+    this.determineModulesPerRow(wrapper.parentNode.children);
+    const positionOnRow = this.getPositionOnRow(wrapper);
+    let additionalOffset = 0;
+    if (this.props.modulesById[id].openEffect === -1) {
+      if (this.state.modulesPerRow - positionOnRow < 3) {
+        const n = (this.state.modulesPerRow - positionOnRow) === 1 ? -2 : -1;
+        this.moveVisible(id, n);
+        additionalOffset = n;  
+      }
+      this.adjustModulesOnOpenEffect(id, additionalOffset, false);
+    } else {
+      this.props.modulesById[id].openEffect = -1;
+      this.adjustModulesOnOpenEffect(id, additionalOffset, true);
+      this.sortClosedModules();
+    }
   }
 
   onSourceChange(id, file) {
@@ -239,14 +305,36 @@ export default connect((state) => ({
           onRouteMouseDown={this.onMouseDown}
           onMouseUp={this.onMouseUp}
           onRename={this.renameModule}
+          onOpenEffect={this.onOpenEffect}
         />
       );
     });
 
+    const modulesAndEffects = [];
+
+    for (let i = 0; i < modulesList.length; i++) {
+      modulesAndEffects.push(modules[i]);
+      if (modulesList[i].openEffect !== -1) {
+        modulesAndEffects.push(
+          <div className="effect" key={-1 * i - 1}>
+            <div className="square">
+              <div className="panel">
+                <div>S</div>
+                <div>M</div>
+              </div>
+            </div>
+          </div>
+        );
+      }
+    }
+
     return (
       <div className="modules">
-        {modules}
+        {modulesAndEffects}
         <div className="create" onClick={this.createModule}></div>
+        <HiddenModule/>
+        <HiddenModule/>
+        <HiddenModule/>
         <HiddenModule/>
         <HiddenModule/>
         <HiddenModule/>

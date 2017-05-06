@@ -218,7 +218,7 @@ header {
       }
     }
   }
-  .module, .create {
+  .module, .create, .effect {
     cursor: default;
     margin: 12px;
     text-align: center;
@@ -391,6 +391,18 @@ header {
         border-radius: 2px 4px 4px 4px;
         background: $lighter-grey;
         background: $main-gradient;
+      }
+    }
+  }
+  .effect {
+    .square {
+      width: 403px;
+      .panel {
+        > div {
+          &:last-child {
+            float: right;   
+          }
+        }
       }
     }
   }

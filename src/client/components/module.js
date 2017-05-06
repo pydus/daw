@@ -22,17 +22,35 @@ export default class Module extends React.Component {
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.rename = this.rename.bind(this);
+    this.open = this.open.bind(this);
+    this.openEffect = this.openEffect.bind(this);
   }
 
   toggle(e) {
     if (e.target.className === 'square' || e.target.tagName === 'H1') {
       const wrapper = this.refs.wrapper;
       if (this.props.module.isOpen) {
-        this.props.onClose(wrapper, this.props.module.id);
+        this.close();
       } else {
-        this.props.onOpen(wrapper, this.props.module.id);
+        this.open();
       }
     }
+  }
+
+  close() {
+    if (this.props.module.isOpen) {
+      this.props.onClose(this.refs.wrapper, this.props.module.id);
+    }
+  }
+
+  open() {
+    if (!this.props.module.isOpen) {
+      this.props.onOpen(this.refs.wrapper, this.props.module.id);
+    }
+  }
+
+  openEffect() {
+    this.props.onOpenEffect(this.refs.wrapper, this.props.module.id);
   }
 
   onSourceChange(e) {
@@ -133,6 +151,7 @@ export default class Module extends React.Component {
                 <EffectSection
                   id={this.props.module.id}
                   effects={this.props.module.effects}
+                  onOpen={this.openEffect}
                 />
                 <div className="panel">
                   <div>S</div>
