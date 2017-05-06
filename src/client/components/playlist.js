@@ -99,7 +99,11 @@ export default class Playlist extends React.Component {
   componentWillReceiveProps(nextProps) {
     const canvas = this.refs.canvas;
 
-    if (nextProps.width !== this.props.width || !this.state.hasDrawn) {
+    if (
+      nextProps.width !== this.props.width ||
+      !this.state.hasDrawn ||
+      nextProps.buffer !== this.props.buffer
+    ) {
       this.setState({willDrawWaveform: true});
     }
 
