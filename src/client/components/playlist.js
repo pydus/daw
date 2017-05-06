@@ -117,10 +117,10 @@ export default class Playlist extends React.Component {
   componentDidUpdate() {
     const canvas = this.refs.canvas;
     const ctx = canvas.getContext('2d');
-    const buffer = this.props.bufferSource.buffer;
+    const buffer = this.props.buffer;
     const segmentDuration = 1000;
 
-    if (!this.props.bufferSource || !this.props.bufferSource.buffer) {
+    if (!buffer) {
       return false;
     }
 

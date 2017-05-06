@@ -14,7 +14,8 @@ import {
   UNROUTE,
   ADD_EQ,
   REMOVE_EFFECT,
-  OPEN_EFFECT
+  OPEN_EFFECT,
+  SET_PLAYING
 } from '../actions';
 
 
@@ -52,6 +53,21 @@ const getIndexById = (id, array) => {
   return -1;
 };
 
+const play = (module) => {
+  const { buffer, merger } = module;
+  if (!buffer) return;
+  const bufferSource = ctx.createBufferSource();
+  bufferSource.buffer = buffer;
+  bufferSource.connect(merger);
+  bufferSource.start(0);
+  module.bufferSource = bufferSource;
+};
+
+const stop = ({ bufferSource }) => {
+  if (!bufferSource) return;
+  bufferSource.stop();
+};
+
 const connectToEffects = (node, effects) => {
   node.disconnect();
   let last = node;
@@ -79,9 +95,7 @@ const disconnectModules = (source, destination) => {
 
 const wireUp = (module) => {
   const newModule = Object.assign({}, module);
-  const {bufferSource, merger, effects} = newModule;
-  bufferSource.disconnect();
-  bufferSource.connect(merger);
+  const {merger, effects} = newModule;
   const last = connectToEffects(merger, effects);
   last.connect(module.gain);
   return newModule;
@@ -121,8 +135,8 @@ const module = (state = {}, action) => {
         effects: [],
         openEffect: -1,
         file: null,
+        buffer: null,
         merger: ctx.createChannelMerger(),
-        bufferSource: ctx.createBufferSource(),
         gain: ctx.createGain(),
         isOpen: false,
         destinations: [],
@@ -142,7 +156,7 @@ const module = (state = {}, action) => {
     case SET_FILE:
       return Object.assign({}, state, {file: action.file});
     case SET_BUFFER:
-      newState.bufferSource.buffer = action.buffer;
+      newState.buffer = action.buffer;
       return newState;
     case ROUTE:
       if (action.id === state.id) {
@@ -222,6 +236,15 @@ const modulesById = (state = {}, action) => {
       return Object.assign({}, state, {
         [action.id]: module(state[action.id], action)
       });
+    case SET_PLAYING:
+      for (let id in newState) {
+        if (action.playing) {
+          play(newState[id]);
+        } else {
+          stop(newState[id]);
+        }
+      }
+      return newState;
     default:
       return state;
   }

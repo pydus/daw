@@ -1,17 +1,18 @@
 'use strict';
 import React from 'react';
 import { connect } from 'react-redux';
-import { setPosition } from '../actions';
+import { setPosition, setPlaying } from '../actions';
 
 export default connect((state) => ({
   song: state.song
 }))(class Header extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {rect: null, position: 0};
+    this.state = {rect: null, position: 0, isPlaying: false};
     this.onMouseMove = this.onMouseMove.bind(this);
     this.onMouseDown = this.onMouseDown.bind(this);
     this.onMouseUp = this.onMouseUp.bind(this);
+    this.togglePlay = this.togglePlay.bind(this);
   }
 
   componentDidMount() {
@@ -40,6 +41,11 @@ export default connect((state) => ({
     this.props.dispatch(setPosition(this.state.position));
   }
 
+  togglePlay() {
+    this.props.dispatch(setPlaying(!this.state.isPlaying));
+    this.setState(prevState => ({isPlaying: !prevState.isPlaying}));
+  }
+
   render() {
     const width = this.props.song.position / this.props.song.beats * 100 + '%';
 
@@ -50,7 +56,7 @@ export default connect((state) => ({
             <div className="button">RENDER</div>
           </div>
           <div className="center">
-            <svg viewBox="0 0 200 200" className="play">
+            <svg viewBox="0 0 200 200" className="play" onClick={this.togglePlay}>
               <polygon points="0,0 0,200 173.2,100" fill="#fff"></polygon>
             </svg>
           </div>
