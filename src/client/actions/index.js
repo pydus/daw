@@ -25,7 +25,7 @@ const startUpdatingPosition = (dispatch, getState) => {
       state.song.position +
       POSITION_UPDATE_INTERVAL / 1000 *
       state.song.tempo / 3600;
-    dispatchPosition(dispatch, position)
+    dispatchPosition(dispatch, position);
   }, POSITION_UPDATE_INTERVAL);
 };
 
@@ -79,6 +79,13 @@ export const setPosition = (position) => (
     });
   }
 );
+
+export const SAVE_POSITION = 'SAVE_POSITION';
+export const savePosition = (position) => ({
+  type: SAVE_POSITION,
+  position
+});
+
 
 /**
  * Modules

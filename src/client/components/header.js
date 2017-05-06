@@ -1,7 +1,7 @@
 'use strict';
 import React from 'react';
 import { connect } from 'react-redux';
-import { setPosition, setPlaying } from '../actions';
+import { setPosition, setPlaying, savePosition } from '../actions';
 
 export default connect((state) => ({
   song: state.song
@@ -25,6 +25,7 @@ export default connect((state) => ({
     const position = this.props.song.beats * (e.clientX - rect.left) / rect.width;
     this.setState({rect: rect, position});
     this.props.dispatch(setPosition(position));
+    this.props.dispatch(savePosition(position));
   }
 
   onMouseMove(e) {
@@ -33,6 +34,7 @@ export default connect((state) => ({
         (e.clientX - this.state.rect.left) / this.state.rect.width;
       this.setState({position});
       this.props.dispatch(setPosition(position));
+      this.props.dispatch(savePosition(position));
     }
   }
 

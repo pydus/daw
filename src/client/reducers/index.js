@@ -7,7 +7,8 @@ import {
   SET_TEMPO,
   SET_BEATS,
   SET_POSITION,
-  CREATE_CLIP
+  CREATE_CLIP,
+  SAVE_POSITION
 } from '../actions';
 
 const song = (
@@ -16,19 +17,23 @@ const song = (
     tempo: 120,
     beatsPerBar: 4,
     beats: 60,
-    position: 0
+    position: 0,
+    savedPosition: 0,
+    loopPosition: 0
   },
   action
 ) => {
   switch (action.type) {
     case SET_PLAYING:
-      return Object.assign({}, state, {isPlaying: action.playing});
+      return Object.assign({}, state, {isPlaying: action.playing, position: state.savedPosition});
     case SET_TEMPO:
       return Object.assign({}, state, {tempo: action.tempo});
     case SET_BEATS:
       return Object.assign({}, state, {beats: beats});
     case SET_POSITION:
       return Object.assign({}, state, {position: (action.position < 0) ? 0 : action.position});
+    case SAVE_POSITION:
+      return Object.assign({}, state, {savedPosition: action.position});
     default:
       return state;
   }
