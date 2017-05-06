@@ -38,7 +38,6 @@ export default connect((state) => ({
 
   onMouseUp(e) {
     this.setState({rect: null});
-    this.props.dispatch(setPosition(this.state.position));
   }
 
   togglePlay() {

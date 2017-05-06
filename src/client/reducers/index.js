@@ -12,7 +12,7 @@ import {
 
 const song = (
   state = {
-    playing: false,
+    isPlaying: false,
     tempo: 120,
     beatsPerBar: 4,
     beats: 60,
@@ -22,13 +22,13 @@ const song = (
 ) => {
   switch (action.type) {
     case SET_PLAYING:
-      return Object.assign({}, state, {playing: action.playing});
+      return Object.assign({}, state, {isPlaying: action.playing});
     case SET_TEMPO:
       return Object.assign({}, state, {tempo: action.tempo});
     case SET_BEATS:
       return Object.assign({}, state, {beats: beats});
     case SET_POSITION:
-      return Object.assign({}, state, {position: action.position});
+      return Object.assign({}, state, {position: (action.position < 0) ? 0 : action.position});
     default:
       return state;
   }

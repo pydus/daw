@@ -15,7 +15,8 @@ import {
   ADD_EQ,
   REMOVE_EFFECT,
   OPEN_EFFECT,
-  SET_PLAYING
+  SET_PLAYING,
+  SET_POSITION
 } from '../actions';
 
 
@@ -53,13 +54,13 @@ const getIndexById = (id, array) => {
   return -1;
 };
 
-const play = (module) => {
+const play = (module, positionRatio) => {
   const { buffer, merger } = module;
   if (!buffer) return;
   const bufferSource = ctx.createBufferSource();
   bufferSource.buffer = buffer;
   bufferSource.connect(merger);
-  bufferSource.start(0);
+  bufferSource.start(0, buffer.length * positionRatio / buffer.sampleRate);
   module.bufferSource = bufferSource;
 };
 
@@ -136,6 +137,7 @@ const module = (state = {}, action) => {
         openEffect: -1,
         file: null,
         buffer: null,
+        bufferSource: null,
         merger: ctx.createChannelMerger(),
         gain: ctx.createGain(),
         isOpen: false,
@@ -239,9 +241,17 @@ const modulesById = (state = {}, action) => {
     case SET_PLAYING:
       for (let id in newState) {
         if (action.playing) {
-          play(newState[id]);
+          play(newState[id], action.positionRatio);
         } else {
           stop(newState[id]);
+        }
+      }
+      return newState;
+    case SET_POSITION:
+      if (action.isPlaying) {
+        for (let id in newState) {
+          stop(newState[id]);
+          play(newState[id], action.positionRatio);
         }
       }
       return newState;

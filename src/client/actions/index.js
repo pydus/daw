@@ -9,10 +9,17 @@ let nextClipId = 0;
  */
 
 export const SET_PLAYING = 'SET_PLAYING';
-export const setPlaying = (playing) => ({
-  type: SET_PLAYING,
-  playing
-});
+export const setPlaying = (playing) => (
+  (dispatch, getState) => {
+    const state = getState();
+    const positionRatio = state.song.position / state.song.beats;
+    dispatch({
+      type: SET_PLAYING,
+      playing,
+      positionRatio
+    });
+  }
+);
 
 export const SET_TEMPO = 'SET_TEMPO';
 export const setTempo = (tempo) => ({
@@ -27,10 +34,19 @@ export const setBeats = (beats) => ({
 });
 
 export const SET_POSITION = 'SET_POSITION';
-export const setPosition = (position) => ({
-  type: SET_POSITION,
-  position
-});
+export const setPosition = (position) => (
+  (dispatch, getState) => {
+    const state = getState();
+    const positionRatio = state.song.position / state.song.beats;
+    const isPlaying = state.song.isPlaying;
+    dispatch({
+      type: SET_POSITION,
+      position,
+      positionRatio,
+      isPlaying
+    });
+  }
+);
 
 /**
  * Modules
