@@ -41,7 +41,7 @@ export default class Slot extends React.Component {
   }
 
   render() {
-    const slotStyle = this.props.effect ? {background: 'red'} : {};
+    const slotStyle = this.props.effect ? {background: '#12e6ba'} : {};
 
     return (
       <div onMouseLeave={this.handleMouseLeave}>

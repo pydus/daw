@@ -16,7 +16,7 @@ export default connect((state) => ({
 
   componentDidMount() {
     window.addEventListener('mouseup', this.onMouseUp);
-    window.addEventListener('mousemove', this.onMouseMove)
+    window.addEventListener('mousemove', this.onMouseMove);
   }
 
   onMouseDown(e) {
@@ -45,6 +45,16 @@ export default connect((state) => ({
 
     return (
       <header>
+        <div className="main">
+          <div className="right">
+            <div className="button">RENDER</div>
+          </div>
+          <div className="center">
+            <svg viewBox="0 0 200 200" className="play">
+              <polygon points="0,0 0,200 173.2,100" fill="#fff"></polygon>
+            </svg>
+          </div>
+        </div>
         <div className="song-position">
           <div className="bar" onMouseDown={this.onMouseDown}>
             <div className="position" style={{width}}></div>

@@ -128,10 +128,59 @@ button, input:not([type="file"]), textarea, select {
 }
 
 header {
-  margin: 24px 0;
+  font-size: 14px;
+  font-weight: bold;
+  padding: inherit;
+  z-index: 4;
+  background: $background;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  max-width: inherit;
+  .main {
+    overflow: hidden;
+    padding: 12px;
+    margin-bottom: 10px;
+    .left {
+      float: left;
+    }
+    .center {
+      position: absolute;
+      left: 0;
+      right: 0;
+      margin: auto; 
+      .play {
+        cursor: pointer;
+        display: block;
+        margin: auto;
+        width: 16px;
+        padding: 6px;
+      }
+    }
+    .right {
+      position: relative;
+      z-index: 1;
+      float: right;
+      .button {
+        height: 17px;
+        cursor:  pointer;
+        background: #0dc1a0;
+        border-radius: 2px;
+        padding: 5px 8px 6px 8px;
+        box-shadow: 0 0 8px $shadow-color;
+        text-shadow: 0 0 8px #a0a0a0;
+      }
+    }
+  }
   .song-position {
+    padding: inherit;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
     height: $song-position-height;
-    padding: 4px;
     .bar {
       background: $secondary;
       box-shadow: 0 0 8px $shadow-color;
@@ -167,6 +216,7 @@ header {
   display: flex;
   flex-flow: row wrap;
   justify-content: space-around;
+  margin-top: 100px;
   .wrapper {
     &.hidden {
       visibility: hidden;
