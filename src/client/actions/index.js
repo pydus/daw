@@ -8,16 +8,48 @@ let nextClipId = 0;
  * Song
  */
 
+const POSITION_UPDATE_INTERVAL = 1000 / 30;
+let interval;
+
+const dispatchPosition = (dispatch, position) => {
+  dispatch({
+    type: SET_POSITION,
+    position
+  });
+};
+
+const startUpdatingPosition = (dispatch, getState) => {
+  interval = setInterval(() => {
+    const state = getState();
+    const position =
+      state.song.position +
+      POSITION_UPDATE_INTERVAL / 1000 *
+      state.song.tempo / 3600;
+    dispatchPosition(dispatch, position)
+  }, POSITION_UPDATE_INTERVAL);
+};
+
+const stopUpdatingPosition = () => {
+  clearInterval(interval);
+};
+
 export const SET_PLAYING = 'SET_PLAYING';
 export const setPlaying = (playing) => (
   (dispatch, getState) => {
     const state = getState();
     const positionRatio = state.song.position / state.song.beats;
+
     dispatch({
       type: SET_PLAYING,
       playing,
       positionRatio
     });
+
+    if (playing) {
+      startUpdatingPosition(dispatch, getState);
+    } else {
+      stopUpdatingPosition();
+    }
   }
 );
 
