@@ -1,7 +1,7 @@
 'use strict';
 import { combineReducers } from 'redux';
 import { ctx } from '../app';
-
+import { MAX_ROUTES } from '../settings';
 import {
   CREATE_MODULE,
   REMOVE_MODULE,
@@ -16,6 +16,7 @@ import {
   REMOVE_EFFECT,
   OPEN_EFFECT
 } from '../actions';
+
 
 let colorIndex = 0;
 
@@ -188,7 +189,12 @@ const modulesById = (state = {}, action) => {
         const destinationIndex = source.destinations.indexOf(action.destination);
         const sourceIndex = destination.sources.indexOf(action.id);
         const rerouteIndex = destination.destinations.indexOf(action.id);
-        if (destinationIndex === -1 && sourceIndex === -1 && rerouteIndex === -1) {
+        if (
+            source.destinations.length < MAX_ROUTES &&
+            destinationIndex === -1 &&
+            sourceIndex === -1 &&
+            rerouteIndex === -1
+          ) {
           newState[action.id] = module(source, action);
           newState[action.destination] = module(destination, action);
           connectModules(source, destination);

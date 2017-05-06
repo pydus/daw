@@ -4,6 +4,7 @@ import Module from './module';
 import HiddenModule from './hidden-module';
 import DOMMath from './dom-math';
 import { connect } from 'react-redux';
+import { MAX_ROUTES } from '../settings';
 import {
   createModule,
   toggleExpandModule,
@@ -242,15 +243,17 @@ export default connect((state) => ({
 
   highlightAvailableDestinations(source) {
     const highlighted = {};
-    this.props.modules.forEach(id => {
-      const destination = this.props.modulesById[id];
-      highlighted[id] = (
-        source !== 0 &&
-        id !== source &&
-        destination.sources.indexOf(source) === -1 &&
-        destination.destinations.indexOf(source) === -1
-      );
-    });
+    if (this.props.modulesById[source].destinations.length < MAX_ROUTES) {
+      this.props.modules.forEach(id => {
+        const destination = this.props.modulesById[id];
+        highlighted[id] = (
+          source !== 0 &&
+          id !== source &&
+          destination.sources.indexOf(source) === -1 &&
+          destination.destinations.indexOf(source) === -1
+        );
+      });
+    }
     this.setState({highlighted});
   }
 
