@@ -241,17 +241,17 @@ const modulesById = (state = {}, action) => {
     case SET_PLAYING:
       for (let id in newState) {
         if (action.playing) {
-          play(newState[id], action.positionRatio);
+          play(newState[id], action.song.position / action.song.beats);
         } else {
           stop(newState[id]);
         }
       }
       return newState;
     case SET_POSITION:
-      if (action.isPlaying) {
+      if (action.song && action.song.isPlaying) {
         for (let id in newState) {
           stop(newState[id]);
-          play(newState[id], action.positionRatio);
+          play(newState[id], action.song.position / action.song.beats);
         }
       }
       return newState;

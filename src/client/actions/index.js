@@ -37,14 +37,12 @@ export const SET_PLAYING = 'SET_PLAYING';
 export const setPlaying = (playing) => (
   (dispatch, getState) => {
     const state = getState();
-    const positionRatio = state.song.position / state.song.beats;
-
+    const song = state.song;
     dispatch({
       type: SET_PLAYING,
       playing,
-      positionRatio
+      song
     });
-
     if (playing) {
       startUpdatingPosition(dispatch, getState);
     } else {
@@ -69,13 +67,11 @@ export const SET_POSITION = 'SET_POSITION';
 export const setPosition = (position) => (
   (dispatch, getState) => {
     const state = getState();
-    const positionRatio = state.song.position / state.song.beats;
-    const isPlaying = state.song.isPlaying;
+    const song = state.song;
     dispatch({
       type: SET_POSITION,
       position,
-      positionRatio,
-      isPlaying
+      song
     });
   }
 );
@@ -85,7 +81,6 @@ export const savePosition = (position) => ({
   type: SAVE_POSITION,
   position
 });
-
 
 /**
  * Modules
