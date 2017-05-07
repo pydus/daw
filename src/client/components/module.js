@@ -113,7 +113,7 @@ export default class Module extends React.Component {
     return (
       <div className={'wrapper ' + (this.props.module.isOpen ? 'open' : '')} ref="wrapper">
         <Playlist
-          buffer={this.props.module.buffer}
+          clips={this.props.module.clips}
           song={this.props.song}
           isOpen={this.props.module.isOpen}
         />

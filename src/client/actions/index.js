@@ -2,7 +2,7 @@
 import { ctx } from '../app';
 
 let nextModuleId = 0;
-let nextClipId = 0;
+let nextSampleId = 0;
 
 /**
  * Song
@@ -119,17 +119,11 @@ export const toggleExpandModule = (id) => ({
   id
 });
 
-export const SET_FILE = 'SET_FILE';
-export const setFile = (id, file) => ({
-  type: SET_FILE,
-  id,
-  file
-});
-
 export const SET_BUFFER = 'SET_BUFFER';
-export const setBuffer = (id, buffer) => ({
+export const setBuffer = (id, index, buffer) => ({
   type: SET_BUFFER,
   id,
+  index,
   buffer
 });
 
@@ -156,13 +150,22 @@ const loadBuffer = (file, cb) => {
   };
 };
 
-export const SET_SOURCE = 'SET_SOURCE';
-export const setSource = (id, file) => (
+export const ADD_CLIP = 'ADD_CLIP';
+export const addClip = (id, file) => (
   (dispatch, getState) => {
-    dispatch(setFile(id, file));
+    const action = dispatch({
+      type: ADD_CLIP,
+      id,
+      file
+    });
     loadBuffer(file, (buffer) => {
-      dispatch(setBuffer(id, buffer));
       const state = getState();
+      const module = state.modules.modulesById[id];
+      module.clips.forEach((clip, i) => {
+        if (!clip.buffer && clip.file === file) {
+          dispatch(setBuffer(id, i, buffer));
+        }
+      });
       const beats = buffer.duration * state.song.tempo / 60;
       if (beats > state.song.beats) {
         dispatch(setBeats(beats));
@@ -197,12 +200,12 @@ export const removeEffect = (id, index) => ({
 });
 
 /**
- * Clips
+ * Samples
  */
 
-export const CREATE_CLIP = 'CREATE_CLIP';
-export const createClip = (file) => ({
-  type: CREATE_CLIP,
-  id: nextClipId++,
+export const CREATE_SAMPLE = 'CREATE_SAMPLE';
+export const createSample = (file) => ({
+  type: CREATE_SAMPLE,
+  id: nextSampleId++,
   file
 });

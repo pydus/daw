@@ -13,9 +13,9 @@ export default class Playlist extends React.Component {
     canvas.style.width = width + 'px';
   }
 
-  resizeIfNeeded(segmentSectionWidth) {
+  resizeIfNeeded(segmentSectionWidth, buffer) {
     const secondsInSong = this.props.song.beats * 60 / this.props.song.tempo;
-    const durationRatio = secondsInSong / this.props.buffer.duration;
+    const durationRatio = secondsInSong / buffer.duration;
     const width = segmentSectionWidth * durationRatio;
     this.resize(width);
   }
@@ -62,7 +62,7 @@ export default class Playlist extends React.Component {
     const pointsPerSegment = 100;
     const step = Math.ceil(maxPointsPerSegment / pointsPerSegment);
 
-    this.resizeIfNeeded(segmentSectionWidth);
+    this.resizeIfNeeded(segmentSectionWidth, buffer);
 
     let sum = 0, s = 0;
 
@@ -96,11 +96,22 @@ export default class Playlist extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     const canvas = this.refs.canvas;
+    let newClips = nextProps.clips.length !== this.props.clips.length;
+    
+    if (!newClips) {
+      for (let i = 0; i < nextProps.clips.length; i++) {
+        // TODO check if any of the buffers have changed
+        if (nextProps.clips[i].position !== this.props.clips[i].position) {
+          newClips = true;
+          break;
+        }
+      }
+    }
 
     if (
       nextProps.song.beats !== this.props.song.beats ||
       !this.state.hasDrawn ||
-      nextProps.buffer !== this.props.buffer
+      newClips
     ) {
       this.setState({willDrawWaveform: true});
     }
@@ -119,7 +130,7 @@ export default class Playlist extends React.Component {
   componentDidUpdate() {
     const canvas = this.refs.canvas;
     const ctx = canvas.getContext('2d');
-    const buffer = this.props.buffer;
+    const buffer = this.props.clips[0] ? this.props.clips[0].buffer : null;
     const segmentDuration = 1000;
 
     if (!buffer) {

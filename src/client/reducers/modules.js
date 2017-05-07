@@ -8,7 +8,7 @@ import {
   MOVE_MODULE,
   RENAME_MODULE,
   TOGGLE_EXPAND_MODULE,
-  SET_FILE,
+  ADD_CLIP,
   SET_BUFFER,
   ROUTE,
   UNROUTE,
@@ -54,19 +54,36 @@ const getIndexById = (id, array) => {
   return -1;
 };
 
-const play = (module, positionRatio) => {
-  const { buffer, merger } = module;
-  if (!buffer) return;
-  const bufferSource = ctx.createBufferSource();
-  bufferSource.buffer = buffer;
-  bufferSource.connect(merger);
-  bufferSource.start(0, buffer.length * positionRatio / buffer.sampleRate);
-  module.bufferSource = bufferSource;
+const play = (module, song) => {
+  const { clips, merger } = module;
+  module.bufferSources = [];
+  clips.forEach(clip => {
+    const { buffer, position } = clip;
+    if (!buffer) return;
+    const bufferSource = ctx.createBufferSource();
+
+    const secondsPerBeat = 60 / song.tempo;
+    const secondsToSongPosition = secondsPerBeat * song.position;
+    const secondsToClipPosition = secondsPerBeat * position;
+
+    let when = secondsToClipPosition - secondsToSongPosition;
+    when = (when < 0) ? 0 : when;
+    const offset = (when > 0) ? 0 : secondsToSongPosition - secondsToClipPosition;
+
+    //const offset = buffer.length * positionRatio / buffer.sampleRate;
+    bufferSource.buffer = buffer;
+    bufferSource.connect(merger);
+    bufferSource.start(ctx.currentTime + when, offset);
+    clip.bufferSource = bufferSource;
+  });
 };
 
-const stop = ({ bufferSource }) => {
-  if (!bufferSource) return;
-  bufferSource.stop();
+const stop = ({ clips }) => {
+  clips.forEach(({ bufferSource }) => {
+    if (bufferSource) {
+      bufferSource.stop();
+    }
+  });
 };
 
 const connectToEffects = (node, effects) => {
@@ -135,9 +152,7 @@ const module = (state = {}, action) => {
         name: action.name ? action.name : '',
         effects: [],
         openEffect: -1,
-        file: null,
-        buffer: null,
-        bufferSource: null,
+        clips: [],
         merger: ctx.createChannelMerger(),
         gain: ctx.createGain(),
         isOpen: false,
@@ -155,10 +170,12 @@ const module = (state = {}, action) => {
       return Object.assign({}, state, {name: action.name});
     case TOGGLE_EXPAND_MODULE:
       return Object.assign({}, state, {isOpen: !state.isOpen});
-    case SET_FILE:
-      return Object.assign({}, state, {file: action.file});
+    case ADD_CLIP:
+      return Object.assign({}, state, {
+        clips: [...state.clips, {file: action.file, buffer: 0, bufferSource: null, position: 0}]
+      });
     case SET_BUFFER:
-      newState.buffer = action.buffer;
+      newState.clips[action.index].buffer = action.buffer;
       return newState;
     case ROUTE:
       if (action.id === state.id) {
@@ -230,7 +247,7 @@ const modulesById = (state = {}, action) => {
       return newState;
     case RENAME_MODULE:
     case TOGGLE_EXPAND_MODULE:
-    case SET_FILE:
+    case ADD_CLIP:
     case SET_BUFFER:
     case ADD_EQ:
     case REMOVE_EFFECT:
@@ -241,7 +258,7 @@ const modulesById = (state = {}, action) => {
     case SET_PLAYING:
       for (let id in newState) {
         if (action.playing) {
-          play(newState[id], action.song.position / action.song.beats);
+          play(newState[id], action.song);
         } else {
           stop(newState[id]);
         }
@@ -251,7 +268,7 @@ const modulesById = (state = {}, action) => {
       if (action.song && action.song.isPlaying) {
         for (let id in newState) {
           stop(newState[id]);
-          play(newState[id], action.song.position / action.song.beats);
+          play(newState[id], action.song);
         }
       }
       return newState;

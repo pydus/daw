@@ -7,7 +7,7 @@ import {
   SET_TEMPO,
   SET_BEATS,
   SET_POSITION,
-  CREATE_CLIP,
+  CREATE_SAMPLE,
   SAVE_POSITION
 } from '../actions';
 
@@ -39,9 +39,9 @@ const song = (
   }
 };
 
-const clips = (state = [], action) => {
+const samples = (state = [], action) => {
   switch (action.type) {
-    case CREATE_CLIP:
+    case CREATE_SAMPLE:
       return [...state, {
         id: action.id,
         file: action.file
@@ -54,5 +54,5 @@ const clips = (state = [], action) => {
 export default combineReducers({
   song,
   modules,
-  clips
+  samples
 });

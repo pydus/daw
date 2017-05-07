@@ -11,7 +11,7 @@ import {
   renameModule,
   moveModule,
   removeModule,
-  setSource,
+  addClip,
   createClip,
   route,
   unroute,
@@ -227,7 +227,7 @@ export default connect((state) => ({
   }
 
   onSourceChange(id, file) {
-    this.props.dispatch(setSource(id, file));
+    this.props.dispatch(addClip(id, file));
   }
 
   onUnroute(source, destination) {
