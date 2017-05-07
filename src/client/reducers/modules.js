@@ -54,7 +54,8 @@ const getIndexById = (id, array) => {
   return -1;
 };
 
-const play = (module, song) => {
+const play = (module, song, newSongPosition) => {
+  const songPosition = newSongPosition || song.position;
   const { clips, merger } = module;
   module.bufferSources = [];
   clips.forEach(clip => {
@@ -63,7 +64,7 @@ const play = (module, song) => {
     const bufferSource = ctx.createBufferSource();
 
     const secondsPerBeat = 60 / song.tempo;
-    const secondsToSongPosition = secondsPerBeat * song.position;
+    const secondsToSongPosition = secondsPerBeat * songPosition;
     const secondsToClipPosition = secondsPerBeat * position;
 
     let when = secondsToClipPosition - secondsToSongPosition;
@@ -273,7 +274,7 @@ const modulesById = (state = {}, action) => {
       if (action.song && action.song.isPlaying) {
         for (let id in newState) {
           stop(newState[id]);
-          play(newState[id], action.song);
+          play(newState[id], action.song, (action.position < 0) ? 0 : action.position);
         }
       }
       return newState;
