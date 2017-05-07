@@ -58,7 +58,8 @@ export default connect((state) => ({
           </div>
           <div className="center">
             <svg viewBox="0 0 200 200" className="play" onClick={this.togglePlay}>
-              <polygon points="0,0 0,200 173.2,100" fill="#fff"></polygon>
+              {!this.state.isPlaying && <polygon points="0,0 0,200 173.2,100" fill="#fff"></polygon>}
+              {this.state.isPlaying && <polygon points="0,0 0,200 200,200 200,0" fill="#fff"></polygon>}
             </svg>
           </div>
         </div>
