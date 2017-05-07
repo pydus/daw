@@ -206,11 +206,11 @@ const modulesById = (state = {}, action) => {
         const sourceIndex = destination.sources.indexOf(action.id);
         const rerouteIndex = destination.destinations.indexOf(action.id);
         if (
-            source.destinations.length < MAX_ROUTES &&
-            destinationIndex === -1 &&
-            sourceIndex === -1 &&
-            rerouteIndex === -1
-          ) {
+          source.destinations.length < MAX_ROUTES &&
+          destinationIndex === -1 &&
+          sourceIndex === -1 &&
+          rerouteIndex === -1
+        ) {
           newState[action.id] = module(source, action);
           newState[action.destination] = module(destination, action);
           connectModules(source, destination);
