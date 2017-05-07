@@ -160,7 +160,7 @@ export const addClip = (id, file, position) => (
     let position = 0;
     module.clips.forEach(clip => {
       const end = clip.position + clip.buffer.duration * bps;
-      if (end >  position) {
+      if (end > position) {
         position = end;
       }
     });

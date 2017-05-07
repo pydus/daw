@@ -13,11 +13,21 @@ export default class Playlist extends React.Component {
     canvas.style.width = width + 'px';
   }
 
-  resizeIfNeeded(segmentSectionWidth, buffer) {
+  getTotalDuration() {
+    let totalDuration = 0;
+    this.props.clips.forEach(clip => {
+      totalDuration += clip.buffer ? clip.buffer.duration : 0;
+    });
+    return totalDuration;
+  }
+
+  resizeAsNeeded(segmentWidth, segmentDuration) {
     const secondsInSong = this.props.song.beats * 60 / this.props.song.tempo;
-    const durationRatio = secondsInSong / buffer.duration;
-    const width = segmentSectionWidth * durationRatio;
-    this.resize(width);
+    const width = secondsInSong * segmentWidth * 1000 / segmentDuration;
+
+    if (width > 0) {
+      this.resize(width);
+    }
   }
 
   setLine(width, color) {
@@ -36,17 +46,18 @@ export default class Playlist extends React.Component {
     ctx.stroke();
   }
 
-  drawSegment(n, width, value, padding) {
+  drawSegment(n, width, value, padding, offset) {
     const canvas = this.refs.canvas;
     this.setLine(width - padding, '#12e6ba');
     this.drawLine(
-      width * n, canvas.height / 2 - value * canvas.height,
-      width * n, canvas.height / 2 + value * canvas.height
+      width * n + offset, canvas.height / 2 - value * canvas.height,
+      width * n + offset, canvas.height / 2 + value * canvas.height
     );
   }
 
   drawSegments(
     buffer,
+    position,
     numberOfSegments,
     segmentWidth = 5,
     segmentPadding = 1,
@@ -61,8 +72,8 @@ export default class Playlist extends React.Component {
       1 : Math.floor(buffer.length / numberOfSegments);
     const pointsPerSegment = 100;
     const step = Math.ceil(maxPointsPerSegment / pointsPerSegment);
-
-    this.resizeIfNeeded(segmentSectionWidth, buffer);
+    const canvas = this.refs.canvas;
+    const offset = canvas.width * position / this.props.song.beats
 
     let sum = 0, s = 0;
 
@@ -74,7 +85,7 @@ export default class Playlist extends React.Component {
       }
       if (j >= maxPointsPerSegment) {
         const value = sum * step / maxPointsPerSegment;
-        this.drawSegment(s, segmentWidth, value * segmentScale, segmentPadding);
+        this.drawSegment(s, segmentWidth, value * segmentScale, segmentPadding, offset);
         s++;
         j = 0;
         sum = 0;
@@ -82,9 +93,19 @@ export default class Playlist extends React.Component {
     }
   }
 
-  drawWaveform(buffer, segmentDuration) {
+  drawWaveform(buffer, position, segmentDuration, segmentWidth) {
     const numberOfSegments = Math.ceil(1000 * buffer.duration / segmentDuration);
-    this.drawSegments(buffer, numberOfSegments, 5, 1, 1);
+    this.drawSegments(buffer, position, numberOfSegments, segmentWidth);
+  }
+
+  drawWaveforms(segmentDuration) {
+    const segmentWidth = 5;
+    this.resizeAsNeeded(segmentWidth, segmentDuration);
+    this.props.clips.forEach(clip => {
+      if (clip.buffer) {
+        this.drawWaveform(clip.buffer, clip.position, segmentDuration, segmentWidth);
+      }
+    });
   }
 
   drawPosition(beat) {
@@ -97,11 +118,14 @@ export default class Playlist extends React.Component {
   componentWillReceiveProps(nextProps) {
     const canvas = this.refs.canvas;
     let newClips = nextProps.clips.length !== this.props.clips.length;
-    
+
     if (!newClips) {
       for (let i = 0; i < nextProps.clips.length; i++) {
         // TODO check if any of the buffers have changed
-        if (nextProps.clips[i].position !== this.props.clips[i].position) {
+        if (
+          nextProps.clips[i].position !== this.props.clips[i].position ||
+          nextProps.clips[i].buffer !== this.props.clips[i].buffer
+        ) {
           newClips = true;
           break;
         }
@@ -130,18 +154,25 @@ export default class Playlist extends React.Component {
   componentDidUpdate() {
     const canvas = this.refs.canvas;
     const ctx = canvas.getContext('2d');
-    const buffer = this.props.clips[0] ? this.props.clips[0].buffer : null;
     const segmentDuration = 1000;
 
-    if (!buffer) {
+    if (this.props.clips.length < 1) {
       return false;
+    }
+
+    for (let i = 0; i < this.props.clips.length; i++) {
+      if (this.props.clips[i].buffer) {
+        break;
+      } else if (i === this.props.clips.length - 1) {
+        return false;
+      }
     }
 
     if (this.state.willDrawWaveform || this.state.willDrawPosition) {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       if (this.state.willDrawWaveform) {
-        this.drawWaveform(buffer, segmentDuration);
+        this.drawWaveforms(segmentDuration);
         const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
         this.setState({willDrawWaveform: false, imageData});
       } else if (this.state.imageData) {
