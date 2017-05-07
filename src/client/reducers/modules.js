@@ -13,6 +13,7 @@ import {
   ROUTE,
   UNROUTE,
   ADD_EQ,
+  ADD_COMPRESSOR,
   REMOVE_EFFECT,
   OPEN_EFFECT,
   SET_PLAYING,
@@ -138,6 +139,10 @@ const effects = (state = [], action) => {
       };
       // TODO connect effect
       return newState;
+    case ADD_COMPRESSOR:
+      newState[action.index] = {
+      };
+      return newState;
     default:
       return state;
   }
@@ -256,6 +261,7 @@ const modulesById = (state = {}, action) => {
     case ADD_CLIP:
     case SET_BUFFER:
     case ADD_EQ:
+    case ADD_COMPRESSOR:
     case REMOVE_EFFECT:
     case OPEN_EFFECT:
       return Object.assign({}, state, {

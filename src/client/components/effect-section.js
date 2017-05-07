@@ -2,7 +2,7 @@
 import React from 'react';
 import Slot from './slot';
 import { connect } from 'react-redux';
-import { addEq, openEffect } from '../actions';
+import { addEq, addCompressor, openEffect } from '../actions';
 
 const N_SLOTS = 8;
 
@@ -21,6 +21,7 @@ export default connect((state) => ({
       case 'EQ':
         this.props.dispatch(addEq(id, index));
       case 'COMPRESSOR':
+        this.props.dispatch(addCompressor(id, index));
       default:
         return false;
     }

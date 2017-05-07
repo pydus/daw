@@ -207,6 +207,13 @@ export const addEq = (id, index) => ({
   index
 });
 
+export const ADD_COMPRESSOR = 'ADD_COMPRESSOR';
+export const addCompressor = (id, index) => ({
+  type: ADD_COMPRESSOR,
+  id,
+  index
+});
+
 export const REMOVE_EFFECT = 'REMOVE_EFFECT';
 export const removeEffect = (id, index) => ({
   type: REMOVE_EFFECT,
