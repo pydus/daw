@@ -8,16 +8,34 @@ export default connect((state) => ({
 }))(class Header extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {rect: null, position: 0, isPlaying: false};
+    this.state = {rect: null, position: 0, isPlaying: false, isHoldingSpace: false};
     this.onMouseMove = this.onMouseMove.bind(this);
     this.onMouseDown = this.onMouseDown.bind(this);
     this.onMouseUp = this.onMouseUp.bind(this);
     this.togglePlay = this.togglePlay.bind(this);
+    this.onKeyDown = this.onKeyDown.bind(this);
+    this.onKeyUp = this.onKeyUp.bind(this);
   }
 
   componentDidMount() {
     window.addEventListener('mouseup', this.onMouseUp);
     window.addEventListener('mousemove', this.onMouseMove);
+    window.addEventListener('keydown', this.onKeyDown);
+    window.addEventListener('keyup', this.onKeyUp);
+  }
+
+  onKeyDown(e) {
+    if (e.key === ' ' && !this.state.isHoldingSpace) {
+      e.preventDefault();
+      this.togglePlay();
+      this.setState({isHoldingSpace: true});
+    }
+  }
+
+  onKeyUp(e) {
+    if (e.key === ' ') {
+      this.setState({isHoldingSpace: false});
+    }
   }
 
   onMouseDown(e) {
