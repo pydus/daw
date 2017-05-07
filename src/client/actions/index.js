@@ -151,24 +151,39 @@ const loadBuffer = (file, cb) => {
 };
 
 export const ADD_CLIP = 'ADD_CLIP';
-export const addClip = (id, file) => (
+export const addClip = (id, file, position) => (
   (dispatch, getState) => {
+    let state = getState();
+    const song = state.song;
+    let bps = song.tempo / 60;
+    let module = state.modules.modulesById[id];
+    let position = 0;
+    module.clips.forEach(clip => {
+      const end = clip.position + clip.buffer.duration * bps;
+      if (end >  position) {
+        position = end;
+      }
+    });
     const action = dispatch({
       type: ADD_CLIP,
       id,
-      file
+      file,
+      position
     });
     loadBuffer(file, (buffer) => {
-      const state = getState();
-      const module = state.modules.modulesById[id];
+      state = getState();
+      module = state.modules.modulesById[id];
+      bps = state.song.tempo / 60;
+      let totalBeats = buffer.duration * bps;
       module.clips.forEach((clip, i) => {
         if (!clip.buffer && clip.file === file) {
           dispatch(setBuffer(id, i, buffer));
+        } else if (clip.buffer) {
+          totalBeats += clip.buffer.duration * bps;
         }
       });
-      const beats = buffer.duration * state.song.tempo / 60;
-      if (beats > state.song.beats) {
-        dispatch(setBeats(beats));
+      if (totalBeats > state.song.beats) {
+        dispatch(setBeats(totalBeats));
       }
     });
   }

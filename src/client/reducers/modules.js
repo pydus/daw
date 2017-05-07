@@ -172,7 +172,12 @@ const module = (state = {}, action) => {
       return Object.assign({}, state, {isOpen: !state.isOpen});
     case ADD_CLIP:
       return Object.assign({}, state, {
-        clips: [...state.clips, {file: action.file, buffer: 0, bufferSource: null, position: 0}]
+        clips: [...state.clips, {
+          file: action.file,
+          buffer: 0,
+          bufferSource: null,
+          position: action.position
+        }]
       });
     case SET_BUFFER:
       newState.clips[action.index].buffer = action.buffer;
