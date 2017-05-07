@@ -114,7 +114,6 @@ export default class Module extends React.Component {
       <div className={'wrapper ' + (this.props.module.isOpen ? 'open' : '')} ref="wrapper">
         <Playlist
           clips={this.props.module.clips}
-          song={this.props.song}
           isOpen={this.props.module.isOpen}
         />
         <div className="module" onClick={this.toggle}>

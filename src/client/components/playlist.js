@@ -1,10 +1,24 @@
 'use strict';
 import React from 'react';
+import { connect } from 'react-redux';
+import { setPosition, savePosition } from '../actions';
 
-export default class Playlist extends React.Component {
+export default connect((state) => ({
+  song: state.song
+}))(class Playlist extends React.Component {
   constructor(props) {
     super(props);
     this.state = {hasDrawn: false, imageData: null};
+    this.onClick = this.onClick.bind(this);
+  }
+
+  onClick(e) {
+    const canvas = this.refs.canvas;
+    const rect = canvas.getBoundingClientRect();
+    const ratio = (e.clientX - rect.left) / canvas.width;
+    const position = ratio * this.props.song.beats;
+    this.props.dispatch(setPosition(position));
+    this.props.dispatch(savePosition(position));
   }
 
   resize(width) {
@@ -192,9 +206,9 @@ export default class Playlist extends React.Component {
     return (
       <div className="playlist">
         <div className="wrapper">
-          <canvas ref="canvas" width="1024" height="720"/>
+          <canvas ref="canvas" onClick={this.onClick} width="1024" height="720"/>
         </div>
       </div>
     );
   }
-};
+});

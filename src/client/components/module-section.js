@@ -293,7 +293,6 @@ export default connect((state) => ({
           onOpen={this.onOpen}
           onClose={this.onClose}
           onSourceChange={this.onSourceChange}
-          song={this.props.song}
           destinationModules={destinationModules}
           onUnroute={this.onUnroute}
           onRouteMouseDown={this.onMouseDown}
