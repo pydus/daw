@@ -437,7 +437,6 @@ header {
     }
     &:hover {
       z-index: 3;
-      transform: scale(1.02);
       padding-left: 10px;
       margin-left:  5px;
       .volume {
@@ -463,6 +462,9 @@ header {
     background: $main;
     font-size: 3em;
     color: $main;
+    &:active {
+      transform: scale(0.98);
+    }
     &::before {
       content: '+';
       background: $secondary;
