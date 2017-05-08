@@ -10,6 +10,10 @@ export default connect((state) => ({
     super(props);
     this.state = {hasDrawn: false, imageData: null};
     this.onClick = this.onClick.bind(this);
+    this.segmentDuration = 1000;
+    this.segmentWidth = 5;
+    this.segmentPadding = 1;
+    this.segmentScale = 1;
   }
 
   onClick(e) {
@@ -35,9 +39,9 @@ export default connect((state) => ({
     return totalDuration;
   }
 
-  resizeAsNeeded(segmentWidth, segmentDuration) {
+  resizeAsNeeded() {
     const secondsInSong = this.props.song.beats * 60 / this.props.song.tempo;
-    const width = secondsInSong * segmentWidth * 1000 / segmentDuration;
+    const width = secondsInSong * this.segmentWidth * 1000 / this.segmentDuration;
 
     if (width > 0) {
       this.resize(width);
@@ -60,24 +64,19 @@ export default connect((state) => ({
     ctx.stroke();
   }
 
-  drawSegment(n, width, value, padding, offset) {
+  drawSegment(n, value, offset) {
     const canvas = this.refs.canvas;
-    this.setLine(width - padding, '#12e6ba');
+    const width = this.segmentWidth;
+    const scale = this.segmentScale;
+    this.setLine(width - this.segmentPadding, '#12e6ba');
     this.drawLine(
-      width * n + offset, canvas.height / 2 - value * canvas.height,
-      width * n + offset, canvas.height / 2 + value * canvas.height
+      width * n + offset, canvas.height / 2 - value * scale * canvas.height,
+      width * n + offset, canvas.height / 2 + value * scale * canvas.height
     );
   }
 
-  drawSegments(
-    buffer,
-    position,
-    numberOfSegments,
-    segmentWidth = 5,
-    segmentPadding = 1,
-    segmentScale = 1
-  ) {
-    const segmentSectionWidth = numberOfSegments * segmentWidth;
+  drawSegments(buffer, position, numberOfSegments) {
+    const segmentSectionWidth = numberOfSegments * this.segmentWidth;
     const stereo = buffer.numberOfChannels === 2;
     const left = buffer.getChannelData(0);
     const right = stereo ? buffer.getChannelData(1) : null;
@@ -99,7 +98,7 @@ export default connect((state) => ({
       }
       if (j >= maxPointsPerSegment) {
         const value = sum * step / maxPointsPerSegment;
-        this.drawSegment(s, segmentWidth, value * segmentScale, segmentPadding, offset);
+        this.drawSegment(s, value, offset);
         s++;
         j = 0;
         sum = 0;
@@ -107,17 +106,16 @@ export default connect((state) => ({
     }
   }
 
-  drawWaveform(buffer, position, segmentDuration, segmentWidth) {
-    const numberOfSegments = Math.ceil(1000 * buffer.duration / segmentDuration);
-    this.drawSegments(buffer, position, numberOfSegments, segmentWidth);
+  drawWaveform(buffer, position) {
+    const numberOfSegments = Math.ceil(1000 * buffer.duration / this.segmentDuration);
+    this.drawSegments(buffer, position, numberOfSegments);
   }
 
-  drawWaveforms(segmentDuration) {
-    const segmentWidth = 5;
-    this.resizeAsNeeded(segmentWidth, segmentDuration);
+  drawWaveforms() {
+    this.resizeAsNeeded();
     this.props.clips.forEach(clip => {
       if (clip.buffer) {
-        this.drawWaveform(clip.buffer, clip.position, segmentDuration, segmentWidth);
+        this.drawWaveform(clip.buffer, clip.position);
       }
     });
   }
@@ -168,7 +166,6 @@ export default connect((state) => ({
   componentDidUpdate() {
     const canvas = this.refs.canvas;
     const ctx = canvas.getContext('2d');
-    const segmentDuration = 1000;
 
     if (this.props.clips.length < 1) {
       return false;
@@ -186,7 +183,7 @@ export default connect((state) => ({
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       if (this.state.willDrawWaveform) {
-        this.drawWaveforms(segmentDuration);
+        this.drawWaveforms();
         const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
         this.setState({willDrawWaveform: false, imageData});
       } else if (this.state.imageData) {
