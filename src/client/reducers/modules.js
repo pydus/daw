@@ -7,6 +7,8 @@ import {
   REMOVE_MODULE,
   MOVE_MODULE,
   RENAME_MODULE,
+  MUTE_MODULE,
+  SOLO_MODULE,
   TOGGLE_EXPAND_MODULE,
   ADD_CLIP,
   SET_BUFFER,
@@ -86,8 +88,53 @@ const stop = ({ clips }) => {
   clips.forEach(({ bufferSource }) => {
     if (bufferSource) {
       bufferSource.stop();
+      bufferSource = null;
     }
   });
+};
+
+const solo = (id, modulesById) => {
+  let unSolo = false;
+  if (modulesById[id].isSoloed) {
+    unSolo = true;
+    for (let key in modulesById) {
+      if (modulesById[key].isSoloed && key !== String(id) && key !== '0') {
+        unSolo = false;
+        break;
+      }
+    }
+    if (!unSolo) {
+      modulesById[id].gain.gain.value = 0;
+    }
+  } else if (!modulesById[id].isMuted) {
+    modulesById[id].gain.gain.value = modulesById[id].gainValue;
+  }
+
+  let isFirstSolo = true;
+  for (let key in modulesById) {
+    if (modulesById[key].isSoloed) {
+      isFirstSolo = false;
+      break;
+    }
+  }
+
+  if (isFirstSolo && id !== 0) {
+    modulesById[0].isSoloed = true;
+  }
+
+  if (unSolo && id !== 0) {
+    modulesById[0].isSoloed = false;
+  }
+
+  for (let key in modulesById) {
+    if (!modulesById[key].isSoloed && key !== String(id)) {
+      if (unSolo && !modulesById[key].isMuted) {
+        modulesById[key].gain.gain.value = modulesById[key].gainValue;
+      } else {
+        modulesById[key].gain.gain.value = 0;
+      }
+    }
+  }
 };
 
 const connectToEffects = (node, effects) => {
@@ -170,6 +217,9 @@ const module = (state = {}, action) => {
         leftMerger: ctx.createChannelMerger(MAX_ROUTES),
         rightMerger: ctx.createChannelMerger(MAX_ROUTES),
         gain: ctx.createGain(),
+        gainValue: 1,
+        isMuted: false,
+        isSoloed: false,
         isOpen: false,
         destinations: [],
         sources: [],
@@ -183,6 +233,15 @@ const module = (state = {}, action) => {
       return newModule;
     case RENAME_MODULE:
       return Object.assign({}, state, {name: action.name});
+    case MUTE_MODULE:
+      if (newState.isMuted) {
+        newState.gain.gain.value = newState.gainValue;
+      } else {
+        newState.gain.gain.value = 0;
+      }
+      return Object.assign({}, state, {isMuted: !state.isMuted});
+    case SOLO_MODULE:
+      return Object.assign({}, state, {isSoloed: !state.isSoloed});
     case TOGGLE_EXPAND_MODULE:
       return Object.assign({}, state, {isOpen: !state.isOpen});
     case ADD_CLIP:
@@ -265,6 +324,26 @@ const modulesById = (state = {}, action) => {
         disconnectModules(source, newState[action.destination]);
       }
       return newState;
+    case SOLO_MODULE:
+      solo(action.id, newState);
+    case MUTE_MODULE:
+      if (
+        action.type === MUTE_MODULE &&
+        newState[action.id].isMuted &&
+        !newState[action.id].isSoloed
+      ) {
+        let moduleIsSoloed = false;
+        for (let id in newState) {
+          if (newState[id].isSoloed && id !== String(action.id)) {
+            moduleIsSoloed = true;
+            break;
+          }
+        }
+        if (moduleIsSoloed) {
+          newState[action.id].isMuted = false;
+          return newState;
+        }
+      }
     case RENAME_MODULE:
     case TOGGLE_EXPAND_MODULE:
     case ADD_CLIP:

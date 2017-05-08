@@ -425,6 +425,9 @@ header {
           &:hover {
             background: #2b3b5e;
           }
+          &:active,&.pressed {
+            background: #212f4e;
+          }
         }
       }
       .circle {

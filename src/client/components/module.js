@@ -2,6 +2,7 @@
 import React from 'react';
 import EffectSection from './effect-section';
 import Playlist from './playlist';
+import { MUTE_MODULE, SOLO_MODULE } from '../actions';
 
 export default class Module extends React.Component {
   constructor(props) {
@@ -23,6 +24,7 @@ export default class Module extends React.Component {
     this.rename = this.rename.bind(this);
     this.open = this.open.bind(this);
     this.openEffect = this.openEffect.bind(this);
+    this.sendAction = this.sendAction.bind(this);
   }
 
   toggle(e) {
@@ -33,6 +35,15 @@ export default class Module extends React.Component {
       } else {
         this.open();
       }
+    }
+  }
+
+  sendAction(action) {
+    switch (action) {
+      case MUTE_MODULE:
+      case SOLO_MODULE:
+      default:
+        this.props.onAction(action, this.props.module.id);
     }
   }
 
@@ -146,7 +157,12 @@ export default class Module extends React.Component {
                   onOpen={this.openEffect}
                 />
                 <div className="panel">
-                  <div>S</div>
+                  <div
+                    onClick={() => this.sendAction(SOLO_MODULE)}
+                    className={this.props.module.isSoloed ? 'pressed' : ''}
+                  >
+                  S
+                  </div>
                   <div>
                     <div
                       className={isMaster || isDestination ? 'tag' : 'tag none'}
@@ -158,7 +174,12 @@ export default class Module extends React.Component {
                       </label>
                     )}
                   </div>
-                  <div>M</div>
+                  <div
+                    onClick={() => this.sendAction(MUTE_MODULE)}
+                    className={this.props.module.isMuted ? 'pressed' : ''}
+                  >
+                  M
+                  </div>
                 </div>
               </div>
             )}

@@ -113,6 +113,25 @@ export const renameModule = (id, name) => ({
   name
 });
 
+export const SET_VOLUME = 'SET_VOLUME';
+export const setVolume = (id, volume) => ({
+  type: SET_VOLUME,
+  id,
+  volume
+});
+
+export const MUTE_MODULE = 'MUTE_MODULE';
+export const muteModule = (id) => ({
+  type: MUTE_MODULE,
+  id
+});
+
+export const SOLO_MODULE = 'SOLO_MODULE';
+export const soloModule = (id) => ({
+  type: SOLO_MODULE,
+  id
+});
+
 export const TOGGLE_EXPAND_MODULE = 'TOGGLE_EXPAND_MODULE';
 export const toggleExpandModule = (id) => ({
   type: TOGGLE_EXPAND_MODULE,
