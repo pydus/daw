@@ -57,7 +57,7 @@ const getIndexById = (id, array) => {
 
 const play = (module, song, newSongPosition) => {
   const songPosition = newSongPosition || song.position;
-  const { clips, merger } = module;
+  const { clips, leftMerger, rightMerger } = module;
   module.bufferSources = [];
   clips.forEach(clip => {
     const { buffer, position } = clip;
@@ -72,9 +72,11 @@ const play = (module, song, newSongPosition) => {
     when = (when < 0) ? 0 : when;
     const offset = (when > 0) ? 0 : secondsToSongPosition - secondsToClipPosition;
 
-    //const offset = buffer.length * positionRatio / buffer.sampleRate;
     bufferSource.buffer = buffer;
-    bufferSource.connect(merger);
+    const splitter = ctx.createChannelSplitter(2);
+    bufferSource.connect(splitter);
+    splitter.connect(leftMerger, 0);
+    splitter.connect(rightMerger, 1);
     bufferSource.start(ctx.currentTime + when, offset);
     clip.bufferSource = bufferSource;
   });
@@ -106,7 +108,10 @@ const connectToDestination = (module) => {
 };
 
 const connectModules = (source, destination) => {
-  source.gain.connect(destination.merger);
+  const splitter = ctx.createChannelSplitter(2);
+  source.gain.connect(splitter);
+  splitter.connect(destination.leftMerger, 0);
+  splitter.connect(destination.rightMerger, 1);
 };
 
 const disconnectModules = (source, destination) => {
@@ -115,7 +120,10 @@ const disconnectModules = (source, destination) => {
 
 const wireUp = (module) => {
   const newModule = Object.assign({}, module);
-  const {merger, effects} = newModule;
+  const {leftMerger, rightMerger, effects} = newModule;
+  const merger = ctx.createChannelMerger(2);
+  leftMerger.connect(merger, 0, 0);
+  rightMerger.connect(merger, 0, 1);
   const last = connectToEffects(merger, effects);
   last.connect(module.gain);
   return newModule;
@@ -159,7 +167,8 @@ const module = (state = {}, action) => {
         effects: [],
         openEffect: -1,
         clips: [],
-        merger: ctx.createChannelMerger(),
+        leftMerger: ctx.createChannelMerger(MAX_ROUTES),
+        rightMerger: ctx.createChannelMerger(MAX_ROUTES),
         gain: ctx.createGain(),
         isOpen: false,
         destinations: [],
