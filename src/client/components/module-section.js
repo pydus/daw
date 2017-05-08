@@ -1,6 +1,7 @@
 'use strict';
 import React from 'react';
 import Module from './module';
+import Effect from './effect';
 import HiddenModule from './hidden-module';
 import DOMMath from './dom-math';
 import { connect } from 'react-redux';
@@ -322,14 +323,12 @@ export default connect((state) => ({
 
     for (let i = 0; i < modulesList.length; i++) {
       modulesAndEffects.push(modules[i]);
-      if (modulesList[i].openEffect !== -1) {
+      const openEffect = modulesList[i].openEffect;
+      if (openEffect !== -1) {
         modulesAndEffects.push(
           <div className="effect" key={-1 * i - 1}>
             <div className="square">
-              <div className="panel">
-                <div>S</div>
-                <div>M</div>
-              </div>
+              <Effect type={modulesList[i].effects[openEffect]}/>
             </div>
           </div>
         );

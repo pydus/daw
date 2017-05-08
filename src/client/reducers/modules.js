@@ -185,6 +185,7 @@ const effects = (state = [], action) => {
       return newState;
     case ADD_EQ:
       newState[action.index] = {
+        type: 'EQ',
         param1: {freq: 0, value: 0},
         param2: {freq: 0, value: 0},
         param3: {freq: 0, value: 0},
@@ -196,6 +197,7 @@ const effects = (state = [], action) => {
       return newState;
     case ADD_COMPRESSOR:
       newState[action.index] = {
+        type: 'COMPRESSOR'
       };
       return newState;
     default:
