@@ -12,6 +12,7 @@ import {
   soloModule,
   toggleExpandModule,
   renameModule,
+  setVolume,
   moveModule,
   removeModule,
   addClip,
@@ -19,6 +20,7 @@ import {
   route,
   unroute,
   setBeats,
+  SET_VOLUME,
   MUTE_MODULE,
   SOLO_MODULE
 } from '../actions';
@@ -73,11 +75,14 @@ export default connect((state) => ({
 
   onAction(action, ...args) {
     switch (action) {
+      case SET_VOLUME:
+        this.props.dispatch(setVolume(...args));
+        break;
       case MUTE_MODULE:
-        this.props.dispatch(muteModule(args[0]));
+        this.props.dispatch(muteModule(...args));
         break;
       case SOLO_MODULE:
-        this.props.dispatch(soloModule(args[0]));
+        this.props.dispatch(soloModule(...args));
         break;
       default:
         return false;

@@ -54,7 +54,7 @@ export default class Range extends React.Component {
       <div
         onMouseDown={this.onMouseDown}
         onDoubleClick={this.reset}
-        style={{display: 'inline-block'}}
+        style={{display: this.props.display || 'inline-block'}}
       >
         {this.props.children}
       </div>

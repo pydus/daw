@@ -7,6 +7,7 @@ import {
   REMOVE_MODULE,
   MOVE_MODULE,
   RENAME_MODULE,
+  SET_VOLUME,
   MUTE_MODULE,
   SOLO_MODULE,
   TOGGLE_EXPAND_MODULE,
@@ -104,10 +105,10 @@ const solo = (id, modulesById) => {
       }
     }
     if (!unSolo) {
-      modulesById[id].gain.gain.value = 0;
+      modulesById[id].muteGain.gain.value = 0;
     }
   } else if (!modulesById[id].isMuted) {
-    modulesById[id].gain.gain.value = modulesById[id].gainValue;
+    modulesById[id].muteGain.gain.value = 1;
   }
 
   let isFirstSolo = true;
@@ -129,9 +130,9 @@ const solo = (id, modulesById) => {
   for (let key in modulesById) {
     if (!modulesById[key].isSoloed && key !== String(id)) {
       if (unSolo && !modulesById[key].isMuted) {
-        modulesById[key].gain.gain.value = modulesById[key].gainValue;
+        modulesById[key].muteGain.gain.value = 1;
       } else {
-        modulesById[key].gain.gain.value = 0;
+        modulesById[key].muteGain.gain.value = 0;
       }
     }
   }
@@ -172,7 +173,8 @@ const wireUp = (module) => {
   leftMerger.connect(merger, 0, 0);
   rightMerger.connect(merger, 0, 1);
   const last = connectToEffects(merger, effects);
-  last.connect(module.gain);
+  last.connect(module.muteGain);
+  module.muteGain.connect(module.gain);
   return newModule;
 };
 
@@ -218,8 +220,8 @@ const module = (state = {}, action) => {
         clips: [],
         leftMerger: ctx.createChannelMerger(MAX_ROUTES),
         rightMerger: ctx.createChannelMerger(MAX_ROUTES),
+        muteGain: ctx.createGain(),
         gain: ctx.createGain(),
-        gainValue: 1,
         isMuted: false,
         isSoloed: false,
         isOpen: false,
@@ -235,11 +237,14 @@ const module = (state = {}, action) => {
       return newModule;
     case RENAME_MODULE:
       return Object.assign({}, state, {name: action.name});
+    case SET_VOLUME:
+      newState.gain.gain.value = action.volume;
+      return newState;
     case MUTE_MODULE:
       if (newState.isMuted) {
-        newState.gain.gain.value = newState.gainValue;
+        newState.muteGain.gain.value = 1;
       } else {
-        newState.gain.gain.value = 0;
+        newState.muteGain.gain.value = 0;
       }
       return Object.assign({}, state, {isMuted: !state.isMuted});
     case SOLO_MODULE:
@@ -347,6 +352,7 @@ const modulesById = (state = {}, action) => {
         }
       }
     case RENAME_MODULE:
+    case SET_VOLUME:
     case TOGGLE_EXPAND_MODULE:
     case ADD_CLIP:
     case SET_BUFFER:

@@ -2,7 +2,8 @@
 import React from 'react';
 import EffectSection from './effect-section';
 import Playlist from './playlist';
-import { MUTE_MODULE, SOLO_MODULE } from '../actions';
+import Range from './range';
+import { SET_VOLUME, MUTE_MODULE, SOLO_MODULE } from '../actions';
 
 export default class Module extends React.Component {
   constructor(props) {
@@ -10,7 +11,8 @@ export default class Module extends React.Component {
     this.state = {
       willStyleCircle: false,
       name: '',
-      isNaming: this.props.module.id !== 0
+      isNaming: this.props.module.id !== 0,
+      volumePercentage: 100
     };
     this.toggle = this.toggle.bind(this);
     this.onSourceChange = this.onSourceChange.bind(this);
@@ -25,6 +27,7 @@ export default class Module extends React.Component {
     this.open = this.open.bind(this);
     this.openEffect = this.openEffect.bind(this);
     this.sendAction = this.sendAction.bind(this);
+    this.onVolumeChange = this.onVolumeChange.bind(this);
   }
 
   toggle(e) {
@@ -38,13 +41,19 @@ export default class Module extends React.Component {
     }
   }
 
-  sendAction(action) {
+  sendAction(action, ...args) {
     switch (action) {
+      case SET_VOLUME:
       case MUTE_MODULE:
       case SOLO_MODULE:
       default:
-        this.props.onAction(action, this.props.module.id);
+        this.props.onAction(action, this.props.module.id, ...args);
     }
+  }
+
+  onVolumeChange(value) {
+    this.setState({volumePercentage: value * 100});
+    this.sendAction(SET_VOLUME, value);
   }
 
   close() {
@@ -128,7 +137,21 @@ export default class Module extends React.Component {
           isOpen={this.props.module.isOpen}
         />
         <div className="module" onClick={this.toggle}>
-          <div className="volume"></div>
+          <Range
+            display="block"
+            onChange={this.onVolumeChange}
+            min="0"
+            max="1.15"
+            default="1"
+          >
+            <div className="volume-wrapper">
+              <div
+                className="volume"
+                style={{height: `${this.state.volumePercentage * 0.85}%`}}
+              >
+              </div>
+            </div>
+          </Range>
           <div className="tags">
             {tags}
           </div>
