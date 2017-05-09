@@ -15,10 +15,10 @@ export default class Effect extends React.Component {
       <div>
         <div className="content">
           <div className="left">
-            <Knob label="Ratio" value="0" max="20"/>
-            <Knob label="Knee" value="0"/>
-            <Knob label="Attack" value="8" max="1000"/>
-            <Knob label="Release" value="60" max="2000"/>
+            <Knob label="Ratio" default="0" max="20"/>
+            <Knob label="Knee" default="0"/>
+            <Knob label="Attack" default="8" max="1000"/>
+            <Knob label="Release" default="60" max="2000"/>
           </div>
           <div className="display-section">
             <div className="meter"></div>

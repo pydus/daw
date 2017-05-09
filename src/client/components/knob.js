@@ -4,14 +4,20 @@ import React from 'react';
 export default class Knob extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {value: Number(this.props.value), lastCursor: 0};
+    this.state = {value: Number(props.default), lastCursor: 0};
+    this.default = Number(props.default) || 0;
     // percentage to add to the value per pixel moved by the cursor
     this.step = props.step || 0.35;
     this.max = Number(props.max) || 100;
     this.min = 0;
+    this.reset = this.reset.bind(this);
     this.onMouseDown = this.onMouseDown.bind(this);
     this.onMouseMove = this.onMouseMove.bind(this);
     this.onMouseUp = this.onMouseUp.bind(this);
+  }
+
+  reset() {
+    this.setState({value: this.default});
   }
 
   onMouseMove(e) {
@@ -32,9 +38,13 @@ export default class Knob extends React.Component {
   }
 
   onMouseDown(e) {
-    this.setState({lastCursor: e.clientY});
-    window.addEventListener('mousemove', this.onMouseMove);
-    window.addEventListener('mouseup', this.onMouseUp);
+    if (e.altKey) {
+      this.reset();
+    } else {
+      this.setState({lastCursor: e.clientY});
+      window.addEventListener('mousemove', this.onMouseMove);
+      window.addEventListener('mouseup', this.onMouseUp);
+    }
   }
 
   render() {
@@ -44,6 +54,7 @@ export default class Knob extends React.Component {
       <div
         className={`knob progress-${percentage}`}
         onMouseDown={this.onMouseDown}
+        onDoubleClick={this.reset}
       >
         <div className="label">{this.props.label}</div>
       </div>
