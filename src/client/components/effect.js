@@ -18,7 +18,7 @@ export default class Effect extends React.Component {
             <Knob label="Ratio" default="0" max="20"/>
             <Knob label="Knee" default="0"/>
             <Knob label="Attack" default="8" max="1000"/>
-            <Knob label="Release" default="60" max="2000"/>
+            <Knob label="Release" default="200" max="2000"/>
           </div>
           <div className="display-section">
             <div className="meter"></div>

@@ -9,7 +9,7 @@ export default class Knob extends React.Component {
     // percentage to add to the value per pixel moved by the cursor
     this.step = props.step || 0.35;
     this.max = Number(props.max) || 100;
-    this.min = 0;
+    this.min = Number(props.min) || 0;
     this.reset = this.reset.bind(this);
     this.onMouseDown = this.onMouseDown.bind(this);
     this.onMouseMove = this.onMouseMove.bind(this);
@@ -48,7 +48,9 @@ export default class Knob extends React.Component {
   }
 
   render() {
-    const percentage = Math.round(100 * this.state.value / this.max);
+    const value = Math.abs(this.min - this.state.value);
+    const interval = Math.abs(this.max -this.min);
+    const percentage = Math.round(100 * value / interval);
 
     return (
       <div
