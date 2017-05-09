@@ -2,14 +2,14 @@
 import React from 'react';
 import Range from './range';
 
-export default class Knob extends React.Component {
+export default class CompressorDisplay extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {value: Number(props.default), percentage: 0};
-    this.default = Number(props.default) || 0;
-    this.max = Number(props.max) || 100;
-    this.min = Number(props.min) || 0;
+    this.state = {value: 0, percentage: 0};
     this.onChange = this.onChange.bind(this);
+    this.default = 0;
+    this.max = 0;
+    this.min = -60;
   }
 
   componentDidMount() {
@@ -29,16 +29,19 @@ export default class Knob extends React.Component {
   }
 
   render() {
-
-    return(
+    return (
       <Range
         onChange={this.onChange}
-        max={this.max}
         min={this.min}
+        max={this.max}
         default={this.default}
       >
-        <div className={`knob progress-${this.state.percentage}`}>
-          <div className="label">{this.props.label}</div>
+        <div className="display">
+          <div
+            className="indicator"
+            style={{bottom: `${this.state.percentage}%`}}
+          >
+          </div>
         </div>
       </Range>
     );

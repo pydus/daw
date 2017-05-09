@@ -2,6 +2,7 @@
 import React from 'react';
 import Menu from './menu';
 import Knob from './knob';
+import CompressorDisplay from './compressor-display';
 
 export default class Effect extends React.Component {
   constructor(props) {
@@ -22,7 +23,7 @@ export default class Effect extends React.Component {
           </div>
           <div className="display-section">
             <div className="meter"></div>
-            <div className="display"></div>
+            <CompressorDisplay/>
             <div className="meter"></div>
           </div>
         </div>

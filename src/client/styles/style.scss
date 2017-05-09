@@ -530,7 +530,17 @@ header {
             }
           }
           .display {
+            position: relative;
+            height: 99%;
+            top: 1px;
             width: 257px;
+            .indicator {
+              position: absolute;
+              left: 0;
+              right: 0;
+              height: 1px;
+              background: #12e6ba;
+            }
           }
         }
       }
