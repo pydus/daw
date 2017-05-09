@@ -451,55 +451,86 @@ header {
     }
   }
   .effect {
+    &:hover {
+      padding: 0 10px;
+      margin-right: 5px;
+    }
     .square {
-      width: 403px;
-      .panel {
-        > div {
-          &:last-child {
-            float: right;   
-          }
-        }
-      }
-      .knob {
-        $knob-diameter: 34px;
-        $bar-width: 3px;
+      padding: 0;
+      width: 396px;
+      .content {
         position: relative;
-        width: $knob-diameter;
-        height: $knob-diameter;
-        border-radius: 50%;
-        background: $main;
-        .label {
+        overflow: hidden;
+        height: 183px;
+        .left {
+          margin: 0 0 0 14px;
+          float: left;
+          width: 88px;
+        }
+        .knob {
+          $knob-diameter: 34px;
+          $bar-width: 3px;
           position: relative;
-          top: $knob-diameter + 4px;
-          bottom: -10px;
-          text-align: center;
-          text-transform: uppercase;
-          font-size: 9px;
-        }
-        &::before {
-          content: '';
-          position: absolute;
+          display: inline-block;
+          margin: 16px 5px 8px 5px;
+          width: $knob-diameter;
+          height: $knob-diameter;
           border-radius: 50%;
-          top: $bar-width;
-          left: $bar-width;
-          width: $knob-diameter - 2 * $bar-width;
-          height: $knob-diameter - 2 * $bar-width; 
-          background: $main;
-        }
-      }
-      $step: 1;
-      $loops: 100;
-      $increment: 270 / $loops;
-      $half: round($loops / 2);
-      @for $i from 0 through $loops {
-        .progress-#{$i * $step} {
-          @if $i < 67 {
-            $nextdeg: -45deg + $increment * $i;
-            background-image: linear-gradient(-45deg, $main 50%, transparent 50%, transparent), linear-gradient($nextdeg, #12e6ba 50%, $main 50%, $main);
+          .label {
+            position: relative;
+            top: $knob-diameter + 2px;
+            bottom: -10px;
+            text-align: center;
+            text-transform: uppercase;
+            font-size: 9px;
           }
-          @else {
-            $nextdeg: 90deg + $increment * ($i - $half);
-            background-image: linear-gradient($nextdeg, #12e6ba 50%, transparent 50%, transparent), linear-gradient(134.5deg, #12e6ba 50%, $main 50%, $main);
+          &::before {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            top: $bar-width;
+            left: $bar-width;
+            width: $knob-diameter - 2 * $bar-width;
+            height: $knob-diameter - 2 * $bar-width; 
+            background: $main;
+          }
+        }
+        $track-color: $third; /*#1C2D48;*/
+        $step: 1;
+        $loops: 100;
+        $increment: 270 / $loops;
+        $half: round($loops / 2);
+        @for $i from 0 through $loops {
+          .progress-#{$i * $step} {
+            @if $i < 67 {
+              $nextdeg: -45deg + $increment * $i;
+              background-image: linear-gradient(-45deg, $track-color 50%, transparent 50%, transparent), linear-gradient($nextdeg, #12e6ba 50%, $track-color 50%, $track-color);
+            }
+            @else {
+              $nextdeg: 90deg + $increment * ($i - $half);
+              background-image: linear-gradient($nextdeg, #12e6ba 50%, transparent 50%, transparent), linear-gradient(134.5deg, #12e6ba 50%, $track-color 50%, $track-color);
+            }
+          }
+        }
+        .display-section {
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          left: 115px;
+          right: 0;
+          > div {
+            background: $main;
+            height: 100%;
+            float: left;
+          }
+          .meter {
+            width: 12px;
+            &:last-of-type {
+              float: right;
+            }
+          }
+          .display {
+            width: 257px;
           }
         }
       }
