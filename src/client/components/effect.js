@@ -10,6 +10,9 @@ export default class Effect extends React.Component {
   render() {
     return (
       <div>
+        <div className="knob progress-50">
+          <div className="label">Release</div>
+        </div>
         <div className="panel">
           <div>S</div>
           <div>M</div>
