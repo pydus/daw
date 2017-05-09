@@ -2,6 +2,14 @@
 import React from 'react';
 import Menu from './menu';
 
+const Knob = (props) => {
+  return (
+    <div className={`knob progress-${props.value}`}>
+      <div className="label">{props.label}</div>
+    </div>
+  );
+};
+
 export default class Effect extends React.Component {
   constructor(props) {
     super(props);
@@ -14,18 +22,10 @@ export default class Effect extends React.Component {
       <div>
         <div className="content">
           <div className="left">
-            <div className="knob progress-50">
-              <div className="label">Ratio</div>
-            </div>
-            <div className="knob progress-0">
-              <div className="label">Knee</div>
-            </div>
-            <div className="knob progress-8">
-              <div className="label">Attack</div>
-            </div>
-            <div className="knob progress-60">
-              <div className="label">Release</div>
-            </div>
+            <Knob label="Ratio" value="50"/>
+            <Knob label="Knee" value="0"/>
+            <Knob label="Attack" value="8"/>
+            <Knob label="Release" value="60"/>
           </div>
           <div className="display-section">
             <div className="meter"></div>
