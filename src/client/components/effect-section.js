@@ -20,8 +20,10 @@ export default connect((state) => ({
     switch (effect) {
       case 'EQ':
         this.props.dispatch(addEq(id, index));
+        break;
       case 'COMPRESSOR':
         this.props.dispatch(addCompressor(id, index));
+        break;
       default:
         return false;
     }
