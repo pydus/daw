@@ -2,7 +2,12 @@
 import React from 'react';
 import Slot from './slot';
 import { connect } from 'react-redux';
-import { addEq, addCompressor, openEffect } from '../actions';
+import {
+  addEq,
+  addCompressor,
+  editCompressor,
+  openEffect
+} from '../actions';
 
 const N_SLOTS = 8;
 
@@ -42,7 +47,13 @@ export default connect((state) => ({
     }
 
     const slots = effects.map((el, i) => (
-      <Slot key={i} index={i} effect={el} onAdd={this.add} onOpen={this.open}/>
+      <Slot
+        key={i}
+        index={i}
+        effect={el}
+        onAdd={this.add}
+        onOpen={this.open}
+      />
     ));
 
     return (
