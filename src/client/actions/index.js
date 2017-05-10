@@ -233,6 +233,15 @@ export const addCompressor = (id, index) => ({
   index
 });
 
+export const EDIT_COMPRESSOR = 'EDIT_COMPRESSOR';
+export const editCompressor = (id, index, settings) => ({
+  type: EDIT_COMPRESSOR,
+  id,
+  index,
+  settings
+});
+
+
 export const REMOVE_EFFECT = 'REMOVE_EFFECT';
 export const removeEffect = (id, index) => ({
   type: REMOVE_EFFECT,

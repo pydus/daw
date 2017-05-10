@@ -3,9 +3,31 @@ import { ctx } from '../app';
 import {
   ADD_EQ,
   ADD_COMPRESSOR,
+  EDIT_COMPRESSOR,
   REMOVE_EFFECT,
   OPEN_EFFECT
 } from '../actions';
+
+const compressor = (state, action) => {
+  const newState = Object.assign({}, state);
+
+  switch (action.type) {
+    case ADD_COMPRESSOR:
+      const input = ctx.createGain();
+      const output = ctx.createGain();
+      const compressor = ctx.createDynamicsCompressor();
+      input.connect(output);
+      return {
+        type: 'COMPRESSOR',
+        input,
+        compressor,
+        output
+      };
+    case EDIT_COMPRESSOR:
+    default:
+      return state;
+  }
+};
 
 const effects = (state = [], action) => {
   const newState = [...state];
@@ -33,16 +55,8 @@ const effects = (state = [], action) => {
       };
       return newState;
     case ADD_COMPRESSOR:
-      input = ctx.createGain();
-      output = ctx.createGain();
-      input.connect(output);
-      const compressor = ctx.createDynamicsCompressor();
-      newState[action.index] = {
-        type: 'COMPRESSOR',
-        input,
-        compressor,
-        output
-      };
+    case EDIT_COMPRESSOR:
+      newState[action.index] = compressor(newState[action.index], action);
       return newState;
     default:
       return state;
