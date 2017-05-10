@@ -5,20 +5,10 @@ import module from './module';
 import {
   CREATE_MODULE,
   REMOVE_MODULE,
-  RENAME_MODULE,
-  SET_VOLUME,
   MUTE_MODULE,
   SOLO_MODULE,
-  TOGGLE_EXPAND_MODULE,
-  ADD_CLIP,
-  SET_BUFFER,
   ROUTE,
   UNROUTE,
-  ADD_EQ,
-  ADD_COMPRESSOR,
-  EDIT_COMPRESSOR,
-  REMOVE_EFFECT,
-  OPEN_EFFECT,
   SET_PLAYING,
   SET_POSITION
 } from '../actions';
@@ -157,6 +147,23 @@ const modulesById = (state = {}, action) => {
         disconnectModules(source, newState[action.destination]);
       }
       return newState;
+    case SET_PLAYING:
+      for (let id in newState) {
+        if (action.playing) {
+          play(newState[id], action.song);
+        } else {
+          stop(newState[id]);
+        }
+      }
+      return newState;
+    case SET_POSITION:
+      if (action.song && action.song.isPlaying) {
+        for (let id in newState) {
+          stop(newState[id]);
+          play(newState[id], action.song, (action.position < 0) ? 0 : action.position);
+        }
+      }
+      return newState;
     case SOLO_MODULE:
       solo(action.id, newState);
     case MUTE_MODULE:
@@ -177,38 +184,13 @@ const modulesById = (state = {}, action) => {
           return newState;
         }
       }
-    case RENAME_MODULE:
-    case SET_VOLUME:
-    case TOGGLE_EXPAND_MODULE:
-    case ADD_CLIP:
-    case SET_BUFFER:
-    case ADD_EQ:
-    case ADD_COMPRESSOR:
-    case EDIT_COMPRESSOR:
-    case REMOVE_EFFECT:
-    case OPEN_EFFECT:
+    default:
+      if (typeof action.id === 'undefined') {
+        return state;
+      }
       return Object.assign({}, state, {
         [action.id]: module(state[action.id], action)
       });
-    case SET_PLAYING:
-      for (let id in newState) {
-        if (action.playing) {
-          play(newState[id], action.song);
-        } else {
-          stop(newState[id]);
-        }
-      }
-      return newState;
-    case SET_POSITION:
-      if (action.song && action.song.isPlaying) {
-        for (let id in newState) {
-          stop(newState[id]);
-          play(newState[id], action.song, (action.position < 0) ? 0 : action.position);
-        }
-      }
-      return newState;
-    default:
-      return state;
   }
 };
 
