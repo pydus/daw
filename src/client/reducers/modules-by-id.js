@@ -16,6 +16,7 @@ import {
   UNROUTE,
   ADD_EQ,
   ADD_COMPRESSOR,
+  EDIT_COMPRESSOR,
   REMOVE_EFFECT,
   OPEN_EFFECT,
   SET_PLAYING,
@@ -183,6 +184,7 @@ const modulesById = (state = {}, action) => {
     case SET_BUFFER:
     case ADD_EQ:
     case ADD_COMPRESSOR:
+    case EDIT_COMPRESSOR:
     case REMOVE_EFFECT:
     case OPEN_EFFECT:
       return Object.assign({}, state, {

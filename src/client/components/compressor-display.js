@@ -24,6 +24,7 @@ export default class CompressorDisplay extends React.Component {
   }
 
   onChange(value) {
+    this.props.onChange(value);
     this.setState({value});
     this.calculatePercentage(value);
   }

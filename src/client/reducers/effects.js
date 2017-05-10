@@ -14,9 +14,10 @@ const compressor = (state, action) => {
   switch (action.type) {
     case ADD_COMPRESSOR:
       const input = ctx.createGain();
-      const output = ctx.createGain();
       const compressor = ctx.createDynamicsCompressor();
-      input.connect(output);
+      const output = ctx.createGain();
+      input.connect(compressor);
+      compressor.connect(output);
       return {
         type: 'COMPRESSOR',
         input,
@@ -24,6 +25,15 @@ const compressor = (state, action) => {
         output
       };
     case EDIT_COMPRESSOR:
+      const settings = action.settings;
+      if (settings.inputGain) newState.input.gain.value = settings.inputGain;
+      if (settings.outputGain) newState.output.gain.value = settings.outputGain;
+      if (settings.threshold) newState.compressor.threshold.value = settings.threshold;
+      if (settings.ratio) newState.compressor.ratio.value = settings.ratio;
+      if (settings.knee) newState.compressor.knee.value = settings.knee;
+      if (settings.attack) newState.compressor.attack.value = settings.attack;
+      if (settings.release) newState.compressor.release.value = settings.release;
+      return newState;
     default:
       return state;
   }
