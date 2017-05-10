@@ -6,6 +6,7 @@ import Range from './range';
 import CompressorDisplay from './compressor-display';
 import { connect } from 'react-redux';
 import { editCompressor } from '../actions';
+import { defaultCompressor } from '../settings';
 
 export default connect((state) => ({
 
@@ -103,10 +104,10 @@ export default connect((state) => ({
         </Range>
         <div className="content">
           <div className="left">
-            <Knob label="Ratio" default="1" min="1" max="20" onChange={this.onRatioChange}/>
-            <Knob label="Knee" default="0" max="40" onChange={this.onKneeChange}/>
-            <Knob label="Attack" default="8" max="1000" onChange={this.onAttackChange}/>
-            <Knob label="Release" default="200" max="1000" onChange={this.onReleaseChange}/>
+            <Knob label="Ratio" default={defaultCompressor.ratio} min="1" max="20" onChange={this.onRatioChange}/>
+            <Knob label="Knee" default={defaultCompressor.knee} max="40" onChange={this.onKneeChange}/>
+            <Knob label="Attack" default={defaultCompressor.attack} max="1000" onChange={this.onAttackChange}/>
+            <Knob label="Release" default={defaultCompressor.release} max="1000" onChange={this.onReleaseChange}/>
           </div>
           <div className="display-section">
             <div className="meter"></div>

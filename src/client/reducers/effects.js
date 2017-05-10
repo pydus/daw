@@ -1,5 +1,6 @@
 'use strict';
 import { ctx } from '../app';
+import { defaultCompressor } from '../settings';
 import {
   ADD_EQ,
   ADD_COMPRESSOR,
@@ -16,6 +17,11 @@ const compressor = (state, action) => {
       const input = ctx.createGain();
       const compressor = ctx.createDynamicsCompressor();
       const output = ctx.createGain();
+      compressor.threshold.value = defaultCompressor.threshold;
+      compressor.ratio.value = defaultCompressor.ratio;
+      compressor.knee.value = defaultCompressor.knee;
+      compressor.attack.value = defaultCompressor.attack / 1000;
+      compressor.release.value = defaultCompressor.release / 1000;
       input.connect(compressor);
       compressor.connect(output);
       return {

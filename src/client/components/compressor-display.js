@@ -1,13 +1,13 @@
 'use strict';
 import React from 'react';
 import Range from './range';
+import { defaultCompressor } from '../settings';
 
 export default class CompressorDisplay extends React.Component {
   constructor(props) {
     super(props);
     this.state = {value: 0, percentage: 0};
     this.onChange = this.onChange.bind(this);
-    this.default = 0;
     this.max = 0;
     this.min = -60;
   }
@@ -35,7 +35,7 @@ export default class CompressorDisplay extends React.Component {
         onChange={this.onChange}
         min={this.min}
         max={this.max}
-        default={this.default}
+        default={defaultCompressor.threshold}
       >
         <div className="display">
           <div
