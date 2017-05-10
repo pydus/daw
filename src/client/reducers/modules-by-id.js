@@ -103,14 +103,16 @@ const solo = (id, modulesById) => {
 };
 
 const connectModules = (source, destination) => {
-  const splitter = ctx.createChannelSplitter(2);
+  const splitter = source.splitter;
   source.gain.connect(splitter);
   splitter.connect(destination.leftMerger, 0);
   splitter.connect(destination.rightMerger, 1);
 };
 
 const disconnectModules = (source, destination) => {
-  source.gain.disconnect(destination.merger);
+  const splitter = source.splitter;
+  splitter.disconnect(destination.leftMerger, 0);
+  splitter.disconnect(destination.rightMerger, 1);
 };
 
 const modulesById = (state = {}, action) => {

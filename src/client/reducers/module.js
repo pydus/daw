@@ -49,9 +49,9 @@ const connectToEffects = (node, effects) => {
   let last = node;
   effects.forEach((effect) => {
     if (effect) {
-      last.connect(effect);
-      effect.disconnect();
-      last = effect;
+      last.connect(effect.input);
+      effect.output.disconnect();
+      last = effect.output;
     }
   });
   return last;
@@ -61,6 +61,8 @@ const wireUp = (module) => {
   const newModule = Object.assign({}, module);
   const {leftMerger, rightMerger, effects} = newModule;
   const merger = ctx.createChannelMerger(2);
+  leftMerger.disconnect();
+  rightMerger.disconnect();
   leftMerger.connect(merger, 0, 0);
   rightMerger.connect(merger, 0, 1);
   const last = connectToEffects(merger, effects);
@@ -84,6 +86,7 @@ const module = (state = {}, action) => {
         effects: [],
         openEffect: -1,
         clips: [],
+        splitter: ctx.createChannelSplitter(2),
         leftMerger: ctx.createChannelMerger(MAX_ROUTES),
         rightMerger: ctx.createChannelMerger(MAX_ROUTES),
         muteGain: ctx.createGain(),
@@ -152,6 +155,11 @@ const module = (state = {}, action) => {
         ) ? action.index : -1;
       return Object.assign({}, state, {openEffect: index});
     default:
+      if (action.type.slice(0, 3) === 'ADD' || action.type === REMOVE_EFFECT) {
+        return wireUp(
+          Object.assign({}, state, {effects: effects(state.effects, action)})
+        );
+      }
       return Object.assign({}, state, {effects: effects(state.effects, action)});
   }
 };
