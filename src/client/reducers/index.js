@@ -33,7 +33,7 @@ const song = (
     case SET_POSITION:
       return Object.assign({}, state, {position: (action.position < 0) ? 0 : action.position});
     case SAVE_POSITION:
-      return Object.assign({}, state, {savedPosition: action.position});
+      return Object.assign({}, state, {savedPosition: (action.position < 0) ? 0 : action.position});
     default:
       return state;
   }
