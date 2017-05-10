@@ -332,9 +332,7 @@ export default connect((state) => ({
       if (openEffect !== -1) {
         modulesAndEffects.push(
           <div className="effect" key={-1 * i - 1}>
-            <div className="square">
-              <Effect effect={modulesList[i].effects[openEffect]}/>
-            </div>
+            <Effect effect={modulesList[i].effects[openEffect]}/>
           </div>
         );
       }
