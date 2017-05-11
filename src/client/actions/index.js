@@ -170,6 +170,23 @@ const loadBuffer = (file, cb) => {
   };
 };
 
+const increaseBeatsIfNecessary = (dispatch, getState) => {
+  const state = getState();
+  const song = state.song;
+  const bps = song.tempo / 60;
+  const modulesById = state.modules.modulesById;
+
+  for (let id in modulesById) {
+    modulesById[id].clips.forEach(clip => {
+      const beatsInClip = clip.buffer.duration * bps;
+      const highestBeat = clip.position + beatsInClip;
+      if (highestBeat > song.beats) {
+        dispatch(setBeats(highestBeat));
+      }
+    });
+  }
+};
+
 export const ADD_CLIP = 'ADD_CLIP';
 export const addClip = (id, file, position) => (
   (dispatch, getState) => {
@@ -193,21 +210,35 @@ export const addClip = (id, file, position) => (
     loadBuffer(file, (buffer) => {
       state = getState();
       module = state.modules.modulesById[id];
-      bps = state.song.tempo / 60;
-      let totalBeats = buffer.duration * bps;
       module.clips.forEach((clip, i) => {
         if (!clip.buffer && clip.file === file) {
           dispatch(setBuffer(id, i, buffer));
-        } else if (clip.buffer) {
-          totalBeats += clip.buffer.duration * bps;
         }
       });
-      if (totalBeats > state.song.beats) {
-        dispatch(setBeats(totalBeats));
-      }
+      increaseBeatsIfNecessary(dispatch, getState);      
     });
   }
 );
+
+export const MOVE_CLIP = 'MOVE_CLIP';
+export const moveClip = (id, index, position) => (
+  (dispatch, getState) => {
+    dispatch({
+      type: MOVE_CLIP,
+      id,
+      index,
+      position
+    });
+    increaseBeatsIfNecessary(dispatch, getState);
+  }
+);
+
+export const CUT = 'CUT';
+export const cut = (id, position) => ({
+  type: CUT,
+  id,
+  position
+});
 
 /**
  * Effects
@@ -241,7 +272,6 @@ export const editCompressor = (id, index, settings) => ({
   index,
   settings
 });
-
 
 export const REMOVE_EFFECT = 'REMOVE_EFFECT';
 export const removeEffect = (id, index) => ({

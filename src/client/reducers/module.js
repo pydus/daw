@@ -12,6 +12,8 @@ import {
   SOLO_MODULE,
   TOGGLE_EXPAND_MODULE,
   ADD_CLIP,
+  MOVE_CLIP,
+  CUT,
   SET_BUFFER,
   ROUTE,
   UNROUTE,
@@ -129,6 +131,12 @@ const module = (state = {}, action) => {
           position: action.position
         }]
       });
+    case MOVE_CLIP:
+      const effect = newState.clips[action.index];
+      effect.position = action.position;
+      return newState;
+    case CUT:
+      return newState;
     case SET_BUFFER:
       newState.clips[action.index].buffer = action.buffer;
       return newState;
