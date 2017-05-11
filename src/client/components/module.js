@@ -147,7 +147,7 @@ export default class Module extends React.Component {
             <div className="volume-wrapper">
               <div
                 className="volume"
-                style={{height: `${this.state.volumePercentage * 0.85}%`}}
+                style={{height: `${this.state.volumePercentage * 0.87}%`}}
               >
               </div>
             </div>
