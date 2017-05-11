@@ -3,6 +3,7 @@ import React from 'react';
 import Menu from './menu';
 import Knob from './knob';
 import Range from './range';
+import Meter from './meter';
 import CompressorDisplay from './compressor-display';
 import { connect } from 'react-redux';
 import { editCompressor } from '../actions';
@@ -110,9 +111,9 @@ export default connect((state) => ({
             <Knob label="Release" default={defaultCompressor.release} max="1000" onChange={this.onReleaseChange}/>
           </div>
           <div className="display-section">
-            <div className="meter"></div>
+            <Meter analyser={this.props.effect.analyserIn}/>
             <CompressorDisplay onChange={this.onThresholdChange}/>
-            <div className="meter"></div>
+            <Meter analyser={this.props.effect.analyserOut}/>
           </div>
         </div>
       </div>

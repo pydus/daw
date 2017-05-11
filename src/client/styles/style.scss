@@ -537,6 +537,10 @@ header {
         }
         .meter {
           width: 12px;
+          canvas {
+            width: 100%;
+            height: 100%;
+          }
           &:last-of-type {
             float: right;
           }

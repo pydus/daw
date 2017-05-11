@@ -14,31 +14,46 @@ const compressor = (state, action) => {
 
   switch (action.type) {
     case ADD_COMPRESSOR:
-      const input = ctx.createGain();
+      const inputGain = ctx.createGain();
+      const analyserIn = ctx.createAnalyser();
       const compressor = ctx.createDynamicsCompressor();
-      const output = ctx.createGain();
+      const outputGain = ctx.createGain();
+      const analyserOut = ctx.createAnalyser();
       compressor.threshold.value = defaultCompressor.threshold;
       compressor.ratio.value = defaultCompressor.ratio;
       compressor.knee.value = defaultCompressor.knee;
       compressor.attack.value = defaultCompressor.attack / 1000;
       compressor.release.value = defaultCompressor.release / 1000;
-      input.connect(compressor);
-      compressor.connect(output);
+      inputGain.connect(analyserIn);
+      analyserIn.connect(compressor);
+      compressor.connect(outputGain);
+      outputGain.connect(analyserOut);
       return {
         type: 'COMPRESSOR',
-        input,
+        inputGain,
+        input: inputGain,
+        analyserIn,
         compressor,
-        output
+        outputGain,
+        analyserOut,
+        output: analyserOut
       };
     case EDIT_COMPRESSOR:
       const settings = action.settings;
-      if (settings.inputGain) newState.input.gain.value = settings.inputGain;
-      if (settings.outputGain) newState.output.gain.value = settings.outputGain;
-      if (settings.threshold) newState.compressor.threshold.value = settings.threshold;
-      if (settings.ratio) newState.compressor.ratio.value = settings.ratio;
-      if (settings.knee) newState.compressor.knee.value = settings.knee;
-      if (settings.attack) newState.compressor.attack.value = settings.attack;
-      if (settings.release) newState.compressor.release.value = settings.release;
+      if (typeof settings.inputGain !== 'undefined')
+        newState.inputGain.gain.value = settings.inputGain;
+      if (typeof settings.outputGain !== 'undefined')
+        newState.outputGain.gain.value = settings.outputGain;
+      if (typeof settings.threshold !== 'undefined')
+        newState.compressor.threshold.value = settings.threshold;
+      if (typeof settings.ratio !== 'undefined')
+        newState.compressor.ratio.value = settings.ratio;
+      if (typeof settings.knee !== 'undefined')
+        newState.compressor.knee.value = settings.knee;
+      if (typeof settings.attack !== 'undefined')
+        newState.compressor.attack.value = settings.attack;
+      if (typeof settings.release !== 'undefined')
+        newState.compressor.release.value = settings.release;
       return newState;
     default:
       return state;

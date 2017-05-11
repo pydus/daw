@@ -30,7 +30,6 @@ export default class Knob extends React.Component {
   }
 
   render() {
-
     return(
       <Range
         onChange={this.onChange}

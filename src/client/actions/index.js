@@ -8,7 +8,8 @@ let nextSampleId = 0;
  * Song
  */
 
-const POSITION_UPDATE_INTERVAL = 1000 / 60;
+import { UPDATE_INTERVAL } from '../settings';
+
 let interval;
 
 const dispatchPosition = (dispatch, position) => {
@@ -23,10 +24,10 @@ const startUpdatingPosition = (dispatch, getState) => {
     const state = getState();
     const position =
       state.song.position +
-      POSITION_UPDATE_INTERVAL / 1000 *
+      UPDATE_INTERVAL / 1000 *
       state.song.tempo / 60;
     dispatchPosition(dispatch, position);
-  }, POSITION_UPDATE_INTERVAL);
+  }, UPDATE_INTERVAL);
 };
 
 const stopUpdatingPosition = () => {
