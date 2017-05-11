@@ -16,7 +16,6 @@ import {
   moveModule,
   removeModule,
   addClip,
-  moveClip,
   cut,
   route,
   unroute,

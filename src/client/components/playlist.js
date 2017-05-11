@@ -1,28 +1,90 @@
 'use strict';
 import React from 'react';
 import { connect } from 'react-redux';
-import { setPosition, savePosition } from '../actions';
+import { setPosition, savePosition, moveClip } from '../actions';
 
 export default connect((state) => ({
   song: state.song
 }))(class Playlist extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {hasDrawn: false, imageData: null};
-    this.onClick = this.onClick.bind(this);
+    this.state = {
+      hasDrawn: false,
+      imageData: null,
+      clickPosition: -1,
+      clickedClip: null
+    };
+    this.onMouseDown = this.onMouseDown.bind(this);
+    this.getNewClickedClipPosition = this.getNewClickedClipPosition.bind(this);
+    this.onMouseMove = this.onMouseMove.bind(this);
+    this.onMouseUp = this.onMouseUp.bind(this);
     this.segmentDuration = 1000;
     this.segmentWidth = 5;
     this.segmentPadding = 1;
     this.segmentScale = 1;
   }
 
-  onClick(e) {
+  componentDidMount() {
+    window.addEventListener('mouseup', this.onMouseUp);
+  }
+
+  getMouseSongPosition(e) {
     const canvas = this.refs.canvas;
     const rect = canvas.getBoundingClientRect();
     const ratio = (e.clientX - rect.left) / canvas.width;
     const position = ratio * this.props.song.beats;
-    this.props.dispatch(setPosition(position));
-    this.props.dispatch(savePosition(position));
+    return position;
+  }
+
+  getNewClickedClipPosition(mousePosition) {
+    const clipOffset = this.state.clickPosition - this.state.clickedClip.position;
+    const newPosition = mousePosition - clipOffset;
+    return newPosition;
+  }
+
+  onMouseMove(e) {
+    const position = this.getMouseSongPosition(e);
+    const newPosition = this.getNewClickedClipPosition(position);
+    const index = this.props.clips.indexOf(this.state.clickedClip);
+    this.props.clips[index].offset = newPosition - this.props.clips[index].position;
+    this.drawWaveforms();
+  }
+
+  onMouseDown(e) {
+    const clickPosition = this.getMouseSongPosition(e);
+    const clips = this.props.clips;
+    const bps = this.props.song.tempo / 60;
+    let clickedClip = null;
+    for (let i = 0; i < clips.length; i++) {
+      const clip = clips[i];
+      if (!clip.buffer) continue;
+      const beatsInClip = clip.buffer.duration * bps;
+      const highestBeat = clip.position + beatsInClip;
+      if (clickPosition >= clip.position && clickPosition <= highestBeat) {
+        clickedClip = clip;
+        break;
+      }
+    }
+    if (clickedClip) {
+      window.addEventListener('mousemove', this.onMouseMove);
+    }
+    this.setState({clickPosition, clickedClip});
+  }
+
+  onMouseUp(e) {
+    if (this.state.clickPosition === -1) return;
+    const position = this.getMouseSongPosition(e);
+    if (this.state.clickPosition === position) {
+      this.props.dispatch(setPosition(position));
+      this.props.dispatch(savePosition(position));
+    } else if (this.state.clickedClip) {
+      const id = this.props.id;
+      const index = this.props.clips.indexOf(this.state.clickedClip);
+      const newPosition = this.getNewClickedClipPosition(position);
+      this.props.dispatch(moveClip(id, index, newPosition));
+    }
+    this.setState({clickPosition: -1, clickedClip: -1});
+    window.removeEventListener('mousemove', this.onMouseMove);
   }
 
   resize(width) {
@@ -115,7 +177,7 @@ export default connect((state) => ({
     this.resizeAsNeeded();
     this.props.clips.forEach(clip => {
       if (clip.buffer) {
-        this.drawWaveform(clip.buffer, clip.position);
+        this.drawWaveform(clip.buffer, clip.position + (clip.offset || 0));
       }
     });
   }
@@ -136,8 +198,10 @@ export default connect((state) => ({
         // TODO check if any of the buffers have changed
         if (
           nextProps.clips[i].position !== this.props.clips[i].position ||
-          nextProps.clips[i].buffer !== this.props.clips[i].buffer
+          nextProps.clips[i].buffer !== this.props.clips[i].buffer ||
+          this.props.clips[i].offset
         ) {
+          this.props.clips[i].offset = 0;
           newClips = true;
           break;
         }
@@ -203,7 +267,12 @@ export default connect((state) => ({
     return (
       <div className="playlist">
         <div className="wrapper">
-          <canvas ref="canvas" onClick={this.onClick} width="1024" height="720"/>
+          <canvas
+            ref="canvas"
+            onMouseDown={this.onMouseDown}
+            width="1024"
+            height="720"
+          />
         </div>
       </div>
     );

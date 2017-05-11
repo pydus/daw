@@ -132,8 +132,8 @@ const module = (state = {}, action) => {
         }]
       });
     case MOVE_CLIP:
-      const effect = newState.clips[action.index];
-      effect.position = action.position;
+      const clip = newState.clips[action.index];
+      clip.position = action.position;
       return newState;
     case CUT:
       return newState;
