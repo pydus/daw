@@ -1,7 +1,6 @@
 'use strict';
 import React from 'react';
 import { connect } from 'react-redux';
-import { UPDATE_INTERVAL } from '../settings';
 
 export default connect((state) => ({
   song: state.song
@@ -53,11 +52,16 @@ export default connect((state) => ({
     if (this.props.song.isPlaying) {
       this.drawLevel();
     } else {
-      const interval = setInterval(() => {
+      let willLoop = true;
+      const loop = () => {
         this.drawLevel();
-      }, UPDATE_INTERVAL);
+        if (willLoop) {
+          window.requestAnimationFrame(loop);    
+        }
+      };
+      window.requestAnimationFrame(loop);
       setTimeout(() => {
-        clearInterval(interval);
+        willLoop = false;
       }, 2000);
     }
   }

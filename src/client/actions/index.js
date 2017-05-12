@@ -8,10 +8,6 @@ let nextSampleId = 0;
  * Song
  */
 
-import { UPDATE_INTERVAL } from '../settings';
-
-let interval;
-
 const dispatchPosition = (dispatch, position) => {
   dispatch({
     type: SET_POSITION,
@@ -20,18 +16,21 @@ const dispatchPosition = (dispatch, position) => {
 };
 
 const startUpdatingPosition = (dispatch, getState) => {
-  interval = setInterval(() => {
+  let lastTime = Date.now();
+  const updatePosition = () => {
     const state = getState();
+    const now = Date.now();
     const position =
       state.song.position +
-      UPDATE_INTERVAL / 1000 *
+      (now - lastTime) / 1000 *
       state.song.tempo / 60;
+    lastTime = now;
     dispatchPosition(dispatch, position);
-  }, UPDATE_INTERVAL);
-};
-
-const stopUpdatingPosition = () => {
-  clearInterval(interval);
+    if (state.song.isPlaying) {
+      window.requestAnimationFrame(updatePosition);
+    }
+  };
+  window.requestAnimationFrame(updatePosition);
 };
 
 export const SET_PLAYING = 'SET_PLAYING';
@@ -46,8 +45,6 @@ export const setPlaying = (playing) => (
     });
     if (playing) {
       startUpdatingPosition(dispatch, getState);
-    } else {
-      stopUpdatingPosition();
     }
   }
 );

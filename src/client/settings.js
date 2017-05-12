@@ -1,7 +1,5 @@
 'use strict';
 
-export const UPDATE_INTERVAL = 1000 / 60;
-
 export const MAX_ROUTES = 10;
 
 export const defaultCompressor = {
