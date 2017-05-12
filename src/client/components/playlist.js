@@ -2,6 +2,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { setPosition, savePosition, moveClip } from '../actions';
+import { SECOND_COLOR, LIGHT_GRAY } from '../settings';
 
 export default connect((state) => ({
   song: state.song
@@ -131,7 +132,7 @@ export default connect((state) => ({
     const canvas = this.refs.canvas;
     const width = this.segmentWidth;
     const scale = this.segmentScale;
-    this.setLine(width - this.segmentPadding, '#12e6ba');
+    this.setLine(width - this.segmentPadding, SECOND_COLOR);
     this.drawLine(
       width * n + offset, canvas.height / 2 - value * scale * canvas.height,
       width * n + offset, canvas.height / 2 + value * scale * canvas.height
@@ -185,7 +186,7 @@ export default connect((state) => ({
 
   drawPosition(beat) {
     const canvas = this.refs.canvas;
-    this.setLine(2, '#465a7b');
+    this.setLine(2, LIGHT_GRAY);
     const x = Math.round(canvas.width * beat / this.props.song.beats);
     this.drawLine(x, 0, x, canvas.height);
   }

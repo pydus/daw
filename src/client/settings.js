@@ -1,5 +1,9 @@
 'use strict';
 
+export const FIRST_COLOR = '#3047d2';
+export const SECOND_COLOR = '#12e6ba';
+export const LIGHT_GRAY = '#465a7b';
+
 export const MAX_ROUTES = 10;
 
 export const defaultCompressor = {

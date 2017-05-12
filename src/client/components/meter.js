@@ -1,6 +1,7 @@
 'use strict';
 import React from 'react';
 import { connect } from 'react-redux';
+import { FIRST_COLOR, SECOND_COLOR} from '../settings';
 
 export default connect((state) => ({
   song: state.song
@@ -36,8 +37,8 @@ export default connect((state) => ({
     const maxLevel = analyser.maxDecibels - analyser.minDecibels;
     const y = canvas.height - canvas.height * averageLevel / maxLevel;
     const gradient = ctx.createLinearGradient(0, canvas.height, 0, y);
-    gradient.addColorStop(0, '#3047d2');
-    gradient.addColorStop(1, '#12e6ba');
+    gradient.addColorStop(0, FIRST_COLOR);
+    gradient.addColorStop(1, SECOND_COLOR);
 
     ctx.lineWidth = canvas.width;
     ctx.strokeStyle = gradient;
