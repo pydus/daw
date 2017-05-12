@@ -103,10 +103,11 @@ export default connect((state) => ({
 
   resizeAsNeeded() {
     const secondsInSong = this.props.song.beats * 60 / this.props.song.tempo;
-    const width = secondsInSong * this.segmentWidth * 1000 / this.segmentDuration;
-
-    if (width > 0) {
-      this.resize(width);
+    const segmentDurationInSeconds = this.segmentDuration / 1000;
+    const totalNumberOfSegments = secondsInSong / segmentDurationInSeconds;
+    const canvasWidth = Math.round(this.segmentWidth * totalNumberOfSegments);
+    if (canvasWidth > 0) {
+      this.resize(canvasWidth);
     }
   }
 
