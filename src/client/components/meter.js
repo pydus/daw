@@ -33,7 +33,8 @@ export default connect((state) => ({
     }
 
     const averageLevel = total / bufferLength;
-    const y = canvas.height - canvas.height * averageLevel / 75;
+    const maxLevel = analyser.maxDecibels - analyser.minDecibels;
+    const y = canvas.height - canvas.height * averageLevel / maxLevel;
     const gradient = ctx.createLinearGradient(0, canvas.height, 0, y);
     gradient.addColorStop(0, '#3047d2');
     gradient.addColorStop(1, '#12e6ba');
