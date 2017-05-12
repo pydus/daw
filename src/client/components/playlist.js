@@ -11,7 +11,6 @@ export default connect((state) => ({
     super(props);
     this.state = {
       hasDrawn: false,
-      imageData: null,
       clickPosition: -1,
       clickedClip: null
     };
@@ -49,6 +48,7 @@ export default connect((state) => ({
     const index = this.props.clips.indexOf(this.state.clickedClip);
     this.props.clips[index].offset = newPosition - this.props.clips[index].position;
     this.drawWaveforms();
+    this.drawPosition();
   }
 
   onMouseDown(e) {
@@ -90,8 +90,11 @@ export default connect((state) => ({
 
   resize(width) {
     const canvas = this.refs.canvas;
+    const positionCanvas = this.refs.positionCanvas;
     canvas.width = width;
     canvas.style.width = width + 'px';
+    positionCanvas.width = width;
+    positionCanvas.style.width = width + 'px';
   }
 
   getTotalDuration() {
@@ -114,14 +117,18 @@ export default connect((state) => ({
 
   setLine(width, color) {
     const canvas = this.refs.canvas;
+    const positionCanvas = this.refs.positionCanvas;
     const ctx = canvas.getContext('2d');
+    const posCtx = positionCanvas.getContext('2d');
     ctx.strokeStyle = color;
     ctx.lineWidth = width;
+    posCtx.strokeStyle = color;
+    posCtx.lineWidth = width;
   }
 
-  drawLine(fromX, fromY, toX, toY) {
+  drawLine(fromX, fromY, toX, toY, context) {
     const canvas = this.refs.canvas;
-    const ctx = canvas.getContext('2d');
+    const ctx = context || canvas.getContext('2d');
     ctx.beginPath();
     ctx.moveTo(fromX, fromY);
     ctx.lineTo(toX, toY);
@@ -184,11 +191,13 @@ export default connect((state) => ({
     });
   }
 
-  drawPosition(beat) {
-    const canvas = this.refs.canvas;
+  drawPosition() {
+    const positionCanvas = this.refs.positionCanvas;
+    const posCtx = positionCanvas.getContext('2d');
+    const beat = this.props.song.position;
     this.setLine(2, LIGHT_GRAY);
-    const x = Math.round(canvas.width * beat / this.props.song.beats);
-    this.drawLine(x, 0, x, canvas.height);
+    const x = Math.round(positionCanvas.width * beat / this.props.song.beats);
+    this.drawLine(x, 0, x, positionCanvas.height, posCtx);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -231,7 +240,9 @@ export default connect((state) => ({
 
   componentDidUpdate() {
     const canvas = this.refs.canvas;
+    const positionCanvas = this.refs.positionCanvas;
     const ctx = canvas.getContext('2d');
+    const posCtx = positionCanvas.getContext('2d');
 
     if (this.props.clips.length < 1) {
       return false;
@@ -245,18 +256,15 @@ export default connect((state) => ({
       }
     }
 
-    if (this.state.willDrawWaveform || this.state.willDrawPosition) {
+    if (this.state.willDrawWaveform) {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+      this.drawWaveforms();
+      this.setState({willDrawWaveform: false});
+    }
 
-      if (this.state.willDrawWaveform) {
-        this.drawWaveforms();
-        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        this.setState({willDrawWaveform: false, imageData});
-      } else if (this.state.imageData) {
-        ctx.putImageData(this.state.imageData, 0, 0);
-      }
-
-      this.drawPosition(this.props.song.position);
+    if (this.state.willDrawPosition || this.state.willDrawWaveform) {
+      posCtx.clearRect(0, 0, positionCanvas.width, positionCanvas.height);
+      this.drawPosition();
       this.setState({willDrawPosition: false});
     }
 
@@ -271,6 +279,11 @@ export default connect((state) => ({
         <div className="wrapper">
           <canvas
             ref="canvas"
+            width="1024"
+            height="720"
+          />
+          <canvas
+            ref="positionCanvas"
             onMouseDown={this.onMouseDown}
             width="1024"
             height="720"
