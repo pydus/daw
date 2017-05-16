@@ -1,8 +1,8 @@
 'use strict';
 import React from 'react';
-import { connect } from 'react-redux';
-import { setPosition, savePosition, moveClip } from '../actions';
-import { SECOND_COLOR, LIGHT_GRAY } from '../settings';
+import {connect} from 'react-redux';
+import {setPosition, savePosition, moveClip} from '../actions';
+import {SECOND_COLOR, LIGHT_GRAY} from '../settings';
 
 export default connect((state) => ({
   song: state.song
@@ -149,7 +149,6 @@ export default connect((state) => ({
   }
 
   drawSegments(buffer, position, numberOfSegments) {
-    const segmentSectionWidth = numberOfSegments * this.segmentWidth;
     const stereo = buffer.numberOfChannels === 2;
     const left = buffer.getChannelData(0);
     const right = stereo ? buffer.getChannelData(1) : null;
@@ -159,7 +158,7 @@ export default connect((state) => ({
     const pointsPerSegment = 100;
     const step = Math.ceil(maxPointsPerSegment / pointsPerSegment);
     const canvas = this.refs.canvas;
-    const offset = canvas.width * position / this.props.song.beats
+    const offset = canvas.width * position / this.props.song.beats;
 
     let sum = 0, s = 0;
 
@@ -206,7 +205,6 @@ export default connect((state) => ({
   }
 
   componentWillReceiveProps(nextProps) {
-    const canvas = this.refs.canvas;
     let newClips = nextProps.clips.length !== this.props.clips.length;
 
     if (!newClips) {

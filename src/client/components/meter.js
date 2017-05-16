@@ -1,7 +1,7 @@
 'use strict';
 import React from 'react';
-import { connect } from 'react-redux';
-import { FIRST_COLOR, SECOND_COLOR} from '../settings';
+import {connect} from 'react-redux';
+import {FIRST_COLOR, SECOND_COLOR} from '../settings';
 
 export default connect((state) => ({
   song: state.song
@@ -58,7 +58,7 @@ export default connect((state) => ({
       const loop = () => {
         this.drawLevel();
         if (willLoop) {
-          window.requestAnimationFrame(loop);    
+          window.requestAnimationFrame(loop);
         }
       };
       window.requestAnimationFrame(loop);

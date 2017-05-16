@@ -1,7 +1,7 @@
 'use strict';
 import React from 'react';
-import { connect } from 'react-redux';
-import { setPosition, setPlaying, savePosition } from '../actions';
+import {connect} from 'react-redux';
+import {setPosition, setPlaying, savePosition} from '../actions';
 
 export default connect((state) => ({
   song: state.song
@@ -56,7 +56,7 @@ export default connect((state) => ({
     }
   }
 
-  onMouseUp(e) {
+  onMouseUp() {
     this.setState({rect: null});
   }
 

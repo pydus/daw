@@ -1,7 +1,7 @@
 'use strict';
 import React from 'react';
 import Range from './range';
-import { defaultCompressor } from '../settings';
+import {defaultCompressor} from '../settings';
 
 export default class CompressorDisplay extends React.Component {
   constructor(props) {

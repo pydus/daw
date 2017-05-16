@@ -1,11 +1,10 @@
 'use strict';
-import { ctx } from '../app';
-import { MAX_ROUTES } from '../settings';
+import {ctx} from '../app';
+import {MAX_ROUTES} from '../settings';
 import effects from './effects';
 import {
   CREATE_MODULE,
   REMOVE_MODULE,
-  MOVE_MODULE,
   RENAME_MODULE,
   SET_VOLUME,
   MUTE_MODULE,
@@ -162,6 +161,7 @@ const module = (state = {}, action) => {
           action.index !== newState.openEffect
         ) ? action.index : -1;
       return Object.assign({}, state, {openEffect: index});
+    case REMOVE_MODULE:
     default:
       if (action.type.slice(0, 3) === 'ADD' || action.type === REMOVE_EFFECT) {
         return wireUp(

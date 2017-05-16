@@ -1,6 +1,5 @@
 'use strict';
 import React from 'react';
-import ReactDOM from 'react-dom';
 import UserForm from './user-form';
 
 export default class Login extends React.Component {
@@ -9,9 +8,7 @@ export default class Login extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  handleSubmit(username, password) {
-
-  }
+  handleSubmit(username, password) { }
 
   render() {
     return (

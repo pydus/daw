@@ -3,7 +3,7 @@ import React from 'react';
 import EffectSection from './effect-section';
 import Playlist from './playlist';
 import Range from './range';
-import { SET_VOLUME, MUTE_MODULE, SOLO_MODULE } from '../actions';
+import {SET_VOLUME, MUTE_MODULE, SOLO_MODULE} from '../actions';
 
 export default class Module extends React.Component {
   constructor(props) {
@@ -32,7 +32,6 @@ export default class Module extends React.Component {
 
   toggle(e) {
     if (e.target.className === 'square' || e.target.tagName === 'H1') {
-      const wrapper = this.refs.wrapper;
       if (this.props.module.isOpen) {
         this.close();
       } else {
@@ -89,15 +88,15 @@ export default class Module extends React.Component {
     }
   }
 
-  onMouseUp(e) {
+  onMouseUp() {
     this.props.onMouseUp(this.props.module.id);
   }
 
-  onMouseEnter(e) {
+  onMouseEnter() {
     this.setState({willStyleCircle: true});
   }
 
-  onMouseLeave(e) {
+  onMouseLeave() {
     this.setState({willStyleCircle: false});
   }
 

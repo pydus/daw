@@ -1,7 +1,6 @@
 'use strict';
 import React from 'react';
 import Menu from './menu';
-import effects from '../effects';
 
 export default class Slot extends React.Component {
   constructor(props) {
@@ -18,7 +17,7 @@ export default class Slot extends React.Component {
   }
 
   toggleMenu() {
-    this.setState((prevState, props) => ({
+    this.setState((prevState) => ({
       menu: !prevState.menu
     }));
   }

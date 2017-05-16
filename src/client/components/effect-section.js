@@ -1,17 +1,16 @@
 'use strict';
 import React from 'react';
 import Slot from './slot';
-import { connect } from 'react-redux';
+import {connect} from 'react-redux';
 import {
   addEq,
   addCompressor,
-  editCompressor,
   openEffect
 } from '../actions';
 
 const N_SLOTS = 8;
 
-export default connect((state) => ({
+export default connect(() => ({
 
 }))(class EffectSection extends React.Component {
   constructor(props) {

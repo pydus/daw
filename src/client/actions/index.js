@@ -1,5 +1,5 @@
 'use strict';
-import { ctx } from '../app';
+import {ctx} from '../app';
 
 let nextModuleId = 0;
 let nextSampleId = 0;
@@ -185,7 +185,7 @@ const increaseBeatsIfNecessary = (dispatch, getState) => {
 };
 
 export const ADD_CLIP = 'ADD_CLIP';
-export const addClip = (id, file, position) => (
+export const addClip = (id, file) => (
   (dispatch, getState) => {
     let state = getState();
     const song = state.song;
@@ -198,7 +198,7 @@ export const addClip = (id, file, position) => (
         position = end;
       }
     });
-    const action = dispatch({
+    dispatch({
       type: ADD_CLIP,
       id,
       file,
@@ -212,7 +212,7 @@ export const addClip = (id, file, position) => (
           dispatch(setBuffer(id, i, buffer));
         }
       });
-      increaseBeatsIfNecessary(dispatch, getState);      
+      increaseBeatsIfNecessary(dispatch, getState);
     });
   }
 );

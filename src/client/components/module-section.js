@@ -4,8 +4,8 @@ import Module from './module';
 import Effect from './effect';
 import HiddenModule from './hidden-module';
 import DOMMath from './dom-math';
-import { connect } from 'react-redux';
-import { MAX_ROUTES } from '../settings';
+import {connect} from 'react-redux';
+import {MAX_ROUTES} from '../settings';
 import {
   createModule,
   muteModule,
@@ -159,7 +159,7 @@ export default connect((state) => ({
     ));
     this.setState((prevState) => {
       const visibleModules = [];
-      prevState.visibleModules.forEach((el, i) => {
+      prevState.visibleModules.forEach(el => {
         if (this.props.modulesById[el].isOpen || this.props.modulesById[el].openEffect !== -1) {
           visibleModules.push(el);
         } else {
@@ -236,7 +236,7 @@ export default connect((state) => ({
       if (this.state.modulesPerRow - positionOnRow < 3) {
         const n = (this.state.modulesPerRow - positionOnRow) === 1 ? -2 : -1;
         this.moveVisible(id, n);
-        additionalOffset = n;  
+        additionalOffset = n;
       }
       this.adjustModulesOnOpenEffect(id, additionalOffset, false);
     } else {

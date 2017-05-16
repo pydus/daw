@@ -1,6 +1,6 @@
 'use strict';
-import { ctx } from '../app';
-import { MAX_ROUTES } from '../settings';
+import {ctx} from '../app';
+import {MAX_ROUTES} from '../settings';
 import module from './module';
 import {
   CREATE_MODULE,
@@ -15,10 +15,10 @@ import {
 
 const play = (module, song, newSongPosition) => {
   const songPosition = newSongPosition || song.position;
-  const { clips, leftMerger, rightMerger } = module;
+  const {clips, leftMerger, rightMerger} = module;
   module.bufferSources = [];
   clips.forEach(clip => {
-    const { buffer, position } = clip;
+    const {buffer, position} = clip;
     if (!buffer) return;
     const bufferSource = ctx.createBufferSource();
 
@@ -40,8 +40,8 @@ const play = (module, song, newSongPosition) => {
   });
 };
 
-const stop = ({ clips }) => {
-  clips.forEach(({ bufferSource }) => {
+const stop = ({clips}) => {
+  clips.forEach(({bufferSource}) => {
     if (bufferSource) {
       bufferSource.stop();
       bufferSource = null;
@@ -112,7 +112,7 @@ const modulesById = (state = {}, action) => {
   switch (action.type) {
     case CREATE_MODULE:
       return Object.assign({}, state, {
-         [action.id]: module(undefined, action)
+        [action.id]: module(undefined, action)
       });
     case REMOVE_MODULE:
       delete newState[action.id];

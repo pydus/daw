@@ -1,12 +1,11 @@
 'use strict';
-import { ctx } from '../app';
-import { defaultCompressor } from '../settings';
+import {ctx} from '../app';
+import {defaultCompressor} from '../settings';
 import {
   ADD_EQ,
   ADD_COMPRESSOR,
   EDIT_COMPRESSOR,
-  REMOVE_EFFECT,
-  OPEN_EFFECT
+  REMOVE_EFFECT
 } from '../actions';
 
 const compressor = (state, action) => {

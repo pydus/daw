@@ -1,5 +1,5 @@
 'use strict';
-import { combineReducers } from 'redux';
+import {combineReducers} from 'redux';
 import modulesById from './modules-by-id';
 import {
   CREATE_MODULE,

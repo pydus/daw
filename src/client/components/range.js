@@ -34,7 +34,7 @@ export default class Range extends React.Component {
     });
   }
 
-  onMouseUp(e) {
+  onMouseUp() {
     window.removeEventListener('mousemove', this.onMouseMove);
     window.removeEventListener('mouseup', this.onMouseUp);
   }

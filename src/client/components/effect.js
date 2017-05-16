@@ -1,15 +1,14 @@
 'use strict';
 import React from 'react';
-import Menu from './menu';
 import Knob from './knob';
 import Range from './range';
 import Meter from './meter';
 import CompressorDisplay from './compressor-display';
-import { connect } from 'react-redux';
-import { editCompressor } from '../actions';
-import { defaultCompressor } from '../settings';
+import {connect} from 'react-redux';
+import {editCompressor} from '../actions';
+import {defaultCompressor} from '../settings';
 
-export default connect((state) => ({
+export default connect(() => ({
 
 }))(class Effect extends React.Component {
   constructor(props) {

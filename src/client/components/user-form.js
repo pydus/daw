@@ -1,6 +1,5 @@
 'use strict';
 import React from 'react';
-import ReactDOM from 'react-dom';
 
 export default class UserForm extends React.Component {
   constructor(props) {
@@ -20,7 +19,7 @@ export default class UserForm extends React.Component {
     this.setState({password: e.target.value});
   }
 
-  handleKeyPress(e) {
+  handleKeyPress(e) {
     if (e.key === 'Enter') {
       this.submit();
     }
