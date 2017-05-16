@@ -3,7 +3,14 @@ import React from 'react';
 import EffectSection from './effect-section';
 import Playlist from './playlist';
 import Range from './range';
-import {SET_VOLUME, MUTE_MODULE, SOLO_MODULE} from '../actions';
+import {
+  setVolume,
+  muteModule,
+  soloModule,
+  addClip,
+  unroute,
+  renameModule
+} from '../actions';
 
 export default class Module extends React.Component {
   constructor(props) {
@@ -26,8 +33,9 @@ export default class Module extends React.Component {
     this.rename = this.rename.bind(this);
     this.open = this.open.bind(this);
     this.openEffect = this.openEffect.bind(this);
-    this.sendAction = this.sendAction.bind(this);
     this.onVolumeChange = this.onVolumeChange.bind(this);
+    this.solo = this.solo.bind(this);
+    this.mute = this.mute.bind(this);
   }
 
   toggle(e) {
@@ -40,19 +48,17 @@ export default class Module extends React.Component {
     }
   }
 
-  sendAction(action, ...args) {
-    switch (action) {
-      case SET_VOLUME:
-      case MUTE_MODULE:
-      case SOLO_MODULE:
-      default:
-        this.props.onAction(action, this.props.module.id, ...args);
-    }
+  solo() {
+    this.props.dispatch(soloModule(this.props.module.id));
+  }
+
+  mute() {
+    this.props.dispatch(muteModule(this.props.module.id));
   }
 
   onVolumeChange(value) {
     this.setState({volumePercentage: value * 100});
-    this.sendAction(SET_VOLUME, value);
+    this.props.dispatch(setVolume(this.props.module.id, value));
   }
 
   close() {
@@ -74,12 +80,12 @@ export default class Module extends React.Component {
   onSourceChange(e) {
     const file = e.target.files[0];
     if (file) {
-      this.props.onSourceChange(this.props.module.id, file);
+      this.props.dispatch(addClip(this.props.module.id, file));
     }
   }
 
   unroute(source, destination) {
-    this.props.onUnroute(source, destination);
+    this.props.dispatch(unroute(source, destination));
   }
 
   onMouseDown(e) {
@@ -105,7 +111,7 @@ export default class Module extends React.Component {
   }
 
   rename() {
-    this.props.onRename(this.props.module.id, this.state.name);
+    this.props.dispatch(renameModule(this.props.module.id, this.state.name));
     this.setState({isNaming: false});
   }
 
@@ -132,9 +138,9 @@ export default class Module extends React.Component {
     return (
       <div className={'wrapper ' + (this.props.module.isOpen ? 'open' : '')} ref="wrapper">
         <Playlist
-          id={this.props.module.id}
-          clips={this.props.module.clips}
-          isOpen={this.props.module.isOpen}
+          module={this.props.module}
+          song={this.props.song}
+          dispatch={this.props.dispatch}
         />
         <div className="module" onClick={this.toggle}>
           <Range
@@ -181,7 +187,7 @@ export default class Module extends React.Component {
                 />
                 <div className="panel">
                   <div
-                    onClick={() => this.sendAction(SOLO_MODULE)}
+                    onClick={this.solo}
                     className={this.props.module.isSoloed ? 'pressed' : ''}
                   >
                   S
@@ -198,7 +204,7 @@ export default class Module extends React.Component {
                     )}
                   </div>
                   <div
-                    onClick={() => this.sendAction(MUTE_MODULE)}
+                    onClick={this.mute}
                     className={this.props.module.isMuted ? 'pressed' : ''}
                   >
                   M

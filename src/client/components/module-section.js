@@ -11,18 +11,11 @@ import {
   muteModule,
   soloModule,
   toggleExpandModule,
-  renameModule,
-  setVolume,
   moveModule,
   removeModule,
-  addClip,
   cut,
   route,
-  unroute,
-  setBeats,
-  SET_VOLUME,
-  MUTE_MODULE,
-  SOLO_MODULE
+  setBeats
 } from '../actions';
 
 export default connect((state) => ({
@@ -41,14 +34,10 @@ export default connect((state) => ({
     this.onOpen = this.onOpen.bind(this);
     this.onClose = this.onClose.bind(this);
     this.createModule = this.createModule.bind(this);
-    this.onSourceChange = this.onSourceChange.bind(this);
-    this.onUnroute = this.onUnroute.bind(this);
     this.onMouseDown = this.onMouseDown.bind(this);
     this.onMouseUp = this.onMouseUp.bind(this);
     this.onMouseMove = this.onMouseMove.bind(this);
-    this.renameModule = this.renameModule.bind(this);
     this.onOpenEffect = this.onOpenEffect.bind(this);
-    this.onAction = this.onAction.bind(this);
   }
 
   componentDidMount() {
@@ -67,26 +56,6 @@ export default connect((state) => ({
     this.setState((prevState) => (
       {visibleModules: [...prevState.visibleModules, action.id]}
     ));
-  }
-
-  renameModule(id, name) {
-    this.props.dispatch(renameModule(id, name));
-  }
-
-  onAction(action, ...args) {
-    switch (action) {
-      case SET_VOLUME:
-        this.props.dispatch(setVolume(...args));
-        break;
-      case MUTE_MODULE:
-        this.props.dispatch(muteModule(...args));
-        break;
-      case SOLO_MODULE:
-        this.props.dispatch(soloModule(...args));
-        break;
-      default:
-        return false;
-    }
   }
 
   determineModulesPerRow(wrappers) {
@@ -246,14 +215,6 @@ export default connect((state) => ({
     }
   }
 
-  onSourceChange(id, file) {
-    this.props.dispatch(addClip(id, file));
-  }
-
-  onUnroute(source, destination) {
-    this.props.dispatch(unroute(source, destination));
-  }
-
   highlightAvailableDestinations(source) {
     const highlighted = {};
     if (this.props.modulesById[source].destinations.length < MAX_ROUTES) {
@@ -312,14 +273,12 @@ export default connect((state) => ({
           module={el}
           onOpen={this.onOpen}
           onClose={this.onClose}
-          onSourceChange={this.onSourceChange}
           destinationModules={destinationModules}
-          onUnroute={this.onUnroute}
           onRouteMouseDown={this.onMouseDown}
           onMouseUp={this.onMouseUp}
-          onRename={this.renameModule}
           onOpenEffect={this.onOpenEffect}
-          onAction={this.onAction}
+          song={this.props.song}
+          dispatch={this.props.dispatch}
         />
       );
     });

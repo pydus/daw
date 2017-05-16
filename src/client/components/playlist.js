@@ -1,18 +1,16 @@
 'use strict';
 import React from 'react';
-import {connect} from 'react-redux';
 import {setPosition, savePosition, moveClip} from '../actions';
 import {SECOND_COLOR, LIGHT_GRAY} from '../settings';
 
-export default connect((state) => ({
-  song: state.song
-}))(class Playlist extends React.Component {
+export default class Playlist extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       hasDrawn: false,
       clickPosition: -1,
-      clickedClip: null
+      clickedClip: null,
+      nullBuffers: []
     };
     this.onMouseDown = this.onMouseDown.bind(this);
     this.getNewClickedClipPosition = this.getNewClickedClipPosition.bind(this);
@@ -45,15 +43,15 @@ export default connect((state) => ({
   onMouseMove(e) {
     const position = this.getMouseSongPosition(e);
     const newPosition = this.getNewClickedClipPosition(position);
-    const index = this.props.clips.indexOf(this.state.clickedClip);
-    this.props.clips[index].offset = newPosition - this.props.clips[index].position;
+    const index = this.props.module.clips.indexOf(this.state.clickedClip);
+    this.props.module.clips[index].offset = newPosition - this.props.module.clips[index].position;
     this.drawWaveforms();
     this.drawPosition();
   }
 
   onMouseDown(e) {
     const clickPosition = this.getMouseSongPosition(e);
-    const clips = this.props.clips;
+    const clips = this.props.module.clips;
     const bps = this.props.song.tempo / 60;
     let clickedClip = null;
     for (let i = 0; i < clips.length; i++) {
@@ -79,8 +77,8 @@ export default connect((state) => ({
       this.props.dispatch(setPosition(position));
       this.props.dispatch(savePosition(position));
     } else if (this.state.clickedClip) {
-      const id = this.props.id;
-      const index = this.props.clips.indexOf(this.state.clickedClip);
+      const id = this.props.module.id;
+      const index = this.props.module.clips.indexOf(this.state.clickedClip);
       const newPosition = this.getNewClickedClipPosition(position);
       this.props.dispatch(moveClip(id, index, newPosition));
     }
@@ -101,7 +99,7 @@ export default connect((state) => ({
 
   getTotalDuration() {
     let totalDuration = 0;
-    this.props.clips.forEach(clip => {
+    this.props.module.clips.forEach(clip => {
       totalDuration += clip.buffer ? clip.buffer.duration : 0;
     });
     return totalDuration;
@@ -185,7 +183,7 @@ export default connect((state) => ({
 
   drawWaveforms() {
     this.resizeAsNeeded();
-    this.props.clips.forEach(clip => {
+    this.props.module.clips.forEach(clip => {
       if (clip.buffer) {
         if (!this.state.clickedClip) {
           clip.offset = 0;
@@ -205,18 +203,28 @@ export default connect((state) => ({
   }
 
   componentWillReceiveProps(nextProps) {
-    let newClips = nextProps.clips.length !== this.props.clips.length;
+    let newClips = nextProps.module.clips.length !== this.props.module.clips.length;
+    
+    for (let i = 0; i < nextProps.module.clips.length; i++) {
+      if (!nextProps.module.clips[i].buffer) {
+        this.setState((prevState) => {
+          prevState.nullBuffers.push(i);
+          return {nullBuffers: prevState.nullBuffers};
+        });
+      }
 
-    if (!newClips) {
-      for (let i = 0; i < nextProps.clips.length; i++) {
-        // TODO check if any of the buffers have changed
-        if (
-          nextProps.clips[i].position !== this.props.clips[i].position ||
-          nextProps.clips[i].buffer !== this.props.clips[i].buffer
-        ) {
-          newClips = true;
-          break;
-        }
+      if (
+        this.props.module.clips[i] &&
+        nextProps.module.clips[i].position !== this.props.module.clips[i].position ||
+        nextProps.module.clips[i].buffer && this.state.nullBuffers.indexOf(i) !== -1
+      ) {
+        this.setState((prevState) => {
+          const index = prevState.nullBuffers.indexOf(i);
+          prevState.nullBuffers.splice(index, 1);
+          return {nullBuffers: prevState.nullBuffers};
+        });
+        newClips = true;
+        break;
       }
     }
 
@@ -229,9 +237,9 @@ export default connect((state) => ({
     }
 
     if (
-      nextProps.isOpen && (
+      nextProps.module.isOpen && (
         nextProps.song.position !== this.props.song.position ||
-        nextProps.isOpen && !this.props.isOpen ||
+        nextProps.module.isOpen && !this.props.module.isOpen ||
         !this.state.hasDrawn
       )
     ) {
@@ -245,14 +253,14 @@ export default connect((state) => ({
     const ctx = canvas.getContext('2d');
     const posCtx = positionCanvas.getContext('2d');
 
-    if (this.props.clips.length < 1) {
+    if (this.props.module.clips.length < 1) {
       return false;
     }
 
-    for (let i = 0; i < this.props.clips.length; i++) {
-      if (this.props.clips[i].buffer) {
+    for (let i = 0; i < this.props.module.clips.length; i++) {
+      if (this.props.module.clips[i].buffer) {
         break;
-      } else if (i === this.props.clips.length - 1) {
+      } else if (i === this.props.module.clips.length - 1) {
         return false;
       }
     }
@@ -293,4 +301,4 @@ export default connect((state) => ({
       </div>
     );
   }
-});
+};
