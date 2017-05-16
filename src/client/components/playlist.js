@@ -84,8 +84,10 @@ export default connect((state) => ({
       const newPosition = this.getNewClickedClipPosition(position);
       this.props.dispatch(moveClip(id, index, newPosition));
     }
-    this.setState({clickPosition: -1, clickedClip: -1});
+    this.setState({clickPosition: -1, clickedClip: null});
     window.removeEventListener('mousemove', this.onMouseMove);
+    this.drawWaveforms();
+    this.drawPosition();
   }
 
   resize(width) {
@@ -186,6 +188,9 @@ export default connect((state) => ({
     this.resizeAsNeeded();
     this.props.clips.forEach(clip => {
       if (clip.buffer) {
+        if (!this.state.clickedClip) {
+          clip.offset = 0;
+        }
         this.drawWaveform(clip.buffer, clip.position + (clip.offset || 0));
       }
     });
@@ -209,10 +214,8 @@ export default connect((state) => ({
         // TODO check if any of the buffers have changed
         if (
           nextProps.clips[i].position !== this.props.clips[i].position ||
-          nextProps.clips[i].buffer !== this.props.clips[i].buffer ||
-          this.props.clips[i].offset
+          nextProps.clips[i].buffer !== this.props.clips[i].buffer
         ) {
-          this.props.clips[i].offset = 0;
           newClips = true;
           break;
         }
