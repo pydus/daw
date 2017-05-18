@@ -1,7 +1,13 @@
 'use strict';
 import React from 'react';
 import {setPosition, savePosition, moveClip} from '../actions';
-import {SECOND_COLOR, LIGHT_GRAY} from '../settings';
+import {
+  SECOND_COLOR,
+  LIGHT_GRAY,
+  SEGMENT_DURATION_STEP_PERCENT,
+  MIN_SEGMENT_DURATION,
+  MAX_SEGMENT_DURATION
+} from '../settings';
 
 export default class Playlist extends React.Component {
   constructor(props) {
@@ -16,6 +22,7 @@ export default class Playlist extends React.Component {
     this.getNewClickedClipPosition = this.getNewClickedClipPosition.bind(this);
     this.onMouseMove = this.onMouseMove.bind(this);
     this.onMouseUp = this.onMouseUp.bind(this);
+    this.onWheel = this.onWheel.bind(this);
     this.segmentDuration = 1000;
     this.segmentWidth = 5;
     this.segmentPadding = 1;
@@ -24,6 +31,33 @@ export default class Playlist extends React.Component {
 
   componentDidMount() {
     window.addEventListener('mouseup', this.onMouseUp);
+  }
+
+  zoom(mousePosition, magnitude) {
+    const lastSegmentDuration = this.segmentDuration;
+    this.segmentDuration *= 1 + magnitude * SEGMENT_DURATION_STEP_PERCENT / 100;
+
+    if (this.segmentDuration < MIN_SEGMENT_DURATION) {
+      this.segmentDuration = MIN_SEGMENT_DURATION;
+    } else if (this.segmentDuration > MAX_SEGMENT_DURATION) {
+      this.segmentDuration = MAX_SEGMENT_DURATION;
+    }
+
+    if (this.segmentDuration !== lastSegmentDuration) {
+      this.drawWaveforms();
+      this.drawPosition();
+    }
+  }
+
+  onWheel(e) {
+    e.preventDefault();
+    const wrapper = this.refs.canvas.parentNode;
+    const sign = Math.abs(e.deltaY) / (e.deltaY || 1);
+    const mousePosition = this.getMouseSongPosition(e) / this.props.song.beats;
+    this.zoom(mousePosition, sign);
+    const newMousePosition = this.getMouseSongPosition(e) / this.props.song.beats;
+    const dx = mousePosition - newMousePosition;
+    wrapper.scrollLeft = wrapper.scrollLeft + dx * wrapper.scrollWidth;
   }
 
   getMouseSongPosition(e) {
@@ -204,7 +238,7 @@ export default class Playlist extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     let newClips = nextProps.module.clips.length !== this.props.module.clips.length;
-    
+
     for (let i = 0; i < nextProps.module.clips.length; i++) {
       if (!nextProps.module.clips[i].buffer) {
         this.setState((prevState) => {
@@ -284,7 +318,7 @@ export default class Playlist extends React.Component {
 
   render() {
     return (
-      <div className="playlist">
+      <div className="playlist" onWheel={this.onWheel}>
         <div className="wrapper">
           <canvas
             ref="canvas"
