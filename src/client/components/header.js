@@ -8,7 +8,7 @@ export default connect((state) => ({
 }))(class Header extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {rect: null, position: 0, isPlaying: false, isHoldingSpace: false};
+    this.state = {rect: null, position: 0, isHoldingSpace: false};
     this.onMouseMove = this.onMouseMove.bind(this);
     this.onMouseDown = this.onMouseDown.bind(this);
     this.onMouseUp = this.onMouseUp.bind(this);
@@ -61,8 +61,7 @@ export default connect((state) => ({
   }
 
   togglePlay() {
-    this.props.dispatch(setPlaying(!this.state.isPlaying));
-    this.setState(prevState => ({isPlaying: !prevState.isPlaying}));
+    this.props.dispatch(setPlaying(!this.props.song.isPlaying));
   }
 
   render() {
@@ -76,8 +75,8 @@ export default connect((state) => ({
           </div>
           <div className="center">
             <svg viewBox="0 0 200 200" className="play" onClick={this.togglePlay}>
-              {!this.state.isPlaying && <polygon points="0,0 0,200 173.2,100" fill="#fff"></polygon>}
-              {this.state.isPlaying && <polygon points="0,0 0,200 200,200 200,0" fill="#fff"></polygon>}
+              {!this.props.song.isPlaying && <polygon points="0,0 0,200 173.2,100" fill="#fff"></polygon>}
+              {this.props.song.isPlaying && <polygon points="0,0 0,200 200,200 200,0" fill="#fff"></polygon>}
             </svg>
           </div>
         </div>

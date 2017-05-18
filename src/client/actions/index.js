@@ -26,7 +26,12 @@ const startUpdatingPosition = (dispatch, getState) => {
       state.song.tempo / 60;
     lastTime = now;
     dispatchPosition(dispatch, position);
-    if (state.song.isPlaying) {
+    if (position > state.song.beats) {
+      dispatch({
+        type: SET_PLAYING,
+        playing: false
+      });
+    } else if (state.song.isPlaying) {
       window.requestAnimationFrame(updatePosition);
     }
   };
