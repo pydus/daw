@@ -5,9 +5,9 @@ $border-color: #ebebf4;
 $button-color: #fff;
 $light-text: #666;
 
-$background: #1e2944;
+$background: #17233a;
 $main: #17233a;
-$secondary: #334165;
+$secondary: #313e61;
 $third: #263556;
 $light-grey: #676794;
 $lighter-grey: #8f98b9;
@@ -293,7 +293,7 @@ header {
       color: #fff;
       font-size: .9em;
       margin: 0 auto 10px auto;
-      min-height: 21px;
+      min-height: 22px;
     }
     input {
       text-align: center;
@@ -351,17 +351,18 @@ header {
       width: 183px;
       padding-top: 12px;
       .effects {
+        line-height: .8;
         > div {
           position: relative;
           display: inline-block;
         }
         .slot {
+          box-sizing: border-box;
           font-size: 0.6em;
+          width: 183 / 4 - 3px;
+          height: 183 / 4 - 3px;
           padding: 8px;
-          margin: 3px;
-          margin-bottom: 0;
-          width: 19px;
-          height: 19px;
+          margin: 1px 1px 0 1px;
           border-radius: 2px;
           background: $main;
           float: left;
@@ -584,6 +585,43 @@ header {
       height: 183px;
       width: 183px;
       padding-top: 53px;
+    }
+  }
+  &.playing {
+    .wrapper {
+      .playlist {
+        background: $main;
+        .wrapper {
+          &::-webkit-scrollbar {
+            background-color: $main;
+          }
+          &::-webkit-scrollbar-thumb {
+            background-color: $third;
+          }
+        }
+      }
+      .module {
+        .square {
+          background: $main;
+        }
+        .panel {
+          background: $main;
+          > div {
+            &:hover, &:active {
+              background: $main;
+            }
+            &.pressed {
+              background: #151d31;
+            }
+          }
+        }
+      }
+    }
+    .effect {
+      background: $main;
+      .content {
+        background: $main;
+      }
     }
   }
 }

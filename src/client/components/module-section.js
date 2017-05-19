@@ -8,8 +8,6 @@ import {connect} from 'react-redux';
 import {MAX_ROUTES} from '../settings';
 import {
   createModule,
-  muteModule,
-  soloModule,
   toggleExpandModule,
   moveModule,
   removeModule,
@@ -298,7 +296,7 @@ export default connect((state) => ({
     }
 
     return (
-      <div className="modules">
+      <div className={`modules ${this.props.song.isPlaying ? 'playing' : ''}`}>
         {modulesAndEffects}
         <div className="create" onClick={this.createModule}></div>
         <HiddenModule/>

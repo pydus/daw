@@ -6,7 +6,7 @@ export const LIGHT_GRAY = '#465a7b';
 
 export const MAX_ROUTES = 10;
 export const SEGMENT_DURATION_STEP_PERCENT = 10;
-export const MIN_SEGMENT_DURATION = 100;
+export const MIN_SEGMENT_DURATION = 10;
 export const MAX_SEGMENT_DURATION = 20000;
 
 export const defaultCompressor = {
