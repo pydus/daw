@@ -95,7 +95,6 @@ const solo = (id, modulesById) => {
 
 const connectModules = (source, destination) => {
   const splitter = source.splitter;
-  source.gain.connect(splitter);
   splitter.connect(destination.leftMerger, 0);
   splitter.connect(destination.rightMerger, 1);
 };

@@ -60,20 +60,32 @@ const connectToEffects = (node, effects) => {
 
 const wireUp = (module) => {
   const newModule = Object.assign({}, module);
-  const {leftMerger, rightMerger, effects} = newModule;
+  const {
+    leftMerger,
+    rightMerger,
+    effects,
+    muteGain,
+    gain,
+    splitter,
+    leftAnalyser,
+    rightAnalyser
+  } = newModule;
   const merger = ctx.createChannelMerger(2);
   leftMerger.disconnect();
   rightMerger.disconnect();
   leftMerger.connect(merger, 0, 0);
   rightMerger.connect(merger, 0, 1);
   const last = connectToEffects(merger, effects);
-  last.connect(module.muteGain);
-  module.muteGain.connect(module.gain);
+  last.connect(muteGain);
+  muteGain.connect(gain);
+  gain.connect(splitter);
+  splitter.connect(leftAnalyser, 0);
+  splitter.connect(rightAnalyser, 1);
   return newModule;
 };
 
 const connectToDestination = (module) => {
-  module.gain.connect(ctx.destination);
+  module.output.connect(ctx.destination);
 };
 
 const module = (state = {}, action) => {
@@ -81,17 +93,21 @@ const module = (state = {}, action) => {
 
   switch (action.type) {
     case CREATE_MODULE:
+      const splitter = ctx.createChannelSplitter(2);
       const newModule = wireUp({
         id: action.id,
         name: action.name ? action.name : '',
         effects: [],
         openEffect: -1,
         clips: [],
-        splitter: ctx.createChannelSplitter(2),
+        splitter,
         leftMerger: ctx.createChannelMerger(MAX_ROUTES),
         rightMerger: ctx.createChannelMerger(MAX_ROUTES),
         muteGain: ctx.createGain(),
         gain: ctx.createGain(),
+        leftAnalyser: ctx.createAnalyser(),
+        rightAnalyser: ctx.createAnalyser(),
+        output: splitter,
         isMuted: false,
         isSoloed: false,
         isOpen: false,

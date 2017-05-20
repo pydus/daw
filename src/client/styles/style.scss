@@ -5,6 +5,7 @@ $border-color: #ebebf4;
 $button-color: #fff;
 $light-text: #666;
 
+$dark-green: #0dc1a0;
 $background: #17233a;
 $main: #17233a;
 $secondary: #313e61;
@@ -167,7 +168,7 @@ header {
         text-transform: uppercase;
         height: 17px;
         cursor:  pointer;
-        background: #0dc1a0;
+        background: $dark-green;
         border-radius: 2px;
         padding: 5px 8px 6px 8px;
         box-shadow: 0 0 8px $shadow-color;
@@ -213,6 +214,14 @@ header {
         top: -2px;
       }
     }
+  }
+}
+
+.meter {
+  canvas {
+    display: block !important;
+    width: 100%;
+    height: 100%;
   }
 }
 
@@ -345,11 +354,21 @@ header {
       box-sizing: border-box;
       position: relative;
       z-index: 1;
-      border-radius: 4px;
       background: $secondary;
       height: 183px;
       width: 183px;
       padding-top: 12px;
+      .meter {
+        z-index: -1;
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 50%;
+        &:nth-of-type(2) {
+          left: 50%;
+        }
+      }
       .effects {
         line-height: .8;
         > div {
@@ -542,10 +561,6 @@ header {
         }
         .meter {
           width: 12px;
-          canvas {
-            width: 100%;
-            height: 100%;
-          }
           &:last-of-type {
             float: right;
           }
@@ -603,12 +618,17 @@ header {
       .module {
         .square {
           background: $main;
+          .effects {
+            .slot {
+              background: none;
+            }
+          }
         }
         .panel {
-          background: $main;
+          background: none;
           > div {
             &:hover, &:active {
-              background: $main;
+              background: none;
             }
             &.pressed {
               background: #151d31;

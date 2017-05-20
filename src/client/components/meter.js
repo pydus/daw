@@ -20,6 +20,7 @@ export default connect((state) => ({
 
   drawLevel() {
     const canvas = this.refs.canvas;
+    if (!canvas) return;
     const ctx = canvas.getContext('2d');
     const analyser = this.props.analyser;
     const bufferLength = analyser.frequencyBinCount;
@@ -32,6 +33,7 @@ export default connect((state) => ({
     for (let i = 0; i < bufferLength; i++) {
       total += data[i];
     }
+
 
     const averageLevel = total / bufferLength;
     const maxLevel = analyser.maxDecibels - analyser.minDecibels;

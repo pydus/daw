@@ -3,6 +3,7 @@ import React from 'react';
 import EffectSection from './effect-section';
 import Playlist from './playlist';
 import Range from './range';
+import Meter from './meter';
 import {
   setVolume,
   muteModule,
@@ -39,7 +40,12 @@ export default class Module extends React.Component {
   }
 
   toggle(e) {
-    if (e.target.className === 'square' || e.target.tagName === 'H1') {
+    const className = e.target.className;
+    if (
+      className === 'square' ||
+      className === 'meter' ||
+      e.target.tagName === 'H1'
+    ) {
       if (this.props.module.isOpen) {
         this.close();
       } else {
@@ -181,6 +187,8 @@ export default class Module extends React.Component {
             )}
             {!this.props.isHighlighted && (
               <div>
+                <Meter analyser={this.props.module.leftAnalyser}/>
+                <Meter analyser={this.props.module.rightAnalyser}/>
                 <EffectSection
                   id={this.props.module.id}
                   effects={this.props.module.effects}
@@ -200,7 +208,7 @@ export default class Module extends React.Component {
                     ></div>
                     {!isMaster && !isDestination && (
                       <label>
-                        <input type="file" onChange={this.onSourceChange}/>
+                        <input type="file" accept="audio/*" onChange={this.onSourceChange}/>
                       </label>
                     )}
                   </div>
