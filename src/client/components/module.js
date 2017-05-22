@@ -175,7 +175,11 @@ export default class Module extends React.Component {
             onMouseEnter={this.onMouseEnter}
             onMouseLeave={this.onMouseLeave}
           >
-            {!this.state.isNaming && <h1>{this.props.module.name}</h1>}
+            {!this.state.isNaming &&
+              <h1 title={this.props.module.name}>
+                {this.props.module.name}
+              </h1>
+            }
             {this.state.isNaming &&
               <input
                 autoFocus
@@ -200,6 +204,7 @@ export default class Module extends React.Component {
                 />
                 <div className="panel">
                   <div
+                    title="Solo"
                     onClick={this.solo}
                     className={this.props.module.isSoloed ? 'pressed' : ''}
                   >
@@ -217,6 +222,7 @@ export default class Module extends React.Component {
                     }
                   </div>
                   <div
+                    title="Mute"
                     onClick={this.mute}
                     className={this.props.module.isMuted ? 'pressed' : ''}
                   >
