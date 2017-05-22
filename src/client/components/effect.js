@@ -111,7 +111,7 @@ export default connect(() => ({
           </div>
           <div className="display-section">
             <Meter analyser={this.props.effect.analyserIn}/>
-            <CompressorDisplay onChange={this.onThresholdChange}/>
+            <CompressorDisplay effect={this.props.effect} onChange={this.onThresholdChange}/>
             <Meter analyser={this.props.effect.analyserOut}/>
           </div>
         </div>

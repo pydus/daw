@@ -130,7 +130,6 @@ export default class Module extends React.Component {
   render() {
     const isMaster = this.props.module.id === 0;
     const isDestination = this.props.module.sources.length > 0;
-    const moduleStyle = this.props.song.isPlaying ? {background: 'none'} : {};
     const circleStyle = {background: this.props.module.color};
     const panelTagStyle = isDestination ? {background: this.props.module.color} : {};
     const tags = this.props.destinationModules.map(el => (
