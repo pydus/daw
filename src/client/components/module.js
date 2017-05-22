@@ -176,7 +176,7 @@ export default class Module extends React.Component {
             onMouseLeave={this.onMouseLeave}
           >
             {!this.state.isNaming && <h1>{this.props.module.name}</h1>}
-            {this.state.isNaming && (
+            {this.state.isNaming &&
               <input
                 autoFocus
                 maxLength="30"
@@ -184,15 +184,15 @@ export default class Module extends React.Component {
                 onKeyDown={this.handleKeyDown}
                 onBlur={this.rename}
               />
-            )}
-            {!this.props.isHighlighted && (
+            }
+            {!this.props.isHighlighted &&
               <div>
-                {(this.props.song.isPlaying &&
+                {this.props.song.isPlaying &&
                   <div>
                     <Meter analyser={this.props.module.leftAnalyser}/>
                     <Meter analyser={this.props.module.rightAnalyser}/>
                   </div>
-                )}
+                }
                 <EffectSection
                   id={this.props.module.id}
                   effects={this.props.module.effects}
@@ -210,11 +210,11 @@ export default class Module extends React.Component {
                       className={isMaster || isDestination ? 'tag' : 'tag none'}
                       style={panelTagStyle}
                     ></div>
-                    {!isMaster && !isDestination && (
+                    {!isMaster && !isDestination &&
                       <label>
                         <input type="file" accept="audio/*" onChange={this.onSourceChange}/>
                       </label>
-                    )}
+                    }
                   </div>
                   <div
                     onClick={this.mute}
@@ -224,13 +224,13 @@ export default class Module extends React.Component {
                   </div>
                 </div>
               </div>
-            )}
-            {this.props.isHighlighted && (
+            }
+            {this.props.isHighlighted &&
               <div
                 className="circle"
                 style={this.state.willStyleCircle ? circleStyle : {}}
               ></div>
-            )}
+            }
           </div>
         </div>
       </div>

@@ -6,7 +6,7 @@ export default class Range extends React.Component {
     super(props);
     this.state = {value: Number(props.default), lastCursor: 0};
     this.default = Number(props.default) || 0;
-    // percentage to add to the value per pixel moved by the cursor
+    // percentage by which to increase the value per pixel moved by the cursor
     this.step = props.step || 0.35;
     this.max = typeof props.max !== undefined ? Number(props.max) : 100;
     this.min = Number(props.min) || 0;
