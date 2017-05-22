@@ -34,7 +34,6 @@ export default connect((state) => ({
       total += data[i];
     }
 
-
     const averageLevel = total / bufferLength;
     const maxLevel = analyser.maxDecibels - analyser.minDecibels;
     const y = canvas.height - canvas.height * averageLevel / maxLevel;

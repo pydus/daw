@@ -187,8 +187,12 @@ export default class Module extends React.Component {
             )}
             {!this.props.isHighlighted && (
               <div>
-                <Meter analyser={this.props.module.leftAnalyser}/>
-                <Meter analyser={this.props.module.rightAnalyser}/>
+                {(this.props.song.isPlaying &&
+                  <div>
+                    <Meter analyser={this.props.module.leftAnalyser}/>
+                    <Meter analyser={this.props.module.rightAnalyser}/>
+                  </div>
+                )}
                 <EffectSection
                   id={this.props.module.id}
                   effects={this.props.module.effects}
