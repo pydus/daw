@@ -25,19 +25,26 @@ export default class CompressorDisplay extends React.Component {
   drawReductions() {
     const canvas = this.refs.canvas;
     const ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
     this.setState(prevState => {
       const reductionHeights = [];
       const lastTime = prevState.reductionHeights[prevState.reductionHeights.length - 1].time;
+      ctx.beginPath();
       for (let i = 0; i < prevState.reductionHeights.length; i++) {
         let obj = prevState.reductionHeights[i];
         let {reductionHeight, time} = obj;
         const dt = (lastTime - time) / 1000;
         if (dt > this.timeInterval) continue;
         const x = canvas.width - canvas.width * dt / this.timeInterval;
-        this.drawReduction(x, reductionHeight);
+        if (i === 0) {
+          ctx.moveTo(x, reductionHeight);
+        } else {
+          ctx.lineTo(x, reductionHeight);
+        }
+        //this.drawReduction(x, reductionHeight);
         reductionHeights.push(obj);
       }
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.stroke();
       return {reductionHeights};
     });
   }
@@ -60,13 +67,18 @@ export default class CompressorDisplay extends React.Component {
     this.drawReductions();
   }
 
+  drawWaveform(time) {
+
+  }
+
   componentDidMount() {
     this.calculatePercentage(this.state.value);
     const canvas = this.refs.canvas;
     const ctx = canvas.getContext('2d');
     ctx.strokeStyle = SECOND_COLOR;
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 1;
     const draw = (time) => {
+      this.drawWaveform(time);
       this.drawReductionCurve(time);
       window.requestAnimationFrame(draw);
     };
@@ -95,7 +107,7 @@ export default class CompressorDisplay extends React.Component {
         default={defaultCompressor.threshold}
       >
         <div className="display">
-          <canvas ref="canvas"/>
+          <canvas width="257" height="181" ref="canvas"/>
           <div
             className="indicator"
             style={{bottom: `${this.state.percentage}%`}}
