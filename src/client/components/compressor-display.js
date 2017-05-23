@@ -1,29 +1,27 @@
 'use strict';
 import React from 'react';
 import Range from './range';
+import Meter from './meter';
 import {defaultCompressor, SECOND_COLOR} from '../settings';
 
 export default class CompressorDisplay extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {value: 0, percentage: 0, reductionHeights: []};
+    this.state = {
+      value: 0,
+      percentage: 0,
+      reductionHeights: [],
+      waveform: []
+    };
     this.onChange = this.onChange.bind(this);
     this.timeInterval = 5;
-    this.max = 0;
-    this.min = -60;
-  }
-
-  drawReduction(x, height) {
-    const canvas = this.refs.canvas;
-    const ctx = canvas.getContext('2d');
-    ctx.beginPath();
-    ctx.moveTo(x, 0);
-    ctx.lineTo(x, height);
-    ctx.stroke();
+    this.max = 5;
+    this.min = -90;
+    this.willDraw = true;
   }
 
   drawReductions() {
-    const canvas = this.refs.canvas;
+    const canvas = this.canvas;
     const ctx = canvas.getContext('2d');
     this.setState(prevState => {
       const reductionHeights = [];
@@ -35,22 +33,16 @@ export default class CompressorDisplay extends React.Component {
         const dt = (lastTime - time) / 1000;
         if (dt > this.timeInterval) continue;
         const x = canvas.width - canvas.width * dt / this.timeInterval;
-        if (i === 0) {
-          ctx.moveTo(x, reductionHeight);
-        } else {
-          ctx.lineTo(x, reductionHeight);
-        }
-        //this.drawReduction(x, reductionHeight);
+        ctx.lineTo(x, this.max / (this.max - this.min) * canvas.height + reductionHeight);
         reductionHeights.push(obj);
       }
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.stroke();
       return {reductionHeights};
     });
   }
 
   drawReductionCurve(time) {
-    const canvas = this.refs.canvas;
+    const canvas = this.canvas;
     if (!canvas) return;
     const compressor = this.props.effect.compressor;
     const interval = this.max - this.min;
@@ -67,28 +59,31 @@ export default class CompressorDisplay extends React.Component {
     this.drawReductions();
   }
 
-  drawWaveform(time) {
-
+  componentWillUnmount() {
+    this.willDraw = false;
   }
 
   componentDidMount() {
     this.calculatePercentage(this.state.value);
-    const canvas = this.refs.canvas;
+    const canvas = this.canvas;
     const ctx = canvas.getContext('2d');
     ctx.strokeStyle = SECOND_COLOR;
     ctx.lineWidth = 1;
     const draw = (time) => {
-      this.drawWaveform(time);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
       this.drawReductionCurve(time);
-      window.requestAnimationFrame(draw);
+      if (this.willDraw) {
+        window.requestAnimationFrame(draw);
+      }
     };
     window.requestAnimationFrame(draw);
   }
 
   calculatePercentage(value) {
     const val = Math.abs(this.min - value);
-    const interval = Math.abs(this.max -this.min);
-    const percentage = Math.round(100 * val / interval);
+    const interval = Math.abs(this.max - this.min);
+    const percentage = 100 * val / interval;
     this.setState({percentage});
   }
 
@@ -107,7 +102,13 @@ export default class CompressorDisplay extends React.Component {
         default={defaultCompressor.threshold}
       >
         <div className="display">
-          <canvas width="257" height="181" ref="canvas"/>
+          <canvas width="257" height="181" ref={canvas => this.canvas = canvas}/>
+          <Meter
+            width={257}
+            height={181}
+            analyser={this.props.effect.analyserIn}
+            timeInterval={this.timeInterval}
+          />
           <div
             className="indicator"
             style={{bottom: `${this.state.percentage}%`}}

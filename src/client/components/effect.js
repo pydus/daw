@@ -110,9 +110,9 @@ export default connect(() => ({
             <Knob label="Release" default={defaultCompressor.release} max="1000" onChange={this.onReleaseChange}/>
           </div>
           <div className="display-section">
-            <Meter analyser={this.props.effect.analyserIn}/>
             <CompressorDisplay effect={this.props.effect} onChange={this.onThresholdChange}/>
-            <Meter analyser={this.props.effect.analyserOut}/>
+            <Meter analyser={this.props.effect.analyserOut} width={12} height={181} type="line"/>
+            <Meter analyser={this.props.effect.analyserIn} width={12} height={181} type="line"/>
           </div>
         </div>
       </div>

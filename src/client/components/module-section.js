@@ -38,6 +38,11 @@ export default connect((state) => ({
     this.onOpenEffect = this.onOpenEffect.bind(this);
   }
 
+  shouldComponentUpdate(nextProps) {
+    return nextProps.song.position === this.props.song.position ||
+      nextProps.song.position === nextProps.song.savedPosition;
+  }
+
   componentDidMount() {
     this.createModule('Master');
     window.addEventListener('mouseup', () => {

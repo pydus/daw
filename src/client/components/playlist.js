@@ -51,7 +51,7 @@ export default class Playlist extends React.Component {
 
   onWheel(e) {
     e.preventDefault();
-    const wrapper = this.refs.canvas.parentNode;
+    const wrapper = this.canvas.parentNode;
     const sign = Math.abs(e.deltaY) / (e.deltaY || 1);
     const mousePosition = this.getMouseSongPosition(e) / this.props.song.beats;
     this.zoom(mousePosition, sign);
@@ -61,7 +61,7 @@ export default class Playlist extends React.Component {
   }
 
   getMouseSongPosition(e) {
-    const canvas = this.refs.canvas;
+    const canvas = this.canvas;
     const rect = canvas.getBoundingClientRect();
     const ratio = (e.clientX - rect.left) / canvas.width;
     const position = ratio * this.props.song.beats;
@@ -123,8 +123,8 @@ export default class Playlist extends React.Component {
   }
 
   resize(width) {
-    const canvas = this.refs.canvas;
-    const positionCanvas = this.refs.positionCanvas;
+    const canvas = this.canvas;
+    const positionCanvas = this.positionCanvas;
     canvas.width = width;
     canvas.style.width = width + 'px';
     positionCanvas.width = width;
@@ -150,8 +150,8 @@ export default class Playlist extends React.Component {
   }
 
   setLine(width, color) {
-    const canvas = this.refs.canvas;
-    const positionCanvas = this.refs.positionCanvas;
+    const canvas = this.canvas;
+    const positionCanvas = this.positionCanvas;
     const ctx = canvas.getContext('2d');
     const posCtx = positionCanvas.getContext('2d');
     ctx.strokeStyle = color;
@@ -161,7 +161,7 @@ export default class Playlist extends React.Component {
   }
 
   drawLine(fromX, fromY, toX, toY, context) {
-    const canvas = this.refs.canvas;
+    const canvas = this.canvas;
     const ctx = context || canvas.getContext('2d');
     ctx.beginPath();
     ctx.moveTo(fromX, fromY);
@@ -170,7 +170,7 @@ export default class Playlist extends React.Component {
   }
 
   drawSegment(n, value, offset) {
-    const canvas = this.refs.canvas;
+    const canvas = this.canvas;
     const width = this.segmentWidth;
     const scale = this.segmentScale;
     this.setLine(width - this.segmentPadding, SECOND_COLOR);
@@ -189,7 +189,7 @@ export default class Playlist extends React.Component {
       1 : Math.floor(buffer.length / numberOfSegments);
     const pointsPerSegment = 100;
     const step = Math.ceil(maxPointsPerSegment / pointsPerSegment);
-    const canvas = this.refs.canvas;
+    const canvas = this.canvas;
     const offset = canvas.width * position / this.props.song.beats;
 
     let sum = 0, s = 0;
@@ -228,7 +228,7 @@ export default class Playlist extends React.Component {
   }
 
   drawPosition() {
-    const positionCanvas = this.refs.positionCanvas;
+    const positionCanvas = this.positionCanvas;
     const posCtx = positionCanvas.getContext('2d');
     const beat = this.props.song.position;
     this.setLine(2, LIGHT_GRAY);
@@ -282,8 +282,8 @@ export default class Playlist extends React.Component {
   }
 
   componentDidUpdate() {
-    const canvas = this.refs.canvas;
-    const positionCanvas = this.refs.positionCanvas;
+    const canvas = this.canvas;
+    const positionCanvas = this.positionCanvas;
     const ctx = canvas.getContext('2d');
     const posCtx = positionCanvas.getContext('2d');
 
@@ -321,12 +321,12 @@ export default class Playlist extends React.Component {
       <div className="playlist" onWheel={this.onWheel}>
         <div className="wrapper">
           <canvas
-            ref="canvas"
+            ref={canvas => this.canvas = canvas}
             width="1024"
             height="720"
           />
           <canvas
-            ref="positionCanvas"
+            ref={positionCanvas => this.positionCanvas = positionCanvas}
             onMouseDown={this.onMouseDown}
             width="1024"
             height="720"

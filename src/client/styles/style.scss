@@ -470,7 +470,7 @@ header {
         margin: 38px auto 0 auto;
       }
     }
-    &:hover {
+    &:hover:not(.create) {
       z-index: 3;
       padding-left: 10px;
       margin-left:  5px;
@@ -561,8 +561,8 @@ header {
         }
         .meter {
           width: 12px;
+          float: right;
           &:last-of-type {
-            float: right;
           }
         }
         .display {
@@ -578,6 +578,8 @@ header {
             background: #12e6ba;
           }
           canvas {
+            position: absolute;
+            left: 0;
             width: 100%;
             height: 100%;
           }
@@ -592,10 +594,12 @@ header {
     &:active {
       transform: scale(0.98);
     }
+    &:hover {
+    }
     &::before {
       content: '+';
-      background: $secondary;
-      background: $main-gradient;
+      background: $main;
+      color: #12e6ba;
       box-sizing: border-box;
       display: block;
       position: relative;
@@ -626,6 +630,9 @@ header {
             .slot {
               background: none;
             }
+          }
+          .circle {
+            background: $background;
           }
         }
         .panel {

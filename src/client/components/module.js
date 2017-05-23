@@ -39,12 +39,22 @@ export default class Module extends React.Component {
     this.mute = this.mute.bind(this);
   }
 
+  shouldComponentUpdate(nextProps) {
+    if (
+      nextProps.song.position !== this.props.song.position
+    ) {
+      return true;
+    }
+    return true;
+  }
+
   toggle(e) {
     const className = e.target.className;
     if (
       className === 'square' ||
       className === 'meter' ||
-      e.target.tagName === 'H1'
+      e.target.tagName === 'H1' ||
+      e.target.tagName === 'CANVAS'
     ) {
       if (this.props.module.isOpen) {
         this.close();
@@ -69,18 +79,18 @@ export default class Module extends React.Component {
 
   close() {
     if (this.props.module.isOpen) {
-      this.props.onClose(this.refs.wrapper, this.props.module.id);
+      this.props.onClose(this.wrapper, this.props.module.id);
     }
   }
 
   open() {
     if (!this.props.module.isOpen) {
-      this.props.onOpen(this.refs.wrapper, this.props.module.id);
+      this.props.onOpen(this.wrapper, this.props.module.id);
     }
   }
 
   openEffect() {
-    this.props.onOpenEffect(this.refs.wrapper, this.props.module.id);
+    this.props.onOpenEffect(this.wrapper, this.props.module.id);
   }
 
   onSourceChange(e) {
@@ -142,7 +152,10 @@ export default class Module extends React.Component {
     ));
 
     return (
-      <div className={'wrapper ' + (this.props.module.isOpen ? 'open' : '')} ref="wrapper">
+      <div
+        className={'wrapper ' + (this.props.module.isOpen ? 'open' : '')}
+        ref={wrapper => this.wrapper = wrapper}
+      >
         <Playlist
           module={this.props.module}
           song={this.props.song}
@@ -192,8 +205,17 @@ export default class Module extends React.Component {
               <div>
                 {this.props.song.isPlaying &&
                   <div>
-                    <Meter analyser={this.props.module.leftAnalyser}/>
-                    <Meter analyser={this.props.module.rightAnalyser}/>
+                    <Meter
+                      analyser={this.props.module.leftAnalyser}
+                      width={91.5}
+                      height={183}
+                    />
+                    <Meter
+                      analyser={this.props.module.rightAnalyser}
+                      width={91.5}
+                      height={183}
+                      direction="right"
+                    />
                   </div>
                 }
                 <EffectSection
