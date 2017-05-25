@@ -2,7 +2,7 @@
 import React from 'react';
 import Range from './range';
 import Meter from './meter';
-import {defaultCompressor, SECOND_COLOR} from '../settings';
+import {defaultCompressor, SECOND_COLOR, LIGHT_GRAY} from '../settings';
 
 export default class CompressorDisplay extends React.Component {
   constructor(props) {
@@ -15,8 +15,8 @@ export default class CompressorDisplay extends React.Component {
     };
     this.onChange = this.onChange.bind(this);
     this.timeInterval = 5;
-    this.max = 5;
-    this.min = -90;
+    this.max = 3;
+    this.min = -60;
     this.willDraw = true;
   }
 
@@ -81,8 +81,8 @@ export default class CompressorDisplay extends React.Component {
   }
 
   calculatePercentage(value) {
-    const val = Math.abs(this.min - value);
-    const interval = Math.abs(this.max - this.min);
+    const val = value - this.min;
+    const interval = this.max - this.min;
     const percentage = 100 * val / interval;
     this.setState({percentage});
   }
@@ -98,17 +98,18 @@ export default class CompressorDisplay extends React.Component {
       <Range
         onChange={this.onChange}
         min={this.min}
-        max={this.max}
+        max={this.max > 0 ? 0 : this.max}
         default={defaultCompressor.threshold}
       >
         <div className="display">
-          <canvas width="257" height="181" ref={canvas => this.canvas = canvas}/>
           <Meter
             width={257}
-            height={181}
+            height={183}
             analyser={this.props.effect.analyserIn}
             timeInterval={this.timeInterval}
+            color={LIGHT_GRAY}
           />
+          <canvas width="257" height="183" ref={canvas => this.canvas = canvas}/>
           <div
             className="indicator"
             style={{bottom: `${this.state.percentage}%`}}

@@ -1,7 +1,7 @@
 'use strict';
 import React from 'react';
 import {connect} from 'react-redux';
-import {SECOND_COLOR} from '../settings';
+import {SECOND_COLOR, LIGHT_GRAY} from '../settings';
 
 export default connect((state) => ({
   song: state.song
@@ -10,27 +10,45 @@ export default connect((state) => ({
     super(props);
     this.state = {waveform: [], willLoop: true};
     this.timeInterval = this.props.timeInterval || 2;
+    // peak meters measuring digital audio need a level adjustment
+    // to get closer to the true peak and to allow headroom for signal
+    // processing that may increase the amplitude
+    this.alignmentLevel = -20; // dB corresponding to a true level of 0 VU
+    this.max = 3;
+    this.min = -60;
   }
 
   componentWillReceiveProps(nextProps) {
+    const canvas = this.canvas;
+    const ctx = canvas.getContext('2d');
     if (nextProps.song.isPlaying) {
+      if (!this.props.song.isPlaying) {
+        this.setState({waveform: []});
+      }
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      if (this.props.type === 'line') {
+        this.drawZeroDbLine();
+      }
       this.drawLevel(Date.now());
     }
   }
 
   componentDidMount() {
     const analyser = this.props.analyser;
-    analyser.fftSize = 256;
-    analyser.maxDecibels = 5;
-    analyser.minDecibels = -90;
-    analyser.smoothingTimeConstant = 0.75;
+    analyser.fftSize = 2048;
+    analyser.maxDecibels = this.max + this.alignmentLevel;
+    analyser.minDecibels = this.min;
+    analyser.smoothingTimeConstant = 0;
+    if (this.props.type === 'line') {
+      this.drawZeroDbLine();
+    }
   }
 
   drawLine(y) {
     const canvas = this.canvas;
     const ctx = canvas.getContext('2d');
     ctx.lineWidth = 1.5;
-    ctx.strokeStyle = SECOND_COLOR;
+    ctx.strokeStyle = this.props.color || SECOND_COLOR;
     ctx.beginPath();
     ctx.moveTo(0, y);
     ctx.lineTo(canvas.width, y);
@@ -41,7 +59,7 @@ export default connect((state) => ({
     const canvas = this.canvas;
     const ctx = canvas.getContext('2d');
     ctx.lineWidth = 1;
-    ctx.strokeStyle = SECOND_COLOR;
+    ctx.strokeStyle = this.props.color || SECOND_COLOR;
     this.setState(prevState => {
       prevState.waveform.push({y, time});
       const waveform = [];
@@ -72,23 +90,36 @@ export default connect((state) => ({
 
     analyser.getByteFrequencyData(data);
 
-    let total = 0;
+    let peak = 0;
 
     for (let i = 0; i < bufferLength; i++) {
-      total += data[i];
+      if (data[i] > peak) {
+        peak = data[i]
+      }
     }
 
-    const averageLevel = total / bufferLength;
-    const maxLevel = analyser.maxDecibels - analyser.minDecibels;
-    const y = canvas.height - canvas.height * averageLevel / maxLevel;
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const levelRatio = peak / 255;
+    const y = canvas.height * (1 - levelRatio);
 
     if (this.props.type === 'line') {
       this.drawLine(y);
     } else {
       this.drawWaveform(y, time);
     }
+  }
+
+  drawZeroDbLine() {
+    const canvas = this.canvas;
+    const ctx = canvas.getContext('2d');
+    const analyser = this.props.analyser;
+    const interval = analyser.maxDecibels - analyser.minDecibels;
+    const y = canvas.height * (this.max - 1) / interval;
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = LIGHT_GRAY;
+    ctx.beginPath();
+    ctx.moveTo(0, y);
+    ctx.lineTo(canvas.width, y);
+    ctx.stroke();
   }
 
   render() {
