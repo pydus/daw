@@ -148,7 +148,6 @@ export default connect((state) => ({
   }
 
   resize(width) {
-    this.setState({width});
     this.width = width;
     this.canvas.width = this.canvas.getBoundingClientRect().width;
     this.positionCanvas.width = this.positionCanvas.getBoundingClientRect().width;
@@ -204,7 +203,7 @@ export default connect((state) => ({
     );
   }
 
-  createWaveform(buffer, position) {
+  createWaveform(buffer) {
     const stereo = buffer.numberOfChannels === 2;
     const left = buffer.getChannelData(0);
     const right = stereo ? buffer.getChannelData(1) : null;
@@ -215,7 +214,6 @@ export default connect((state) => ({
     let maxPointsPerSegment =
       (numberOfPoints > buffer.length) ?
       1 : Math.floor(buffer.length / numberOfPoints);
-    const canvas = this.canvas;
 
     let peak = 0, waveform = [];
     for (let i = 0, j = 0; i < buffer.length; i++, j++) {
