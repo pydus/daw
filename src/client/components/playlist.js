@@ -1,6 +1,7 @@
 'use strict';
 import React from 'react';
 import {setPosition, savePosition, moveClip} from '../actions';
+import {connect} from 'react-redux';
 import {
   SECOND_COLOR,
   LIGHT_GRAY,
@@ -9,7 +10,9 @@ import {
   MAX_SEGMENT_DURATION
 } from '../settings';
 
-export default class Playlist extends React.Component {
+export default connect((state) => ({
+  song: state.song
+}))(class Playlist extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -374,4 +377,4 @@ export default class Playlist extends React.Component {
       </div>
     );
   }
-};
+});

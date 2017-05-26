@@ -39,15 +39,6 @@ export default class Module extends React.Component {
     this.mute = this.mute.bind(this);
   }
 
-  shouldComponentUpdate(nextProps) {
-    if (
-      nextProps.song.position !== this.props.song.position
-    ) {
-      return true;
-    }
-    return true;
-  }
-
   toggle(e) {
     const className = e.target.className;
     if (
@@ -156,11 +147,7 @@ export default class Module extends React.Component {
         className={'wrapper ' + (this.props.module.isOpen ? 'open' : '')}
         ref={wrapper => this.wrapper = wrapper}
       >
-        <Playlist
-          module={this.props.module}
-          song={this.props.song}
-          dispatch={this.props.dispatch}
-        />
+        <Playlist module={this.props.module}/>
         <div className="module" onClick={this.toggle}>
           <Range
             display="block"
