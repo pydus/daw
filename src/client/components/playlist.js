@@ -2,13 +2,7 @@
 import React from 'react';
 import {setPosition, savePosition, moveClip} from '../actions';
 import {connect} from 'react-redux';
-import {
-  SECOND_COLOR,
-  LIGHT_GRAY,
-  SEGMENT_DURATION_STEP_PERCENT,
-  MIN_SEGMENT_DURATION,
-  MAX_SEGMENT_DURATION
-} from '../settings';
+import {SECOND_COLOR, LIGHT_GRAY} from '../settings';
 
 export default connect((state) => ({
   song: state.song
@@ -26,6 +20,9 @@ export default connect((state) => ({
     this.onMouseMove = this.onMouseMove.bind(this);
     this.onMouseUp = this.onMouseUp.bind(this);
     this.onWheel = this.onWheel.bind(this);
+    this.segmentDurationStepPercent = 10;
+    this.minSegmentDuration = 10;
+    this.maxSegmentDuration = 20000;
     this.segmentDuration = 500;
     this.segmentWidth = 1.5;
     this.segmentPadding = 0;
@@ -41,12 +38,12 @@ export default connect((state) => ({
 
   zoom(mousePosition, magnitude) {
     const lastSegmentDuration = this.segmentDuration;
-    this.segmentDuration *= 1 + magnitude * SEGMENT_DURATION_STEP_PERCENT / 100;
+    this.segmentDuration *= 1 + magnitude * this.segmentDurationStepPercent / 100;
 
-    if (this.segmentDuration < MIN_SEGMENT_DURATION) {
-      this.segmentDuration = MIN_SEGMENT_DURATION;
-    } else if (this.segmentDuration > MAX_SEGMENT_DURATION) {
-      this.segmentDuration = MAX_SEGMENT_DURATION;
+    if (this.segmentDuration < this.minSegmentDuration) {
+      this.segmentDuration = this.minSegmentDuration;
+    } else if (this.segmentDuration > this.maxSegmentDuration) {
+      this.segmentDuration = this.maxSegmentDuration;
     }
 
     if (this.segmentDuration !== lastSegmentDuration) {
@@ -207,7 +204,6 @@ export default connect((state) => ({
       const highest = Math.max(leftValue, rightValue);
       peak = highest > peak ? highest : peak;
       if (j >= maxPointsPerSegment) {
-        this.drawSegment(s++, peak, offset);
         waveform.push(peak);
         j = 0;
         peak = 0;
@@ -252,9 +248,8 @@ export default connect((state) => ({
     const index = this.props.module.clips.indexOf(clip);
     if (!this.waveforms[index]) {
       this.createWaveform(buffer, position);
-    } else {
-      this.drawSegments(index, position, numberOfSegments);
     }
+    this.drawSegments(index, position, numberOfSegments);
   }
 
   drawWaveforms() {
@@ -274,7 +269,7 @@ export default connect((state) => ({
     const posCtx = positionCanvas.getContext('2d');
     const beat = this.props.song.position;
     this.setLine(2, LIGHT_GRAY);
-    const x = Math.round(positionCanvas.width * beat / this.props.song.beats);
+    const x = positionCanvas.width * beat / this.props.song.beats;
     this.drawLine(x, 0, x, positionCanvas.height, posCtx);
   }
 
