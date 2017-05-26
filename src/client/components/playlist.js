@@ -30,10 +30,24 @@ export default connect((state) => ({
     this.waveforms = [];
     this.pointsPerSecond = 10;
     this.maxNumberOfPoints = 10000;
+    this.width = 150;
+    this.scrollLeft = 0;
   }
 
   componentDidMount() {
     window.addEventListener('mouseup', this.onMouseUp);
+  }
+
+  clearCanvas() {
+    const canvas = this.canvas;
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+
+  clearPositionCanvas() {
+    const positionCanvas = this.positionCanvas;
+    const posCtx = positionCanvas.getContext('2d');
+    posCtx.clearRect(0, 0, positionCanvas.width, positionCanvas.height);
   }
 
   zoom(mousePosition, magnitude) {
@@ -46,27 +60,31 @@ export default connect((state) => ({
       this.segmentDuration = this.maxSegmentDuration;
     }
 
-    if (this.segmentDuration !== lastSegmentDuration) {
-      this.drawWaveforms();
-      this.drawPosition();
-    }
+    return this.segmentDuration !== lastSegmentDuration;
   }
 
   onWheel(e) {
     e.preventDefault();
-    const wrapper = this.canvas.parentNode;
     const sign = Math.abs(e.deltaY) / (e.deltaY || 1);
     const mousePosition = this.getMouseSongPosition(e) / this.props.song.beats;
-    this.zoom(mousePosition, sign);
-    const newMousePosition = this.getMouseSongPosition(e) / this.props.song.beats;
+    const zoomChanged = this.zoom(mousePosition, sign);
+    if (!zoomChanged) return;
+    this.resizeAsNeeded();
+    const canvas = this.canvas;
+    const rect = canvas.getBoundingClientRect();
+    const newMousePosition = (e.clientX - rect.left + this.scrollLeft) / this.width;
     const dx = mousePosition - newMousePosition;
-    wrapper.scrollLeft = wrapper.scrollLeft + dx * wrapper.scrollWidth;
+    this.scrollLeft = this.scrollLeft + dx * this.width;
+    this.clearCanvas();
+    this.clearPositionCanvas();
+    this.drawWaveforms();
+    this.drawPosition();
   }
 
   getMouseSongPosition(e) {
     const canvas = this.canvas;
     const rect = canvas.getBoundingClientRect();
-    const ratio = (e.clientX - rect.left) / canvas.width;
+    const ratio = (e.clientX - rect.left + this.scrollLeft) / this.width;
     const position = ratio * this.props.song.beats;
     return position;
   }
@@ -82,6 +100,8 @@ export default connect((state) => ({
     const newPosition = this.getNewClickedClipPosition(position);
     const index = this.props.module.clips.indexOf(this.state.clickedClip);
     this.props.module.clips[index].offset = newPosition - this.props.module.clips[index].position;
+    this.clearCanvas();
+    this.clearPositionCanvas();
     this.drawWaveforms();
     this.drawPosition();
   }
@@ -121,17 +141,17 @@ export default connect((state) => ({
     }
     this.setState({clickPosition: -1, clickedClip: null});
     window.removeEventListener('mousemove', this.onMouseMove);
+    this.clearCanvas();
+    this.clearPositionCanvas();
     this.drawWaveforms();
     this.drawPosition();
   }
 
   resize(width) {
-    const canvas = this.canvas;
-    const positionCanvas = this.positionCanvas;
-    canvas.width = width;
-    canvas.style.width = width + 'px';
-    positionCanvas.width = width;
-    positionCanvas.style.width = width + 'px';
+    this.setState({width});
+    this.width = width;
+    this.canvas.width = this.canvas.getBoundingClientRect().width;
+    this.positionCanvas.width = this.positionCanvas.getBoundingClientRect().width;
   }
 
   getTotalDuration() {
@@ -146,9 +166,9 @@ export default connect((state) => ({
     const secondsInSong = this.props.song.beats * 60 / this.props.song.tempo;
     const segmentDurationInSeconds = this.segmentDuration / 1000;
     const totalNumberOfSegments = secondsInSong / segmentDurationInSeconds;
-    const canvasWidth = Math.round(this.segmentWidth * totalNumberOfSegments);
-    if (canvasWidth > 0) {
-      this.resize(canvasWidth);
+    const newWidth = Math.round(this.segmentWidth * totalNumberOfSegments);
+    if (newWidth > 0) {
+      this.resize(newWidth);
     }
   }
 
@@ -176,10 +196,11 @@ export default connect((state) => ({
     const canvas = this.canvas;
     const width = this.segmentWidth;
     const scale = this.segmentScale;
+    const x = width * n + offset - this.scrollLeft;
     this.setLine(width - this.segmentPadding, SECOND_COLOR);
     this.drawLine(
-      width * n + offset, canvas.height / 2 - value * scale * canvas.height,
-      width * n + offset, canvas.height / 2 + value * scale * canvas.height
+      x, canvas.height / 2 - value * scale * canvas.height,
+      x, canvas.height / 2 + value * scale * canvas.height
     );
   }
 
@@ -214,7 +235,7 @@ export default connect((state) => ({
   drawSegments(index, position, numberOfSegments) {
     const waveform = this.waveforms[index];
     const step = waveform.length / numberOfSegments;
-    const offset = this.canvas.width * position / this.props.song.beats;
+    const offset = this.width * position / this.props.song.beats;
     let n = 0;
     let firstOfChunk = {n: 0, index: 0};
     let lastIndex = 0;
@@ -267,7 +288,7 @@ export default connect((state) => ({
     const posCtx = positionCanvas.getContext('2d');
     const beat = this.props.song.position;
     this.setLine(2, LIGHT_GRAY);
-    const x = positionCanvas.width * beat / this.props.song.beats;
+    const x = this.width * beat / this.props.song.beats - this.scrollLeft;
     this.drawLine(x, 0, x, positionCanvas.height, posCtx);
   }
 
@@ -317,11 +338,6 @@ export default connect((state) => ({
   }
 
   componentDidUpdate() {
-    const canvas = this.canvas;
-    const positionCanvas = this.positionCanvas;
-    const ctx = canvas.getContext('2d');
-    const posCtx = positionCanvas.getContext('2d');
-
     if (this.props.module.clips.length < 1) {
       return false;
     }
@@ -335,13 +351,13 @@ export default connect((state) => ({
     }
 
     if (this.state.willDrawWaveform) {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      this.clearCanvas();
       this.drawWaveforms();
       this.setState({willDrawWaveform: false});
     }
 
     if (this.state.willDrawPosition || this.state.willDrawWaveform) {
-      posCtx.clearRect(0, 0, positionCanvas.width, positionCanvas.height);
+      this.clearPositionCanvas();
       this.drawPosition();
       this.setState({willDrawPosition: false});
     }
@@ -358,13 +374,13 @@ export default connect((state) => ({
           <canvas
             ref={canvas => this.canvas = canvas}
             width="1024"
-            height="720"
+            height="183"
           />
           <canvas
             ref={positionCanvas => this.positionCanvas = positionCanvas}
             onMouseDown={this.onMouseDown}
             width="1024"
-            height="720"
+            height="183"
           />
         </div>
       </div>
