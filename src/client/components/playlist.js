@@ -23,10 +23,13 @@ export default class Playlist extends React.Component {
     this.onMouseMove = this.onMouseMove.bind(this);
     this.onMouseUp = this.onMouseUp.bind(this);
     this.onWheel = this.onWheel.bind(this);
-    this.segmentDuration = 1000;
-    this.segmentWidth = 5;
-    this.segmentPadding = 1;
-    this.segmentScale = 1;
+    this.segmentDuration = 500;
+    this.segmentWidth = 1;
+    this.segmentPadding = 0;
+    this.segmentScale = 0.3;
+    this.waveforms = [];
+    this.pointsPerSecond = 10;
+    this.maxNumberOfPoints = 10000;
   }
 
   componentDidMount() {
@@ -180,39 +183,75 @@ export default class Playlist extends React.Component {
     );
   }
 
-  drawSegments(buffer, position, numberOfSegments) {
+  createWaveform(buffer, position) {
     const stereo = buffer.numberOfChannels === 2;
     const left = buffer.getChannelData(0);
     const right = stereo ? buffer.getChannelData(1) : null;
-    const maxPointsPerSegment =
-      (numberOfSegments > buffer.length) ?
-      1 : Math.floor(buffer.length / numberOfSegments);
-    const pointsPerSegment = 100;
-    const step = Math.ceil(maxPointsPerSegment / pointsPerSegment);
+    let numberOfPoints = Math.ceil(buffer.duration * this.pointsPerSecond);
+    if (numberOfPoints > this.maxNumberOfPoints) {
+      numberOfPoints = this.maxNumberOfPoints;
+    }
+    let maxPointsPerSegment =
+      (numberOfPoints > buffer.length) ?
+      1 : Math.floor(buffer.length / numberOfPoints);
     const canvas = this.canvas;
     const offset = canvas.width * position / this.props.song.beats;
 
-    let sum = 0, s = 0;
-
-    for (let i = 0, j = 0; i < buffer.length; i += step, j += step) {
-      if (stereo) {
-        sum += (Math.abs(left[i]) + Math.abs(right[i])) / 2;
-      } else {
-        sum += Math.abs(left[i]);
-      }
+    let peak = 0, s = 0, waveform = [];
+    for (let i = 0, j = 0; i < buffer.length; i++, j++) {
+      const leftValue = Math.abs(left[i]);
+      const rightValue = right ? Math.abs(right[i]) : 0;
+      const highest = Math.max(leftValue, rightValue);
+      peak = highest > peak ? highest : peak;
       if (j >= maxPointsPerSegment) {
-        const value = sum * step / maxPointsPerSegment;
-        this.drawSegment(s, value, offset);
-        s++;
+        this.drawSegment(s++, peak, offset);
+        waveform.push(peak);
         j = 0;
-        sum = 0;
+        peak = 0;
       }
+    }
+    this.waveforms.push(waveform);
+  }
+
+  drawSegments(index, position, numberOfSegments) {
+    const waveform = this.waveforms[index];
+    const step = waveform.length / numberOfSegments;
+    const offset = this.canvas.width * position / this.props.song.beats;
+    let n = 0;
+    let firstOfChunk = {n: 0, index: 0};
+    let value = 0;
+    let lastIndex = 0;
+    for (let i = 0; i < waveform.length; i += step) {
+      const index = Math.round(i);
+      const nextIndex = Math.round(i + step);
+      let value = waveform[index];
+      while (lastIndex < index - 1) {
+        if (waveform[++lastIndex] > value) {
+          value = waveform[lastIndex];
+        }
+      }
+      if (index !== nextIndex && index === firstOfChunk.index) {
+        const halfway = (firstOfChunk.n + n) / 2;
+        this.drawSegment(halfway, value, offset);
+      } else if (index !== nextIndex) {
+        this.drawSegment(n, value, offset);
+      } else if (index !== firstOfChunk.index) {
+        firstOfChunk = {n, index};
+      }
+      n++;
     }
   }
 
-  drawWaveform(buffer, position) {
+  drawWaveform(clip) {
+    const {buffer} = clip;
+    const position = clip.position + (clip.offset || 0);
     const numberOfSegments = Math.ceil(1000 * buffer.duration / this.segmentDuration);
-    this.drawSegments(buffer, position, numberOfSegments);
+    const index = this.props.module.clips.indexOf(clip);
+    if (!this.waveforms[index]) {
+      this.createWaveform(buffer, position);
+    } else {
+      this.drawSegments(index, position, numberOfSegments);
+    }
   }
 
   drawWaveforms() {
@@ -222,7 +261,7 @@ export default class Playlist extends React.Component {
         if (!this.state.clickedClip) {
           clip.offset = 0;
         }
-        this.drawWaveform(clip.buffer, clip.position + (clip.offset || 0));
+        this.drawWaveform(clip);
       }
     });
   }
