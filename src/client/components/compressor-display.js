@@ -71,7 +71,6 @@ export default class CompressorDisplay extends React.Component {
     ctx.lineWidth = 1;
     const draw = (time) => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-
       this.drawReductionCurve(time);
       if (this.willDraw) {
         window.requestAnimationFrame(draw);

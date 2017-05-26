@@ -83,7 +83,6 @@ export default connect((state) => ({
   drawLevel(time) {
     const canvas = this.canvas;
     if (!canvas) return;
-    const ctx = canvas.getContext('2d');
     const analyser = this.props.analyser;
     const bufferLength = analyser.frequencyBinCount;
     const data = new Uint8Array(bufferLength);
@@ -94,7 +93,7 @@ export default connect((state) => ({
 
     for (let i = 0; i < bufferLength; i++) {
       if (data[i] > peak) {
-        peak = data[i]
+        peak = data[i];
       }
     }
 

@@ -195,9 +195,8 @@ export default connect((state) => ({
       (numberOfPoints > buffer.length) ?
       1 : Math.floor(buffer.length / numberOfPoints);
     const canvas = this.canvas;
-    const offset = canvas.width * position / this.props.song.beats;
 
-    let peak = 0, s = 0, waveform = [];
+    let peak = 0, waveform = [];
     for (let i = 0, j = 0; i < buffer.length; i++, j++) {
       const leftValue = Math.abs(left[i]);
       const rightValue = right ? Math.abs(right[i]) : 0;
@@ -218,7 +217,6 @@ export default connect((state) => ({
     const offset = this.canvas.width * position / this.props.song.beats;
     let n = 0;
     let firstOfChunk = {n: 0, index: 0};
-    let value = 0;
     let lastIndex = 0;
     for (let i = 0; i < waveform.length; i += step) {
       const index = Math.round(i);
