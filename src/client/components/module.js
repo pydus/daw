@@ -37,6 +37,7 @@ export default class Module extends React.Component {
     this.onVolumeChange = this.onVolumeChange.bind(this);
     this.solo = this.solo.bind(this);
     this.mute = this.mute.bind(this);
+    this.onViewChange = this.onViewChange.bind(this);
   }
 
   toggle(e) {
@@ -128,6 +129,10 @@ export default class Module extends React.Component {
     }
   }
 
+  onViewChange(view) {
+    this.props.onViewChange(view);
+  }
+
   render() {
     const isMaster = this.props.module.id === 0;
     const isDestination = this.props.module.sources.length > 0;
@@ -147,7 +152,12 @@ export default class Module extends React.Component {
         className={'wrapper ' + (this.props.module.isOpen ? 'open' : '')}
         ref={wrapper => this.wrapper = wrapper}
       >
-        <Playlist module={this.props.module}/>
+        <Playlist
+          module={this.props.module}
+          segmentDuration={this.props.view.segmentDuration}
+          scrollLeft={this.props.view.scrollLeft}
+          onViewChange={this.onViewChange}
+        />
         <div className="module" onClick={this.toggle}>
           <Range
             display="block"

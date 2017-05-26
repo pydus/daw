@@ -27,7 +27,9 @@ export default connect((state) => ({
       draggingId: -1,
       highlighted: {},
       modulesPerRow: 0,
-      visibleModules: [...this.props.modules]
+      visibleModules: [...this.props.modules],
+      segmentDuration: 500,
+      scrollLeft: 0
     };
     this.onOpen = this.onOpen.bind(this);
     this.onClose = this.onClose.bind(this);
@@ -36,6 +38,7 @@ export default connect((state) => ({
     this.onMouseUp = this.onMouseUp.bind(this);
     this.onMouseMove = this.onMouseMove.bind(this);
     this.onOpenEffect = this.onOpenEffect.bind(this);
+    this.onViewChange = this.onViewChange.bind(this);
   }
 
   shouldComponentUpdate(nextProps) {
@@ -260,10 +263,16 @@ export default connect((state) => ({
     }
   }
 
+  onViewChange(view) {
+    this.setState(view);
+  }
+
   render() {
     const modulesList = this.state.visibleModules.map(key => (
       this.props.modulesById[key]
     ));
+
+    const {segmentDuration, scrollLeft} = this.state;
 
     const modules = modulesList.map(el => {
       const destinationModules = el.destinations.map(id => (
@@ -281,6 +290,8 @@ export default connect((state) => ({
           onMouseUp={this.onMouseUp}
           onOpenEffect={this.onOpenEffect}
           song={this.props.song}
+          view={{segmentDuration, scrollLeft}}
+          onViewChange={this.onViewChange}
           dispatch={this.props.dispatch}
         />
       );

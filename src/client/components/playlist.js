@@ -24,7 +24,6 @@ export default connect((state) => ({
     this.segmentDurationStepPercent = 10;
     this.minSegmentDuration = 1;
     this.maxSegmentDuration = 20000;
-    this.segmentDuration = 500;
     this.segmentWidth = 1.5;
     this.segmentPadding = 0;
     this.segmentScale = 0.3;
@@ -32,8 +31,9 @@ export default connect((state) => ({
     this.pointsPerSecond = 10;
     this.maxNumberOfPoints = 10000;
     this.width = 150;
-    this.scrollLeft = 0;
     this.clipLockDistance = 5;
+    this.segmentDuration = props.segmentDuration;
+    this.scrollLeft = props.scrollLeft;
   }
 
   componentDidMount() {
@@ -59,14 +59,27 @@ export default connect((state) => ({
     this.drawPosition();
   }
 
+  setScrollLeft(scrollLeft) {
+    this.scrollLeft = scrollLeft;
+    this.scroll.scrollLeft = this.scrollLeft;
+    this.props.onViewChange({scrollLeft});
+  }
+
+  setSegmentDuration(segmentDuration) {
+    this.segmentDuration = segmentDuration;
+    this.props.onViewChange({segmentDuration});
+  }
+
   zoom(mousePosition, magnitude) {
     const lastSegmentDuration = this.segmentDuration;
-    this.segmentDuration *= 1 + magnitude * this.segmentDurationStepPercent / 100;
+    this.setSegmentDuration(
+      this.segmentDuration * (1 + magnitude * this.segmentDurationStepPercent / 100)
+    );
 
     if (this.segmentDuration < this.minSegmentDuration) {
-      this.segmentDuration = this.minSegmentDuration;
+      this.setSegmentDuration(this.minSegmentDuration);
     } else if (this.segmentDuration > this.maxSegmentDuration) {
-      this.segmentDuration = this.maxSegmentDuration;
+      this.setSegmentDuration(this.maxSegmentDuration);
     }
 
     return this.segmentDuration !== lastSegmentDuration;
@@ -83,13 +96,13 @@ export default connect((state) => ({
     const rect = canvas.getBoundingClientRect();
     const newMousePosition = (e.clientX - rect.left + this.scrollLeft) / this.width;
     const dx = mousePosition - newMousePosition;
-    this.scrollLeft = this.scrollLeft + dx * this.width;
+    this.setScrollLeft(this.scrollLeft + dx * this.width);
     this.scroll.scrollLeft = this.scrollLeft;
     this.redraw();
   }
 
   onScroll() {
-    this.scrollLeft = this.scroll.scrollLeft;
+    this.setScrollLeft(this.scroll.scrollLeft);
     this.redraw();
   }
 
@@ -306,6 +319,12 @@ export default connect((state) => ({
   }
 
   componentWillReceiveProps(nextProps) {
+    const newView = nextProps.segmentDuration !== this.segmentDuration ||
+      nextProps.scrollLeft !== this.scrollLeft;
+    this.segmentDuration = nextProps.segmentDuration;
+    this.scrollLeft = nextProps.scrollLeft;
+    this.scroll.scrollLeft = nextProps.scrollLeft;
+
     let newClips = nextProps.module.clips.length !== this.props.module.clips.length;
 
     for (let i = 0; i < nextProps.module.clips.length; i++) {
@@ -334,7 +353,8 @@ export default connect((state) => ({
     if (
       nextProps.song.beats !== this.props.song.beats ||
       !this.state.hasDrawn ||
-      newClips
+      newClips ||
+      newView
     ) {
       this.setState({willDrawWaveform: true});
     }
@@ -343,7 +363,8 @@ export default connect((state) => ({
       nextProps.module.isOpen && (
         nextProps.song.position !== this.props.song.position ||
         nextProps.module.isOpen && !this.props.module.isOpen ||
-        !this.state.hasDrawn
+        !this.state.hasDrawn ||
+        newView
       )
     ) {
       this.setState({willDrawPosition: true});
