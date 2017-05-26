@@ -33,6 +33,7 @@ export default connect((state) => ({
     this.maxNumberOfPoints = 10000;
     this.width = 150;
     this.scrollLeft = 0;
+    this.clipLockDistance = 5;
   }
 
   componentDidMount() {
@@ -103,7 +104,10 @@ export default connect((state) => ({
   getNewClickedClipPosition(mousePosition) {
     const clipOffset = this.state.clickPosition - this.state.clickedClip.position;
     const newPosition = mousePosition - clipOffset;
-    return newPosition;
+    const oldPosition = this.state.clickPosition - clipOffset;
+    const beatsDragged = Math.abs(this.state.clickPosition - mousePosition);
+    const pixelsDragged = beatsDragged / this.props.song.beats * this.width;
+    return pixelsDragged < this.clipLockDistance ? oldPosition : newPosition;
   }
 
   onMouseMove(e) {
