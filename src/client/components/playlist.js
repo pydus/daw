@@ -397,7 +397,10 @@ export default connect((state) => ({
             height="183"
             className="scroll"
           >
-            <div className="widener" style={{width: this.state.scrollWidth}}></div>
+            <div
+              className="widener"
+              style={{width: this.props.module.isOpen ? this.state.scrollWidth : 0}}
+            ></div>
           </div>
         </div>
       </div>
