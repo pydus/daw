@@ -20,8 +20,9 @@ export default connect((state) => ({
     this.onMouseMove = this.onMouseMove.bind(this);
     this.onMouseUp = this.onMouseUp.bind(this);
     this.onWheel = this.onWheel.bind(this);
+    this.onScroll = this.onScroll.bind(this);
     this.segmentDurationStepPercent = 10;
-    this.minSegmentDuration = 10;
+    this.minSegmentDuration = 1;
     this.maxSegmentDuration = 20000;
     this.segmentDuration = 500;
     this.segmentWidth = 1.5;
@@ -50,6 +51,13 @@ export default connect((state) => ({
     posCtx.clearRect(0, 0, positionCanvas.width, positionCanvas.height);
   }
 
+  redraw() {
+    this.clearCanvas();
+    this.clearPositionCanvas();
+    this.drawWaveforms();
+    this.drawPosition();
+  }
+
   zoom(mousePosition, magnitude) {
     const lastSegmentDuration = this.segmentDuration;
     this.segmentDuration *= 1 + magnitude * this.segmentDurationStepPercent / 100;
@@ -75,10 +83,13 @@ export default connect((state) => ({
     const newMousePosition = (e.clientX - rect.left + this.scrollLeft) / this.width;
     const dx = mousePosition - newMousePosition;
     this.scrollLeft = this.scrollLeft + dx * this.width;
-    this.clearCanvas();
-    this.clearPositionCanvas();
-    this.drawWaveforms();
-    this.drawPosition();
+    this.scroll.scrollLeft = this.scrollLeft;
+    this.redraw();
+  }
+
+  onScroll() {
+    this.scrollLeft = this.scroll.scrollLeft;
+    this.redraw();
   }
 
   getMouseSongPosition(e) {
@@ -100,10 +111,7 @@ export default connect((state) => ({
     const newPosition = this.getNewClickedClipPosition(position);
     const index = this.props.module.clips.indexOf(this.state.clickedClip);
     this.props.module.clips[index].offset = newPosition - this.props.module.clips[index].position;
-    this.clearCanvas();
-    this.clearPositionCanvas();
-    this.drawWaveforms();
-    this.drawPosition();
+    this.redraw();
   }
 
   onMouseDown(e) {
@@ -141,16 +149,14 @@ export default connect((state) => ({
     }
     this.setState({clickPosition: -1, clickedClip: null});
     window.removeEventListener('mousemove', this.onMouseMove);
-    this.clearCanvas();
-    this.clearPositionCanvas();
-    this.drawWaveforms();
-    this.drawPosition();
+    this.redraw();
   }
 
   resize(width) {
     this.width = width;
     this.canvas.width = this.canvas.getBoundingClientRect().width;
     this.positionCanvas.width = this.positionCanvas.getBoundingClientRect().width;
+    this.setState({scrollWidth: width});
   }
 
   getTotalDuration() {
@@ -290,6 +296,10 @@ export default connect((state) => ({
     this.drawLine(x, 0, x, positionCanvas.height, posCtx);
   }
 
+  drawScroll() {
+    this.scrollCanvas.scrollWidth = 30000;
+  }
+
   componentWillReceiveProps(nextProps) {
     let newClips = nextProps.module.clips.length !== this.props.module.clips.length;
 
@@ -380,6 +390,15 @@ export default connect((state) => ({
             width="1024"
             height="183"
           />
+          <div
+            ref={scroll => this.scroll = scroll}
+            onScroll={this.onScroll}
+            width="1024"
+            height="183"
+            className="scroll"
+          >
+            <div className="widener" style={{width: this.state.scrollWidth}}></div>
+          </div>
         </div>
       </div>
     );
