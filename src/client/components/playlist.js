@@ -370,7 +370,7 @@ export default connect((state) => ({
       this.setState({willDrawPosition: false});
     }
 
-    if (!this.state.hasDrawn) {
+    if (!this.state.hasDrawn && this.canvas.width !== 0) {
       this.setState({hasDrawn: true});
     }
   }
