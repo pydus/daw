@@ -115,6 +115,7 @@ export default connect((state) => ({
   }
 
   onMouseDown(e) {
+    if (e.button !== 0) return;
     const clickPosition = this.getMouseSongPosition(e);
     const clips = this.props.module.clips;
     const bps = this.props.song.tempo / 60;
