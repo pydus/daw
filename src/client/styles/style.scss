@@ -528,6 +528,33 @@ header {
           text-transform: uppercase;
           font-size: 9px;
         }
+        .unit-label {
+          display: none;
+        }
+        &:hover, &:active {
+          .unit-label:not(:hover) {
+            $width: 90px;
+            $height: 38px;
+            font-size: 16px;
+            line-height: 2.2;
+            z-index: 2;
+            display: block;
+            position: absolute;
+            width: $width;
+            height: $height;
+            text-align: center;
+            background: $third;
+            color: #fff;
+            border-radius: 2px;
+            top: -3px;
+            &.left {
+              left: -($width + 3);
+            }
+            &.right {
+              right: -($width + 3);
+            }
+          }
+        }
         &::before {
           content: '';
           position: absolute;

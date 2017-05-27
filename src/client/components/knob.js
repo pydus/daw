@@ -1,6 +1,7 @@
 'use strict';
 import React from 'react';
 import Range from './range';
+import UnitLabel from './unit-label';
 
 export default class Knob extends React.Component {
   constructor(props) {
@@ -38,6 +39,7 @@ export default class Knob extends React.Component {
         default={this.default}
       >
         <div className={`knob progress-${this.state.percentage}`}>
+          <UnitLabel value={this.state.value} unit={this.props.unit}/>
           <div className="label">{this.props.label}</div>
         </div>
       </Range>

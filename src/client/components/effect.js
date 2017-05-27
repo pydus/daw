@@ -104,10 +104,10 @@ export default connect(() => ({
         </Range>
         <div className="content">
           <div className="left">
-            <Knob label="Ratio" default={defaultCompressor.ratio} min="1" max="20" onChange={this.onRatioChange}/>
-            <Knob label="Knee" default={defaultCompressor.knee} max="40" onChange={this.onKneeChange}/>
-            <Knob label="Attack" default={defaultCompressor.attack} max="1000" onChange={this.onAttackChange}/>
-            <Knob label="Release" default={defaultCompressor.release} max="1000" onChange={this.onReleaseChange}/>
+            <Knob label="Ratio" unit=": 1" default={defaultCompressor.ratio} min="1" max="20" onChange={this.onRatioChange}/>
+            <Knob label="Knee" unit="" default={defaultCompressor.knee} max="40" onChange={this.onKneeChange}/>
+            <Knob label="Attack" unit="ms" default={defaultCompressor.attack} max="1000" onChange={this.onAttackChange}/>
+            <Knob label="Release" unit="ms" default={defaultCompressor.release} max="1000" onChange={this.onReleaseChange}/>
           </div>
           <div className="display-section">
             <CompressorDisplay effect={this.props.effect} onChange={this.onThresholdChange}/>
