@@ -95,7 +95,6 @@ export default connect((state) => ({
     const mousePosition = this.getMouseSongPosition(e) / this.props.song.beats;
     const zoomChanged = this.zoom(mousePosition, sign);
     if (!zoomChanged) return;
-    const oldWidth = this.width;
     this.resizeAsNeeded();
     const rect = this.canvas.getBoundingClientRect();
     const newMousePosition = (e.clientX - rect.left + this.scrollLeft) / this.width;
@@ -105,7 +104,7 @@ export default connect((state) => ({
     this.didZoom = true;
   }
 
-  onScroll(e) {
+  onScroll() {
     const scrollLeft = this.didZoom ? this.scrollLeft : this.scroll.scrollLeft;
     this.setScrollLeft(scrollLeft);
     this.redraw();
