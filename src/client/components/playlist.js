@@ -264,16 +264,22 @@ export default connect((state) => ({
     const waveform = this.waveforms[index];
     const step = waveform.length / numberOfSegments;
     const offset = this.width * position / this.props.song.beats;
-    let n = 0;
-    let firstOfChunk = {n: 0, index: 0};
-    let lastIndex = 0;
-    for (let i = 0; i < waveform.length; i += step) {
+    const firstPosition = Math.floor((this.scrollLeft - offset) / this.segmentWidth);
+    const lastPosition = Math.floor(
+      (this.scrollLeft + this.canvas.width - offset) / this.segmentWidth
+    );
+    const firstIndex = Math.round(firstPosition * step);
+    const lastIndex = Math.min(Math.round(lastPosition * step), waveform.length);
+    let n = firstPosition;
+    let firstOfChunk = {n: firstPosition, index: firstIndex};
+    let lastUsedIndex = firstIndex;
+    for (let i = firstIndex; i < lastIndex; i += step, n++) {
       const index = Math.round(i);
       const nextIndex = Math.round(i + step);
       let value = waveform[index];
-      while (lastIndex < index - 1) {
-        if (waveform[++lastIndex] > value) {
-          value = waveform[lastIndex];
+      while (lastUsedIndex < index - 1) {
+        if (waveform[++lastUsedIndex] > value) {
+          value = waveform[lastUsedIndex];
         }
       }
       if (index !== nextIndex && index === firstOfChunk.index) {
@@ -284,7 +290,6 @@ export default connect((state) => ({
       } else if (index !== firstOfChunk.index) {
         firstOfChunk = {n, index};
       }
-      n++;
     }
   }
 
