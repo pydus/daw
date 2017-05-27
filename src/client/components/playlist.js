@@ -325,6 +325,7 @@ export default connect((state) => ({
       nextProps.scrollLeft !== this.scrollLeft;
     this.segmentDuration = nextProps.segmentDuration;
     this.scrollLeft = nextProps.scrollLeft;
+    this.didZoom = true;
     this.scroll.scrollLeft = nextProps.scrollLeft;
 
     let newClips = nextProps.module.clips.length !== this.props.module.clips.length;
