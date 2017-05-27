@@ -21,7 +21,7 @@ export default connect((state) => ({
     this.onMouseUp = this.onMouseUp.bind(this);
     this.onWheel = this.onWheel.bind(this);
     this.onScroll = this.onScroll.bind(this);
-    this.segmentDurationStepPercent = 10;
+    this.segmentDurationStepPercent = 20;
     this.minSegmentDuration = 1;
     this.maxSegmentDuration = 20000;
     this.segmentWidth = 1.5;
@@ -34,6 +34,7 @@ export default connect((state) => ({
     this.clipLockDistance = 5;
     this.segmentDuration = props.segmentDuration;
     this.scrollLeft = props.scrollLeft;
+    this.didZoom = false;
   }
 
   componentDidMount() {
@@ -60,8 +61,11 @@ export default connect((state) => ({
   }
 
   setScrollLeft(scrollLeft) {
+    scrollLeft = scrollLeft > this.width - this.canvas.width ?
+      this.width - this.canvas.width : scrollLeft;
+    scrollLeft = scrollLeft < 0 ? 0 : scrollLeft;
     this.scrollLeft = scrollLeft;
-    this.scroll.scrollLeft = this.scrollLeft;
+    this.scroll.scrollLeft = scrollLeft;
     this.props.onViewChange({scrollLeft});
   }
 
@@ -91,19 +95,21 @@ export default connect((state) => ({
     const mousePosition = this.getMouseSongPosition(e) / this.props.song.beats;
     const zoomChanged = this.zoom(mousePosition, sign);
     if (!zoomChanged) return;
+    const oldWidth = this.width;
     this.resizeAsNeeded();
-    const canvas = this.canvas;
-    const rect = canvas.getBoundingClientRect();
+    const rect = this.canvas.getBoundingClientRect();
     const newMousePosition = (e.clientX - rect.left + this.scrollLeft) / this.width;
     const dx = mousePosition - newMousePosition;
     this.setScrollLeft(this.scrollLeft + dx * this.width);
-    this.scroll.scrollLeft = this.scrollLeft;
     this.redraw();
+    this.didZoom = true;
   }
 
-  onScroll() {
-    this.setScrollLeft(this.scroll.scrollLeft);
+  onScroll(e) {
+    const scrollLeft = this.didZoom ? this.scrollLeft : this.scroll.scrollLeft;
+    this.setScrollLeft(scrollLeft);
     this.redraw();
+    this.didZoom = false;
   }
 
   getMouseSongPosition(e) {
@@ -312,10 +318,6 @@ export default connect((state) => ({
     this.setLine(2, LIGHT_GRAY);
     const x = this.width * beat / this.props.song.beats - this.scrollLeft;
     this.drawLine(x, 0, x, positionCanvas.height, posCtx);
-  }
-
-  drawScroll() {
-    this.scrollCanvas.scrollWidth = 30000;
   }
 
   componentWillReceiveProps(nextProps) {
