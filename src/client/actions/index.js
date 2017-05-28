@@ -25,7 +25,9 @@ const startUpdatingPosition = (dispatch, getState) => {
       (now - lastTime) / 1000 *
       state.song.tempo / 60;
     lastTime = now;
-    dispatchPosition(dispatch, position);
+    if (state.song.isPlaying) {
+      dispatchPosition(dispatch, position);
+    }
     if (position > state.song.beats) {
       dispatch({
         type: SET_PLAYING,
