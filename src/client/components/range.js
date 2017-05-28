@@ -4,7 +4,8 @@ import React from 'react';
 export default class Range extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {value: Number(props.default), lastCursor: 0};
+    const value = typeof props.value !== 'undefined' ? props.value : props.default;
+    this.state = {value: Number(value), lastCursor: 0};
     this.default = Number(props.default) || 0;
     // percentage by which to increase the value per pixel moved by the cursor
     this.step = props.step || 0.35;

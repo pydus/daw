@@ -6,7 +6,8 @@ import UnitLabel from './unit-label';
 export default class Knob extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {value: Number(props.default), percentage: 0};
+    const value = typeof props.value !== 'undefined' ? props.value : props.default;
+    this.state = {value: Number(value), percentage: 0};
     this.default = Number(props.default) || 0;
     this.max = Number(props.max) || 100;
     this.min = Number(props.min) || 0;
@@ -37,6 +38,7 @@ export default class Knob extends React.Component {
         max={this.max}
         min={this.min}
         default={this.default}
+        value={this.props.value}
       >
         <div className={`knob progress-${this.state.percentage}`}>
           <UnitLabel value={this.state.value} unit={this.props.unit}/>

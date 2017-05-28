@@ -8,7 +8,7 @@ export default class CompressorDisplay extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: 0,
+      value: props.effect.compressor.threshold.value,
       percentage: 0,
       reductionHeights: [],
       waveform: []
@@ -98,6 +98,7 @@ export default class CompressorDisplay extends React.Component {
         onChange={this.onChange}
         min={this.min}
         max={this.max > 0 ? 0 : this.max}
+        value={this.state.value}
         default={defaultCompressor.threshold}
       >
         <div className="display">

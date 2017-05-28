@@ -13,7 +13,10 @@ export default connect(() => ({
 }))(class Effect extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {inputGain: 1, outputGain: 1};
+    this.state = {
+      inputGain: props.effect.inputGain.gain.value,
+      outputGain: props.effect.outputGain.gain.value
+    };
     this.compressor = this.compressor.bind(this);
     this.eq = this.eq.bind(this);
     this.edit = this.edit.bind(this);
@@ -72,6 +75,7 @@ export default connect(() => ({
   }
 
   compressor() {
+    const compressor = this.props.effect.compressor;
     return (
       <div>
         <Range
@@ -80,6 +84,7 @@ export default connect(() => ({
           min="0"
           max="2"
           default="1"
+          value={this.state.inputGain}
         >
           <div className="volume-wrapper">
             <div
@@ -94,6 +99,7 @@ export default connect(() => ({
           min="0"
           max="2"
           default="1"
+          value={this.state.outputGain}
         >
           <div className="volume-wrapper right">
             <div
@@ -104,10 +110,38 @@ export default connect(() => ({
         </Range>
         <div className="content">
           <div className="left">
-            <Knob label="Ratio" unit=": 1" default={defaultCompressor.ratio} min="1" max="20" onChange={this.onRatioChange}/>
-            <Knob label="Knee" unit="" default={defaultCompressor.knee} max="40" onChange={this.onKneeChange}/>
-            <Knob label="Attack" unit="ms" default={defaultCompressor.attack} max="1000" onChange={this.onAttackChange}/>
-            <Knob label="Release" unit="ms" default={defaultCompressor.release} max="1000" onChange={this.onReleaseChange}/>
+            <Knob
+              label="Ratio"
+              unit=": 1"
+              default={defaultCompressor.ratio}
+              value={compressor.ratio.value}
+              min="1"
+              max="20" onChange={this.onRatioChange}
+            />
+            <Knob
+              label="Knee"
+              unit=""
+              default={defaultCompressor.knee}
+              value={compressor.knee.value}
+              max="40"
+              onChange={this.onKneeChange}
+            />
+            <Knob
+              label="Attack"
+              unit="ms"
+              default={defaultCompressor.attack}
+              value={compressor.attack.value * 1000}
+              max="1000"
+              onChange={this.onAttackChange}
+            />
+            <Knob
+              label="Release"
+              unit="ms"
+              default={defaultCompressor.release}
+              value={compressor.release.value * 1000}
+              max="1000"
+              onChange={this.onReleaseChange}
+            />
           </div>
           <div className="display-section">
             <CompressorDisplay effect={this.props.effect} onChange={this.onThresholdChange}/>
