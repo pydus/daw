@@ -229,10 +229,25 @@ export default class Module extends React.Component {
                   S
                   </div>
                   <div>
-                    <div
-                      className={isMaster || isDestination ? 'tag' : 'tag none'}
-                      style={panelTagStyle}
-                    ></div>
+                    {this.props.module.clips.length === 0 &&
+                      <div
+                        className={isMaster || isDestination ? 'tag' : 'tag none'}
+                        style={panelTagStyle}
+                      ></div>
+                    }
+                    {this.props.module.clips.length > 0 &&
+                      <svg viewBox="0 0 120 120">
+                        <line x1="0" x2="0" y1="55" y2="65" strokeWidth="5" strokeLinecap="round"/>
+                        <line x1="15" x2="15" y1="25" y2="95" strokeWidth="5" strokeLinecap="round"/>
+                        <line x1="30" x2="30" y1="35" y2="85" strokeWidth="5" strokeLinecap="round"/>
+                        <line x1="45" x2="45" y1="25" y2="95" strokeWidth="5" strokeLinecap="round"/>
+                        <line x1="60" x2="60" y1="40" y2="80" strokeWidth="5" strokeLinecap="round"/>
+                        <line x1="75" x2="75" y1="25" y2="95" strokeWidth="5" strokeLinecap="round"/>
+                        <line x1="90" x2="90" y1="35" y2="85" strokeWidth="5" strokeLinecap="round"/>
+                        <line x1="105" x2="105" y1="25" y2="95" strokeWidth="5" strokeLinecap="round"/>
+                        <line x1="120" x2="120" y1="55" y2="65" strokeWidth="5" strokeLinecap="round"/>
+                      </svg>
+                    }
                     {!isMaster && !isDestination &&
                       <label>
                         <input type="file" accept="audio/*" onChange={this.onSourceChange}/>
