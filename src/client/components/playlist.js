@@ -268,7 +268,7 @@ export default connect((state) => ({
       (this.scrollLeft + this.canvas.width - offset) / this.segmentWidth
     );
     const firstIndex = Math.round(firstPosition * step);
-    const lastIndex = Math.min(Math.round(lastPosition * step), waveform.length);
+    const lastIndex = Math.min(Math.round(lastPosition * step) + 1, waveform.length);
     let n = firstPosition;
     let firstOfChunk = {n: firstPosition, index: firstIndex};
     let lastUsedIndex = firstIndex;
