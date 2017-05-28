@@ -542,7 +542,6 @@ header {
           .unit-label:not(:hover) {
             $width: 90px;
             $height: 38px;
-            box-shadow: 0 0 6px $shadow-color;
             font-size: 16px;
             line-height: 2.3;
             z-index: 2;
