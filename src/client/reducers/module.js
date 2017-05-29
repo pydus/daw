@@ -11,6 +11,7 @@ import {
   SOLO_MODULE,
   TOGGLE_EXPAND_MODULE,
   ADD_CLIP,
+  REMOVE_CLIP,
   MOVE_CLIP,
   CUT,
   SET_BUFFER,
@@ -141,11 +142,14 @@ const module = (state = {}, action) => {
       return Object.assign({}, state, {
         clips: [...state.clips, {
           file: action.file,
-          buffer: 0,
+          buffer: action.buffer,
           bufferSource: null,
           position: action.position
         }]
       });
+    case REMOVE_CLIP:
+      newState.clips.splice(action.index, 1);
+      return newState;
     case MOVE_CLIP:
       const clip = newState.clips[action.index];
       clip.position = action.position;

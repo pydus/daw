@@ -1,6 +1,6 @@
 'use strict';
 import React from 'react';
-import {setPosition, savePosition, moveClip} from '../actions';
+import {setPosition, savePosition, moveClip, cut} from '../actions';
 import {connect} from 'react-redux';
 import {SECOND_COLOR, LIGHT_GRAY} from '../settings';
 
@@ -334,6 +334,10 @@ export default connect((state) => ({
     this.scroll.scrollLeft = nextProps.scrollLeft;
 
     let newClips = nextProps.module.clips.length !== this.props.module.clips.length;
+
+    if (nextProps.module.clips.length > this.props.module.clips.length) {
+      this.waveforms = [];
+    }
 
     for (let i = 0; i < nextProps.module.clips.length; i++) {
       if (!nextProps.module.clips[i].buffer) {

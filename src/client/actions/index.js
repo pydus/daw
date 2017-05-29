@@ -224,6 +224,13 @@ export const addClip = (id, file) => (
   }
 );
 
+export const REMOVE_CLIP = 'REMOVE_CLIP';
+export const removeClip = (id, index) => ({
+  type: REMOVE_CLIP,
+  id,
+  index
+});
+
 export const MOVE_CLIP = 'MOVE_CLIP';
 export const moveClip = (id, index, position) => (
   (dispatch, getState) => {
@@ -238,11 +245,48 @@ export const moveClip = (id, index, position) => (
 );
 
 export const CUT = 'CUT';
-export const cut = (id, position) => ({
-  type: CUT,
-  id,
-  position
-});
+export const cut = (position, id) => (
+  (dispatch, getState) => {
+    const state = getState();
+    if (state.song.isPlaying) {
+      dispatch(setPlaying(false));
+    }
+    state.modules.modules.forEach(id => {
+      state.modules.modulesById[id].clips.forEach((clip, clipIndex) => {
+        const bps = state.song.tempo / 60;
+        const end = clip.position + clip.buffer.duration * bps;
+        if (clip.position < position && end > position) {
+          const secondsInNewClip = (position - clip.position) / bps;
+          const index = Math.floor(secondsInNewClip * clip.buffer.sampleRate);
+          const firstBuffer = ctx.createBuffer(2, index, clip.buffer.sampleRate);
+          const secondBuffer = ctx.createBuffer(2, clip.buffer.length - index, clip.buffer.sampleRate);
+          for (let channel = 0; channel < 2; channel++) {
+            const channelData = clip.buffer.getChannelData(channel);
+            const firstData = channelData.slice(0, index);
+            const secondData = channelData.slice(index);
+            firstBuffer.copyToChannel(firstData, channel);
+            secondBuffer.copyToChannel(secondData, channel)
+          }
+          dispatch(removeClip(id, clipIndex));
+          dispatch({
+            type: ADD_CLIP,
+            id,
+            file: clip.file,
+            position: clip.position,
+            buffer: firstBuffer
+          });
+          dispatch({
+            type: ADD_CLIP,
+            id,
+            file: clip.file,
+            position,
+            buffer: secondBuffer
+          });
+        }
+      });
+    });
+  }
+);
 
 /**
  * Effects

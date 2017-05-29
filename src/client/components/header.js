@@ -1,7 +1,7 @@
 'use strict';
 import React from 'react';
 import {connect} from 'react-redux';
-import {setPosition, setPlaying, savePosition} from '../actions';
+import {setPosition, setPlaying, savePosition, cut} from '../actions';
 
 export default connect((state) => ({
   song: state.song
@@ -29,6 +29,8 @@ export default connect((state) => ({
       e.preventDefault();
       this.togglePlay();
       this.setState({isHoldingSpace: true});
+    } else if (e.key === 'Delete') {
+      this.props.dispatch(cut(this.props.song.position));
     }
   }
 
