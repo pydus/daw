@@ -10,7 +10,6 @@ export default connect((state) => ({
   constructor(props) {
     super(props);
     this.state = {
-      hasDrawn: false,
       clickPosition: -1,
       clickedClip: null,
       nullBuffers: []
@@ -21,6 +20,7 @@ export default connect((state) => ({
     this.onMouseUp = this.onMouseUp.bind(this);
     this.onWheel = this.onWheel.bind(this);
     this.onScroll = this.onScroll.bind(this);
+    this.hasDrawn = false;
     this.segmentDurationStepPercent = 20;
     this.minSegmentDuration = 1;
     this.maxSegmentDuration = 20000;
@@ -364,9 +364,8 @@ export default connect((state) => ({
 
     if (
       nextProps.song.beats !== this.props.song.beats ||
-      !this.state.hasDrawn ||
       newClips ||
-      newView
+      newView && nextProps.module.isOpen
     ) {
       this.setState({willDrawWaveform: true});
     }
@@ -375,11 +374,14 @@ export default connect((state) => ({
       nextProps.module.isOpen && (
         nextProps.song.position !== this.props.song.position ||
         nextProps.module.isOpen && !this.props.module.isOpen ||
-        !this.state.hasDrawn ||
         newView
       )
     ) {
       this.setState({willDrawPosition: true});
+    }
+
+    if (!nextProps.module.isOpen && (newView || !this.hasDrawn)) {
+      this.drawOnOpen = true;
     }
   }
 
@@ -396,20 +398,32 @@ export default connect((state) => ({
       }
     }
 
-    if (this.state.willDrawWaveform) {
+    if (
+      !this.hasDrawn ||
+      this.state.willDrawWaveform ||
+      this.drawOnOpen && this.props.module.isOpen
+    ) {
       this.clearCanvas();
       this.drawWaveforms();
       this.setState({willDrawWaveform: false});
+      if (this.drawOnOpen && this.props.module.isOpen) {
+        setTimeout(() => this.scroll.scrollLeft = this.scrollLeft);
+        this.drawOnOpen = false;
+      }
     }
 
-    if (this.state.willDrawPosition || this.state.willDrawWaveform) {
+    if (
+      !this.hasDrawn ||
+      this.state.willDrawPosition ||
+      this.state.willDrawWaveform
+    ) {
       this.clearPositionCanvas();
       this.drawPosition();
       this.setState({willDrawPosition: false});
     }
 
-    if (!this.state.hasDrawn && this.canvas.width !== 0) {
-      this.setState({hasDrawn: true});
+    if (!this.hasDrawn) {
+      this.hasDrawn = true;
     }
   }
 
