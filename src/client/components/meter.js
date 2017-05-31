@@ -87,18 +87,20 @@ export default connect((state) => ({
     const bufferLength = analyser.frequencyBinCount;
     const data = new Uint8Array(bufferLength);
 
-    analyser.getByteFrequencyData(data);
+    analyser.getByteTimeDomainData(data);
 
     let peak = 0;
 
     for (let i = 0; i < bufferLength; i++) {
-      if (data[i] > peak) {
-        peak = data[i];
+      const value = Math.abs(data[i] - 128);
+      if (value > peak) {
+        peak = value;
       }
     }
 
-    const levelRatio = peak / 255;
-    const y = canvas.height * (1 - levelRatio);
+    const levelRatio = Math.log10(peak) / Math.log10(128);
+    const interval = this.max - this.min;
+    const y = canvas.height * (1 - levelRatio * (1 - this.max / interval));
 
     if (this.props.type === 'line') {
       this.drawLine(y);
