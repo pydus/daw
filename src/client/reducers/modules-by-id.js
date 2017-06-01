@@ -26,7 +26,7 @@ const play = (module, song, newSongPosition) => {
     const secondsToSongPosition = secondsPerBeat * songPosition;
     const secondsToClipPosition = secondsPerBeat * position;
 
-    let when = Math.max(0, secondsToClipPosition - secondsToSongPosition);
+    const when = Math.max(0, secondsToClipPosition - secondsToSongPosition);
     const offset = (when > 0) ? 0 : secondsToSongPosition - secondsToClipPosition;
 
     bufferSource.buffer = buffer;
