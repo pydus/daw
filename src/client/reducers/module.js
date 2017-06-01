@@ -86,7 +86,7 @@ const wireUp = (module) => {
 };
 
 const connectToDestination = (module) => {
-  module.output.connect(ctx.destination);
+  module.gain.connect(ctx.destination);
 };
 
 const module = (state = {}, action) => {
@@ -94,21 +94,19 @@ const module = (state = {}, action) => {
 
   switch (action.type) {
     case CREATE_MODULE:
-      const splitter = ctx.createChannelSplitter(2);
       const newModule = wireUp({
         id: action.id,
         name: action.name ? action.name : '',
         effects: [],
         openEffect: -1,
         clips: [],
-        splitter,
+        splitter: ctx.createChannelSplitter(2),
         leftMerger: ctx.createChannelMerger(MAX_ROUTES),
         rightMerger: ctx.createChannelMerger(MAX_ROUTES),
         muteGain: ctx.createGain(),
         gain: ctx.createGain(),
         leftAnalyser: ctx.createAnalyser(),
         rightAnalyser: ctx.createAnalyser(),
-        output: splitter,
         isMuted: false,
         isSoloed: false,
         isOpen: false,
