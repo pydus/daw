@@ -61,9 +61,8 @@ export default connect((state) => ({
   }
 
   setScrollLeft(scrollLeft) {
-    scrollLeft = scrollLeft > this.width - this.canvas.width ?
-      this.width - this.canvas.width : scrollLeft;
-    scrollLeft = scrollLeft < 0 ? 0 : scrollLeft;
+    scrollLeft = Math.min(this.width - this.canvas.width, scrollLeft);
+    scrollLeft = Math.max(0, scrollLeft);
     this.scrollLeft = scrollLeft;
     this.scroll.scrollLeft = scrollLeft;
     this.props.onViewChange({scrollLeft});
@@ -236,10 +235,10 @@ export default connect((state) => ({
     const stereo = buffer.numberOfChannels === 2;
     const left = buffer.getChannelData(0);
     const right = stereo ? buffer.getChannelData(1) : null;
-    let numberOfPoints = Math.ceil(buffer.duration * this.pointsPerSecond);
-    if (numberOfPoints > this.maxNumberOfPoints) {
-      numberOfPoints = this.maxNumberOfPoints;
-    }
+    const numberOfPoints = Math.min(
+      this.maxNumberOfPoints,
+      Math.ceil(buffer.duration * this.pointsPerSecond)
+    );
     let maxPointsPerSegment =
       (numberOfPoints > buffer.length) ?
       1 : Math.floor(buffer.length / numberOfPoints);

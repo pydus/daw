@@ -26,8 +26,7 @@ const play = (module, song, newSongPosition) => {
     const secondsToSongPosition = secondsPerBeat * songPosition;
     const secondsToClipPosition = secondsPerBeat * position;
 
-    let when = secondsToClipPosition - secondsToSongPosition;
-    when = (when < 0) ? 0 : when;
+    let when = Math.max(0, secondsToClipPosition - secondsToSongPosition);
     const offset = (when > 0) ? 0 : secondsToSongPosition - secondsToClipPosition;
 
     bufferSource.buffer = buffer;
@@ -94,13 +93,13 @@ const solo = (id, modulesById) => {
 };
 
 const connectModules = (source, destination) => {
-  const splitter = source.splitter;
+  const {splitter} = source;
   splitter.connect(destination.leftMerger, 0);
   splitter.connect(destination.rightMerger, 1);
 };
 
 const disconnectModules = (source, destination) => {
-  const splitter = source.splitter;
+  const {splitter} = source;
   splitter.disconnect(destination.leftMerger, 0);
   splitter.disconnect(destination.rightMerger, 1);
 };
