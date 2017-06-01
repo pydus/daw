@@ -10,10 +10,6 @@ export default connect((state) => ({
     super(props);
     this.state = {waveform: [], willLoop: true};
     this.timeInterval = this.props.timeInterval || 2;
-    // peak meters measuring digital audio need a level adjustment
-    // to get closer to the true peak and to allow headroom for signal
-    // processing that may increase the amplitude
-    this.alignmentLevel = -20; // dB corresponding to a true level of 0 VU
     this.max = 3;
     this.min = -60;
   }
@@ -36,7 +32,7 @@ export default connect((state) => ({
   componentDidMount() {
     const analyser = this.props.analyser;
     analyser.fftSize = 2048;
-    analyser.maxDecibels = this.max + this.alignmentLevel;
+    analyser.maxDecibels = this.max;
     analyser.minDecibels = this.min;
     analyser.smoothingTimeConstant = 0;
     if (this.props.type === 'line') {
