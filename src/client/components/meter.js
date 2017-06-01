@@ -94,7 +94,7 @@ export default connect((state) => ({
       }
     }
 
-    const levelRatio = Math.log10(peak) / Math.log10(128);
+    const levelRatio = Math.log10(1 + peak) / Math.log10(1 + 128);
     const interval = this.max - this.min;
     const y = canvas.height * (1 - levelRatio * (1 - this.max / interval));
 
@@ -110,7 +110,7 @@ export default connect((state) => ({
     const ctx = canvas.getContext('2d');
     const analyser = this.props.analyser;
     const interval = analyser.maxDecibels - analyser.minDecibels;
-    const y = canvas.height * (this.max - 1) / interval;
+    const y = canvas.height * this.max / interval;
     ctx.lineWidth = 1;
     ctx.strokeStyle = LIGHT_GRAY;
     ctx.beginPath();
