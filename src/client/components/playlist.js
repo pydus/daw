@@ -219,11 +219,16 @@ export default connect((state) => ({
     ctx.stroke();
   }
 
+  fillRect(x, y, width, height, context) {
+    const canvas = this.canvas;
+    const ctx = context || canvas.getContext('2d');
+    ctx.fillRect(x, y, width, height);
+  }
+
   drawSegment(n, value, offset) {
     const canvas = this.canvas;
     const scale = this.segmentScale;
     const x = this.segmentWidth * n + offset - this.scrollLeft;
-    //console.log(n, value)
     this.drawLine(
       x, canvas.height / 2 - value * scale * canvas.height,
       x, canvas.height / 2 + value * scale * canvas.height
@@ -296,6 +301,18 @@ export default connect((state) => ({
     }
   }
 
+  drawBackground(position, numberOfSegments) {
+    const ctx = this.canvas.getContext('2d');
+    ctx.fillStyle = this.props.song.isPlaying ? '#192741' : '#293A5E';
+    const offset = position / this.props.song.beats * this.width;
+    this.fillRect(
+      Math.round(offset - this.scrollLeft),
+      0,
+      numberOfSegments * this.segmentWidth,
+      this.canvas.height
+    );
+  }
+
   drawWaveform(clip) {
     const {buffer} = clip;
     const position = clip.position + (clip.offset || 0);
@@ -304,9 +321,8 @@ export default connect((state) => ({
     if (!this.waveforms[index]) {
       this.createWaveform(buffer, position);
     }
+    this.drawBackground(position, numberOfSegments);
     this.drawSegments(index, position, numberOfSegments);
-    const offset = position / this.props.song.beats * this.width;
-    this.drawLine(offset - this.scrollLeft, 0, offset - this.scrollLeft, this.canvas.height);
   }
 
   drawWaveforms() {
@@ -371,7 +387,8 @@ export default connect((state) => ({
     if (
       nextProps.song.beats !== this.props.song.beats ||
       newClips ||
-      newView && nextProps.module.isOpen
+      newView && nextProps.module.isOpen ||
+      nextProps.song.isPlaying !== this.props.song.isPlaying && nextProps.module.isOpen
     ) {
       this.setState({willDrawWaveform: true});
     }
