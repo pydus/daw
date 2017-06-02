@@ -278,7 +278,6 @@ header {
               height: 1px;
             }
             &::-webkit-scrollbar {
-              background-color: $third;
               height: 16px;
             }
             &::-webkit-scrollbar-thumb {
@@ -656,10 +655,7 @@ header {
       .playlist {
         background: $main;
         .wrapper {
-          .scroll { 
-            &::-webkit-scrollbar {
-              background-color: $main;
-            }
+          .scroll {
             &::-webkit-scrollbar-thumb {
               background-color: $third;
             }
