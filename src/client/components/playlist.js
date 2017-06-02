@@ -221,10 +221,9 @@ export default connect((state) => ({
 
   drawSegment(n, value, offset) {
     const canvas = this.canvas;
-    const width = this.segmentWidth;
     const scale = this.segmentScale;
-    const x = width * n + offset - this.scrollLeft;
-    this.setLine(width - this.segmentPadding, SECOND_COLOR);
+    const x = this.segmentWidth * n + offset - this.scrollLeft;
+    //console.log(n, value)
     this.drawLine(
       x, canvas.height / 2 - value * scale * canvas.height,
       x, canvas.height / 2 + value * scale * canvas.height
@@ -261,13 +260,19 @@ export default connect((state) => ({
   drawSegments(index, position, numberOfSegments) {
     const waveform = this.waveforms[index];
     const step = waveform.length / numberOfSegments;
-    const offset = this.width * position / this.props.song.beats;
-    const firstPosition = Math.floor((this.scrollLeft - offset) / this.segmentWidth);
+    let offset = this.width * position / this.props.song.beats;
+    const hiddenPartWidth = this.scrollLeft - offset;
+    // for aligning the first n to the first drawn segment
+    const alignment = hiddenPartWidth % (this.segmentWidth / step);
+    const firstPosition = Math.max(0, Math.floor((hiddenPartWidth - alignment) / this.segmentWidth));
     const lastPosition = Math.floor(
       (this.scrollLeft + this.canvas.width - offset) / this.segmentWidth
     );
     const firstIndex = Math.round(firstPosition * step);
     const lastIndex = Math.min(Math.round(lastPosition * step) + 1, waveform.length);
+
+    this.setLine(this.segmentWidth - this.segmentPadding, SECOND_COLOR);
+
     let n = firstPosition;
     let firstOfChunk = {n: firstPosition, index: firstIndex};
     let lastUsedIndex = firstIndex;
@@ -300,6 +305,8 @@ export default connect((state) => ({
       this.createWaveform(buffer, position);
     }
     this.drawSegments(index, position, numberOfSegments);
+    const offset = position / this.props.song.beats * this.width;
+    this.drawLine(offset - this.scrollLeft, 0, offset - this.scrollLeft, this.canvas.height);
   }
 
   drawWaveforms() {
