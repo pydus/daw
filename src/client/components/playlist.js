@@ -303,7 +303,7 @@ export default connect((state) => ({
 
   drawBackground(position, numberOfSegments) {
     const ctx = this.canvas.getContext('2d');
-    ctx.fillStyle = this.props.song.isPlaying ? '#192741' : '#293A5E';
+    ctx.fillStyle = this.props.song.isPlaying ? 'rgba(64,101,168,0.07)' : 'rgba(80,121,190,0.07)';
     const offset = position / this.props.song.beats * this.width;
     this.fillRect(
       Math.round(offset - this.scrollLeft),
