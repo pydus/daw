@@ -35,7 +35,40 @@ export default class Eq extends React.Component {
     const eq = this.props.effect.eq;
     return (
       <div>
-        <div className="content">EQ</div>
+        <Range
+          display="block"
+          onChange={this.onInputGainChange}
+          min="0"
+          max="2"
+          default="1"
+          value={this.state.inputGain}
+        >
+          <div className="volume-wrapper">
+            <div
+              className="volume"
+              style={{height: `${this.state.inputGain / 2 * 100}%`}}
+            ></div>
+          </div>
+        </Range>
+        <Range
+          display="block"
+          onChange={this.onOutputGainChange}
+          min="0"
+          max="2"
+          default="1"
+          value={this.state.outputGain}
+        >
+          <div className="volume-wrapper right">
+            <div
+              className="volume"
+              style={{height: `${this.state.outputGain / 2 * 100}%`}}
+            ></div>
+          </div>
+        </Range>
+        <div className="content">
+          <div className="eq-display">
+          </div>
+        </div>
       </div>
     );
   }

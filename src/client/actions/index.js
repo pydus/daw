@@ -313,9 +313,9 @@ export const addCompressor = (id, index) => ({
   index
 });
 
-export const EDIT_COMPRESSOR = 'EDIT_COMPRESSOR';
-export const editCompressor = (id, index, settings) => ({
-  type: EDIT_COMPRESSOR,
+export const EDIT_EFFECT = 'EDIT_EFFECT';
+export const editEffect = (id, index, settings) => ({
+  type: EDIT_EFFECT,
   id,
   index,
   settings

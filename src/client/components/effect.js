@@ -3,7 +3,7 @@ import React from 'react';
 import Compressor from './compressor';
 import Eq from './eq';
 import {connect} from 'react-redux';
-import {editCompressor} from '../actions';
+import {editEffect} from '../actions';
 
 export default connect(() => ({
 
@@ -19,9 +19,8 @@ export default connect(() => ({
 
     switch (this.props.effect.type) {
       case 'EQ':
-        break;
       case 'COMPRESSOR':
-        this.props.dispatch(editCompressor(id, index, settings));
+        this.props.dispatch(editEffect(id, index, settings));
         break;
       default:
         return false;

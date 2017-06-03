@@ -4,7 +4,7 @@ import {defaultCompressor} from '../settings';
 import {
   ADD_EQ,
   ADD_COMPRESSOR,
-  EDIT_COMPRESSOR,
+  EDIT_EFFECT,
   REMOVE_EFFECT
 } from '../actions';
 
@@ -37,7 +37,7 @@ const compressor = (state, action) => {
         analyserOut,
         output: analyserOut
       };
-    case EDIT_COMPRESSOR:
+    case EDIT_EFFECT:
       const settings = action.settings;
       if (typeof settings.inputGain !== 'undefined')
         newState.inputGain.gain.value = settings.inputGain;
@@ -86,7 +86,7 @@ const effects = (state = [], action) => {
       };
       return newState;
     case ADD_COMPRESSOR:
-    case EDIT_COMPRESSOR:
+    case EDIT_EFFECT:
       newState[action.index] = compressor(newState[action.index], action);
       return newState;
     default:
