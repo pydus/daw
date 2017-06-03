@@ -16,15 +16,7 @@ export default connect(() => ({
   edit(settings) {
     const id = this.props.id;
     const index = this.props.index;
-
-    switch (this.props.effect.type) {
-      case 'EQ':
-      case 'COMPRESSOR':
-        this.props.dispatch(editEffect(id, index, settings));
-        break;
-      default:
-        return false;
-    }
+    this.props.dispatch(editEffect(id, index, settings));
   }
 
   render() {
