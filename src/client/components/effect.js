@@ -1,6 +1,7 @@
 'use strict';
 import React from 'react';
 import Compressor from './compressor';
+import Eq from './eq';
 import {connect} from 'react-redux';
 import {editCompressor} from '../actions';
 
@@ -9,7 +10,6 @@ export default connect(() => ({
 }))(class Effect extends React.Component {
   constructor(props) {
     super(props);
-    this.eq = this.eq.bind(this);
     this.edit = this.edit.bind(this);
   }
 
@@ -28,20 +28,12 @@ export default connect(() => ({
     }
   }
 
-  eq() {
-    return (
-      <div>
-        <div className="content">EQ</div>
-      </div>
-    );
-  }
-
   render() {
     switch (this.props.effect.type) {
       case 'COMPRESSOR':
         return <Compressor effect={this.props.effect} onEdit={this.edit}/>;
       case 'EQ':
-        return this.eq();
+        return <Eq effect={this.props.effect} onEdit={this.edit}/>;
       default:
         return <div></div>;
     }

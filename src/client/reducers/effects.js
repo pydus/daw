@@ -61,17 +61,16 @@ const compressor = (state, action) => {
 
 const effects = (state = [], action) => {
   const newState = [...state];
-  let input, output;
 
   switch (action.type) {
     case REMOVE_EFFECT:
       newState.splice(action.index, 1);
       return newState;
     case ADD_EQ:
-      input = ctx.createGain();
-      output = ctx.createGain();
+      const inputGain = ctx.createGain();
+      const outputGain = ctx.createGain();
       // TODO create filters and connect them to each other, then to output
-      input.connect(output);
+      inputGain.connect(outputGain);
       newState[action.index] = {
         type: 'EQ',
         param1: {freq: 0, value: 0},
@@ -80,8 +79,10 @@ const effects = (state = [], action) => {
         param4: {freq: 0, value: 0},
         param5: {freq: 0, value: 0},
         param6: {freq: 0, value: 0},
-        input,
-        output
+        inputGain,
+        outputGain,
+        input: inputGain,
+        output: outputGain
       };
       return newState;
     case ADD_COMPRESSOR:
