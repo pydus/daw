@@ -6,7 +6,7 @@ import Meter from './meter';
 import CompressorDisplay from './compressor-display';
 import {defaultCompressor} from '../settings';
 
-export default class Effect extends React.Component {
+export default class Compressor extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
