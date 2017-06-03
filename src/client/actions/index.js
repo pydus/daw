@@ -265,7 +265,7 @@ export const cut = (position, id) => (
             const firstData = channelData.slice(0, index);
             const secondData = channelData.slice(index);
             firstBuffer.copyToChannel(firstData, channel);
-            secondBuffer.copyToChannel(secondData, channel)
+            secondBuffer.copyToChannel(secondData, channel);
           }
           dispatch(removeClip(id, clipIndex));
           dispatch({
