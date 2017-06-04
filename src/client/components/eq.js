@@ -14,7 +14,6 @@ export default class Eq extends React.Component {
     this.minFreq = 20;
     this.maxFreq = 20000;
     this.maxValue = 20;
-    this.minValue = -20;
   }
 
   edit(settings) {
@@ -37,6 +36,16 @@ export default class Eq extends React.Component {
     const percentage = freq => (
       100 * Math.log10(freq / this.minFreq) / Math.log10(this.maxFreq / this.minFreq)
     );
+    const controls = eq.filters.map((filter, i) => (
+      <div
+        key={i}
+        className="control"
+        style={{
+          left: `${percentage(filter.frequency.value)}%`,
+          top: `${50 - 50 * filter.gain.value / this.maxValue}%`
+        }}
+      ></div>
+    ));
     return (
       <div>
         <Range
@@ -71,13 +80,7 @@ export default class Eq extends React.Component {
         </Range>
         <div className="content">
           <div className="eq-display">
-            <div className="control" style={{left: `${percentage(eq.param1.freq)}%`, top: '50%'}}></div>
-            <div className="control" style={{left: `${percentage(eq.param2.freq)}%`, top: '50%'}}></div>
-            <div className="control" style={{left: `${percentage(eq.param3.freq)}%`, top: '50%'}}></div>
-            <div className="control" style={{left: `${percentage(eq.param4.freq)}%`, top: '50%'}}></div>
-            <div className="control" style={{left: `${percentage(eq.param5.freq)}%`, top: '50%'}}></div>
-            <div className="control" style={{left: `${percentage(eq.param6.freq)}%`, top: '50%'}}></div>
-            <div className="control" style={{left: `${percentage(eq.param7.freq)}%`, top: '50%'}}></div>
+            {controls}
           </div>
         </div>
       </div>

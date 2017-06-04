@@ -69,17 +69,27 @@ const effects = (state = [], action) => {
     case ADD_EQ:
       const inputGain = ctx.createGain();
       const outputGain = ctx.createGain();
-      // TODO create filters and connect them to each other, then to output
+      const initFrequencies = [63, 136, 294, 632, 1263, 2936, 6324];
+      const filters = [];
+      for (let i = 0; i < initFrequencies.length; i++) {
+        const filter = ctx.createBiquadFilter();
+        if (i === 0) {
+          filter.type = 'lowshelf';
+        } else if (i === initFrequencies.length - 1) {
+          filter.type = 'highshelf';
+        } else {
+          filter.type = 'peaking';
+        }
+        if (i > 0) {
+          filters[i - 1].connect(filter);
+        }
+        filter.frequency.value = initFrequencies[i];
+        filters.push(filter);
+      }
       inputGain.connect(outputGain);
       newState[action.index] = {
         type: 'EQ',
-        param1: {freq: 63, value: 0},
-        param2: {freq: 136, value: 0},
-        param3: {freq: 294, value: 0},
-        param4: {freq: 632, value: 0},
-        param5: {freq: 1363, value: 0},
-        param6: {freq: 2936, value: 0},
-        param7: {freq: 6324, value: 0},
+        filters,
         inputGain,
         outputGain,
         input: inputGain,
