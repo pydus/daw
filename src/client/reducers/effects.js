@@ -59,13 +59,10 @@ const compressor = (state, action) => {
   }
 };
 
-const effects = (state = [], action) => {
-  const newState = [...state];
+const eq = (state, action) => {
+  const newState = Object.assign({}, state);
 
   switch (action.type) {
-    case REMOVE_EFFECT:
-      newState.splice(action.index, 1);
-      return newState;
     case ADD_EQ:
       const inputGain = ctx.createGain();
       const outputGain = ctx.createGain();
@@ -87,7 +84,7 @@ const effects = (state = [], action) => {
         filters.push(filter);
       }
       inputGain.connect(outputGain);
-      newState[action.index] = {
+      return {
         type: 'EQ',
         filters,
         inputGain,
@@ -95,10 +92,40 @@ const effects = (state = [], action) => {
         input: inputGain,
         output: outputGain
       };
+    case EDIT_EFFECT:
+      const settings = action.settings;
+      if (typeof settings.gain !== 'undefined') {
+        newState.filters[settings.index].gain.value = settings.gain;
+      }
+      return newState;
+    default:
+      return state;
+  }
+};
+
+const effects = (state = [], action) => {
+  const newState = [...state];
+
+  switch (action.type) {
+    case REMOVE_EFFECT:
+      newState.splice(action.index, 1);
+      return newState;
+    case ADD_EQ:
+      newState[action.index] = eq(newState[action.index], action);
       return newState;
     case ADD_COMPRESSOR:
-    case EDIT_EFFECT:
       newState[action.index] = compressor(newState[action.index], action);
+      return newState;
+    case EDIT_EFFECT:
+      switch (newState[action.index].type) {
+        case 'COMPRESSOR':
+          newState[action.index] = compressor(newState[action.index], action);
+          break;
+        case 'EQ':
+          newState[action.index] = eq(newState[action.index], action);
+          break;
+        default:
+      }
       return newState;
     default:
       return state;

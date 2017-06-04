@@ -11,6 +11,7 @@ export default class Eq extends React.Component {
     };
     this.onInputGainChange = this.onInputGainChange.bind(this);
     this.onOutputGainChange = this.onOutputGainChange.bind(this);
+    this.onGainChange = this.onGainChange.bind(this);
     this.minFreq = 20;
     this.maxFreq = 20000;
     this.maxValue = 20;
@@ -30,6 +31,10 @@ export default class Eq extends React.Component {
     this.edit({outputGain: value});
   }
 
+  onGainChange(gain, index) {
+    this.edit({gain, index});
+  }
+
   render() {
     const eq = this.props.effect;
     const interval = this.maxFreq - this.minFreq;
@@ -37,14 +42,22 @@ export default class Eq extends React.Component {
       100 * Math.log10(freq / this.minFreq) / Math.log10(this.maxFreq / this.minFreq)
     );
     const controls = eq.filters.map((filter, i) => (
-      <div
+      <Range
         key={i}
-        className="control"
-        style={{
-          left: `${percentage(filter.frequency.value)}%`,
-          top: `${50 - 50 * filter.gain.value / this.maxValue}%`
-        }}
-      ></div>
+        onChange={value => this.onGainChange(value, i)}
+        max={this.maxValue}
+        min={-this.maxValue}
+        default={0}
+        value={filter.gain.value}
+      >
+        <div
+          className="control"
+          style={{
+            left: `${percentage(filter.frequency.value)}%`,
+            top: `${50 - 50 * filter.gain.value / this.maxValue}%`
+          }}
+        ></div>
+      </Range>
     ));
     return (
       <div>
