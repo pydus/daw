@@ -1,10 +1,6 @@
 'use strict';
 import React from 'react';
-import Knob from './knob';
 import Range from './range';
-import Meter from './meter';
-import CompressorDisplay from './compressor-display';
-import {defaultCompressor} from '../settings';
 
 export default class Eq extends React.Component {
   constructor(props) {
@@ -15,6 +11,10 @@ export default class Eq extends React.Component {
     };
     this.onInputGainChange = this.onInputGainChange.bind(this);
     this.onOutputGainChange = this.onOutputGainChange.bind(this);
+    this.minFreq = 20;
+    this.maxFreq = 20000;
+    this.maxValue = 20;
+    this.minValue = -20;
   }
 
   edit(settings) {
@@ -32,7 +32,11 @@ export default class Eq extends React.Component {
   }
 
   render() {
-    const eq = this.props.effect.eq;
+    const eq = this.props.effect;
+    const interval = this.maxFreq - this.minFreq;
+    const percentage = freq => (
+      100 * Math.log10(freq / this.minFreq) / Math.log10(this.maxFreq / this.minFreq)
+    );
     return (
       <div>
         <Range
@@ -67,6 +71,13 @@ export default class Eq extends React.Component {
         </Range>
         <div className="content">
           <div className="eq-display">
+            <div className="control" style={{left: `${percentage(eq.param1.freq)}%`, top: '50%'}}></div>
+            <div className="control" style={{left: `${percentage(eq.param2.freq)}%`, top: '50%'}}></div>
+            <div className="control" style={{left: `${percentage(eq.param3.freq)}%`, top: '50%'}}></div>
+            <div className="control" style={{left: `${percentage(eq.param4.freq)}%`, top: '50%'}}></div>
+            <div className="control" style={{left: `${percentage(eq.param5.freq)}%`, top: '50%'}}></div>
+            <div className="control" style={{left: `${percentage(eq.param6.freq)}%`, top: '50%'}}></div>
+            <div className="control" style={{left: `${percentage(eq.param7.freq)}%`, top: '50%'}}></div>
           </div>
         </div>
       </div>

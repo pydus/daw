@@ -632,6 +632,22 @@ header {
         right: 0;
         bottom: 0;
         background: $main;
+        .control {
+          $control-diameter: 4px;
+          $control-padding: 10px;
+          position: absolute;
+          padding: $control-padding;
+          margin-top: -($control-padding + $control-diameter / 2);
+          margin-left: -($control-padding + $control-diameter / 2);
+          &::before {
+            content: '';
+            border-radius: 420px;
+            display: block;
+            background: #12e6ba;
+            width: $control-diameter;
+            height: $control-diameter;
+          }
+        }
       }
     }
   }
