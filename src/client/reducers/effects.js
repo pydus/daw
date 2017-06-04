@@ -72,8 +72,10 @@ const eq = (state, action) => {
         const filter = ctx.createBiquadFilter();
         if (i === 0) {
           filter.type = 'lowshelf';
+          inputGain.connect(filter);
         } else if (i === initFrequencies.length - 1) {
           filter.type = 'highshelf';
+          filter.connect(outputGain);
         } else {
           filter.type = 'peaking';
         }
@@ -83,7 +85,6 @@ const eq = (state, action) => {
         filter.frequency.value = initFrequencies[i];
         filters.push(filter);
       }
-      inputGain.connect(outputGain);
       return {
         type: 'EQ',
         filters,
