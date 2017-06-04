@@ -97,6 +97,10 @@ const eq = (state, action) => {
     case EDIT_EFFECT:
       const settings = action.settings;
       const filter = newState.filters[settings.index];
+      if (typeof settings.inputGain !== 'undefined')
+        newState.inputGain.gain.value = settings.inputGain;
+      if (typeof settings.outputGain !== 'undefined')
+        newState.outputGain.gain.value = settings.outputGain;
       if (typeof settings.gain !== 'undefined')
         filter.gain.value = settings.gain;
       if (typeof settings.frequency !== 'undefined')
