@@ -11,9 +11,10 @@ export default class Eq extends React.Component {
     };
     this.onInputGainChange = this.onInputGainChange.bind(this);
     this.onOutputGainChange = this.onOutputGainChange.bind(this);
+    this.onFrequencyChange = this.onFrequencyChange.bind(this);
     this.onGainChange = this.onGainChange.bind(this);
-    this.minFreq = 20;
-    this.maxFreq = 20000;
+    this.minFrequency = 20;
+    this.maxFrequency = 20000;
     this.maxValue = 20;
   }
 
@@ -31,32 +32,45 @@ export default class Eq extends React.Component {
     this.edit({outputGain: value});
   }
 
+  onFrequencyChange(frequency, index) {
+    this.edit({frequency, index});
+  }
+
   onGainChange(gain, index) {
     this.edit({gain, index});
   }
 
   render() {
     const eq = this.props.effect;
-    const interval = this.maxFreq - this.minFreq;
+    const interval = this.maxFrequency - this.minFrequency;
     const percentage = freq => (
-      100 * Math.log10(freq / this.minFreq) / Math.log10(this.maxFreq / this.minFreq)
+      100 * Math.log10(freq / this.minFrequency) / Math.log10(this.maxFrequency / this.minFrequency)
     );
     const controls = eq.filters.map((filter, i) => (
       <Range
         key={i}
-        onChange={value => this.onGainChange(value, i)}
-        max={this.maxValue}
-        min={-this.maxValue}
-        default={0}
-        value={filter.gain.value}
+        onChange={value => this.onFrequencyChange(value, i)}
+        max={this.maxFrequency}
+        min={this.minFrequency}
+        default={eq.initialFrequencies[i]}
+        value={filter.frequency.value}
+        direction="horizontal"
       >
-        <div
-          className="control"
-          style={{
-            left: `${percentage(filter.frequency.value)}%`,
-            top: `${50 - 50 * filter.gain.value / this.maxValue}%`
-          }}
-        ></div>
+        <Range
+          onChange={value => this.onGainChange(value, i)}
+          max={this.maxValue}
+          min={-this.maxValue}
+          default={0}
+          value={filter.gain.value}
+        >
+          <div
+            className="control"
+            style={{
+              left: `${percentage(filter.frequency.value)}%`,
+              top: `${50 - 50 * filter.gain.value / this.maxValue}%`
+            }}
+          ></div>
+        </Range>
       </Range>
     ));
     return (

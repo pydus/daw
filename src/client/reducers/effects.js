@@ -66,14 +66,14 @@ const eq = (state, action) => {
     case ADD_EQ:
       const inputGain = ctx.createGain();
       const outputGain = ctx.createGain();
-      const initFrequencies = [63, 136, 294, 632, 1263, 2936, 6324];
+      const initialFrequencies = [63, 136, 294, 632, 1263, 2936, 6324];
       const filters = [];
-      for (let i = 0; i < initFrequencies.length; i++) {
+      for (let i = 0; i < initialFrequencies.length; i++) {
         const filter = ctx.createBiquadFilter();
         if (i === 0) {
           filter.type = 'lowshelf';
           inputGain.connect(filter);
-        } else if (i === initFrequencies.length - 1) {
+        } else if (i === initialFrequencies.length - 1) {
           filter.type = 'highshelf';
           filter.connect(outputGain);
         } else {
@@ -82,11 +82,12 @@ const eq = (state, action) => {
         if (i > 0) {
           filters[i - 1].connect(filter);
         }
-        filter.frequency.value = initFrequencies[i];
+        filter.frequency.value = initialFrequencies[i];
         filters.push(filter);
       }
       return {
         type: 'EQ',
+        initialFrequencies,
         filters,
         inputGain,
         outputGain,
@@ -95,9 +96,11 @@ const eq = (state, action) => {
       };
     case EDIT_EFFECT:
       const settings = action.settings;
-      if (typeof settings.gain !== 'undefined') {
-        newState.filters[settings.index].gain.value = settings.gain;
-      }
+      const filter = newState.filters[settings.index];
+      if (typeof settings.gain !== 'undefined')
+        filter.gain.value = settings.gain;
+      if (typeof settings.frequency !== 'undefined')
+        filter.frequency.value = settings.frequency;
       return newState;
     default:
       return state;

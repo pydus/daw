@@ -11,6 +11,7 @@ export default class Range extends React.Component {
     this.step = props.step || 0.35;
     this.max = typeof props.max !== undefined ? Number(props.max) : 100;
     this.min = Number(props.min) || 0;
+    this.direction = props.direction || 'vertical';
     this.reset = this.reset.bind(this);
     this.onMouseDown = this.onMouseDown.bind(this);
     this.onMouseMove = this.onMouseMove.bind(this);
@@ -23,15 +24,17 @@ export default class Range extends React.Component {
   }
 
   onMouseMove(e) {
-    const dy = this.state.lastCursor - e.clientY;
+    const horizontal = this.direction === 'horizontal';
+    const cursor = horizontal ? e.clientX : e.clientY;
+    const delta = (horizontal ? -1 : 1) * (this.state.lastCursor - cursor);
     this.setState((prevState) => {
-      const interval = Math.abs(this.min) + Math.abs(this.max);
-      const stepValue = this.step * interval / 100;
-      let value = prevState.value + stepValue * dy;
+      const interval = this.max - this.min;
+      const stepValue = this.step * (horizontal ? prevState.value / 40 : interval / 100);
+      let value = prevState.value + stepValue * delta;
       value = (value > this.max) ? this.max : value;
       value = (value < this.min) ? this.min : value;
       this.props.onChange(value);
-      return {value, lastCursor: e.clientY};
+      return {value, lastCursor: cursor};
     });
   }
 
@@ -44,7 +47,8 @@ export default class Range extends React.Component {
     if (e.altKey) {
       this.reset();
     } else {
-      this.setState({lastCursor: e.clientY});
+      const cursor = this.direction === 'horizontal' ? e.clientX : e.clientY;
+      this.setState({lastCursor: cursor});
       window.addEventListener('mousemove', this.onMouseMove);
       window.addEventListener('mouseup', this.onMouseUp);
     }
