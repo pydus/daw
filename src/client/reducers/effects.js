@@ -68,7 +68,7 @@ const eq = (state, action) => {
       const outputGain = ctx.createGain();
       const analyserIn = ctx.createAnalyser();
       const analyserOut = ctx.createAnalyser();
-      const initialFrequencies = [63, 136, 294, 632, 1263, 2936, 6324];
+      const initialFrequencies = [63, 136, 294, 632, 1363, 2936, 6324];
       const filters = [];
       inputGain.connect(analyserIn);
       for (let i = 0; i < initialFrequencies.length; i++) {
