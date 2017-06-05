@@ -69,7 +69,14 @@ export default class Eq extends React.Component {
               left: `${percentage(filter.frequency.value)}%`,
               top: `${50 - 50 * filter.gain.value / this.maxValue}%`
             }}
-          ></div>
+          >
+            <div className={`text ${filter.gain.value > 15 ? 'low' : ''} ${filter.frequency.value > 13000 ? 'left' : ''} ${filter.frequency.value < 27.5 ? 'right' : ''}`}>
+              {`${filter.gain.value.toFixed(2)} dB`}
+            </div>
+            <div className={`text ${filter.gain.value < -15 ? 'high' : ''} ${filter.frequency.value > 13000 ? 'left' : ''} ${filter.frequency.value < 27.5 ? 'right' : ''}`}>
+              {`${filter.frequency.value.toFixed(2)} Hz`}
+            </div>
+          </div>
         </Range>
       </Range>
     ));

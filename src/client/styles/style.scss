@@ -636,6 +636,7 @@ header {
           $control-diameter: 4px;
           $control-padding: 10px;
           position: absolute;
+          cursor: all-scroll;
           padding: $control-padding;
           margin-top: -($control-padding + $control-diameter / 2);
           margin-left: -($control-padding + $control-diameter / 2);
@@ -646,6 +647,40 @@ header {
             background: #12e6ba;
             width: $control-diameter;
             height: $control-diameter;
+          }
+          .text {
+            display: none;
+          }
+          &:hover, &:active {
+            .text {
+              display: block;
+              text-align: center;
+              position: absolute;
+              font-size: 10px;
+              top: -14px;
+              left: -20px;
+              right: -20px;
+              &:last-of-type, &.low {
+                top: auto;
+                bottom: -14px;
+              }
+              &.low {
+                bottom: -24px;
+              }
+              &.high {
+                bottom: auto;
+                top: -24px;
+              }
+              &.left {
+                text-align: right;
+                margin-left: -60px;
+              }
+              &.right {
+                text-align: left;
+                margin-left: 36px;
+                right: -40px;
+              }
+            }
           }
         }
       }
