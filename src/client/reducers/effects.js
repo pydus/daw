@@ -66,13 +66,16 @@ const eq = (state, action) => {
     case ADD_EQ:
       const inputGain = ctx.createGain();
       const outputGain = ctx.createGain();
+      const analyserIn = ctx.createAnalyser();
+      const analyserOut = ctx.createAnalyser();
       const initialFrequencies = [63, 136, 294, 632, 1263, 2936, 6324];
       const filters = [];
+      inputGain.connect(analyserIn);
       for (let i = 0; i < initialFrequencies.length; i++) {
         const filter = ctx.createBiquadFilter();
         if (i === 0) {
           filter.type = 'lowshelf';
-          inputGain.connect(filter);
+          analyserIn.connect(filter);
         } else if (i === initialFrequencies.length - 1) {
           filter.type = 'highshelf';
           filter.connect(outputGain);
@@ -85,14 +88,17 @@ const eq = (state, action) => {
         filter.frequency.value = initialFrequencies[i];
         filters.push(filter);
       }
+      outputGain.connect(analyserOut);
       return {
         type: 'EQ',
         initialFrequencies,
         filters,
         inputGain,
         outputGain,
+        analyserIn,
+        analyserOut,
         input: inputGain,
-        output: outputGain
+        output: analyserOut
       };
     case EDIT_EFFECT:
       const settings = action.settings;
