@@ -636,7 +636,6 @@ header {
           $control-diameter: 4px;
           $control-padding: 10px;
           position: absolute;
-          cursor: all-scroll;
           padding: $control-padding;
           margin-top: -($control-padding + $control-diameter / 2);
           margin-left: -($control-padding + $control-diameter / 2);
