@@ -18,6 +18,10 @@ export default class Eq extends React.Component {
     this.maxValue = 20;
   }
 
+  usesGain(filter) {
+    return ['highshelf', 'lowshelf', 'peaking'].indexOf(filter.type) !== -1;
+  }
+
   edit(settings) {
     this.props.onEdit(settings);
   }
@@ -37,7 +41,9 @@ export default class Eq extends React.Component {
   }
 
   onGainChange(gain, index) {
-    this.edit({gain, index});
+    if (this.usesGain(this.props.effect.filters[index])) {
+      this.edit({gain, index});
+    }
   }
 
   render() {
@@ -67,7 +73,7 @@ export default class Eq extends React.Component {
             className="control"
             style={{
               left: `${percentage(filter.frequency.value)}%`,
-              top: `${50 - 50 * filter.gain.value / this.maxValue}%`
+              top: `${this.usesGain(filter) ? 50 - 50 * filter.gain.value / this.maxValue : 50}%`
             }}
           >
             <div className={`text ${filter.gain.value > 15 ? 'low' : ''} ${filter.frequency.value > 13000 ? 'left' : ''} ${filter.frequency.value < 27.5 ? 'right' : ''}`}>
