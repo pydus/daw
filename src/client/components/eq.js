@@ -18,7 +18,7 @@ export default class Eq extends React.Component {
     this.minFrequency = 20;
     this.maxFrequency = 20000;
     this.maxValue = 20;
-    this.QStepPercentage = 10;
+    this.QStepPercentage = 12;
   }
 
   componentDidMount() {
@@ -80,7 +80,7 @@ export default class Eq extends React.Component {
   onWheel(e, index) {
     e.preventDefault();
     const sign = Math.abs(e.deltaY) / (e.deltaY || 1);
-    const Q = this.props.effect.filters[index].Q.value * (1 - sign * this.QStepPercentage / 100);
+    const Q = this.props.effect.filters[index].Q.value * (1 + sign * this.QStepPercentage / 100);
     this.edit({Q, index});
     this.drawCurve();
   }
