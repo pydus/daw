@@ -104,15 +104,12 @@ export default class Eq extends React.Component {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.beginPath();
 
-    for (let x = 0; x < canvas.width; x++) {
-      const frequency = frequencyArray[x];
+    frequencyArray.forEach((frequency, x) => {
       const gainValues = magResponses.map(magResponse => 20 * Math.log10(magResponse[x]));
       const totalGain = gainValues.reduce((a, b) => a + b);
       const y = canvas.height * (0.5 - 0.5 * totalGain / this.maxValue);
-      const ratio = this.getLogFrequencyRatio(frequency);
-      const x = canvas.width * ratio;
       ctx.lineTo(x, y);
-    }
+    });
 
     ctx.stroke();
   }
