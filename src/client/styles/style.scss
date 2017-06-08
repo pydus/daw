@@ -632,6 +632,12 @@ header {
         right: 0;
         bottom: 0;
         background: $main;
+        canvas {
+          position: absolute;
+          left: 0;
+          height: 100%;
+          width: 100%;
+        }
         .control {
           $control-diameter: 4px;
           $control-padding: 10px;

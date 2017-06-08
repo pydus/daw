@@ -1,6 +1,7 @@
 'use strict';
 import React from 'react';
 import Range from './range';
+import {LIGHT_GRAY} from '../settings';
 
 export default class Eq extends React.Component {
   constructor(props) {
@@ -13,13 +14,40 @@ export default class Eq extends React.Component {
     this.onOutputGainChange = this.onOutputGainChange.bind(this);
     this.onFrequencyChange = this.onFrequencyChange.bind(this);
     this.onGainChange = this.onGainChange.bind(this);
+    this.onWheel = this.onWheel.bind(this);
     this.minFrequency = 20;
     this.maxFrequency = 20000;
     this.maxValue = 20;
+    this.QStepPercentage = 10;
+  }
+
+  componentDidMount() {
+    this.drawCurve();
   }
 
   usesGain(filter) {
     return ['highshelf', 'lowshelf', 'peaking'].indexOf(filter.type) !== -1;
+  }
+
+  getBandwidth(filter) {
+    return 2 / Math.log(2) * Math.asinh(1 / (2 * filter.Q.value));
+  }
+
+  getLogFrequencyRatio(frequency) {
+    return (
+      Math.log10(frequency / this.minFrequency) /
+      Math.log10(this.maxFrequency / this.minFrequency)
+    );
+  }
+
+  getFrequencyAtX(x) {
+    return (
+      this.minFrequency *
+      Math.pow(
+        10,
+        x / this.canvas.width * Math.log10(this.maxFrequency / this.minFrequency)
+      )
+    );
   }
 
   edit(settings) {
@@ -38,20 +66,60 @@ export default class Eq extends React.Component {
 
   onFrequencyChange(frequency, index) {
     this.edit({frequency, index});
+    this.drawCurve();
   }
 
   onGainChange(gain, index) {
     if (this.usesGain(this.props.effect.filters[index])) {
       this.edit({gain, index});
+      this.drawCurve();
     }
+  }
+
+  onWheel(e, index) {
+    e.preventDefault();
+    const sign = Math.abs(e.deltaY) / (e.deltaY || 1);
+    const Q = this.props.effect.filters[index].Q.value * (1 - sign * this.QStepPercentage / 100);
+    this.edit({Q, index});
+    this.drawCurve();
+  }
+
+  drawCurve() {
+    const canvas = this.canvas;
+    const ctx = canvas.getContext('2d');
+    const length = Math.floor(canvas.width);
+    const frequencyArray = new Float32Array(length).map(
+      (el, x) => this.getFrequencyAtX(x)
+    );
+    const filters = this.props.effect.filters;
+    const magResponses = filters.map(filter => {
+      const magResponse = new Float32Array(length);
+      const phaseResponse = new Float32Array(length);
+      filter.getFrequencyResponse(frequencyArray, magResponse, phaseResponse);
+      return magResponse;
+    });
+
+    ctx.lineWidth = 1.5;
+    ctx.strokeStyle = LIGHT_GRAY;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.beginPath();
+
+    for (let x = 0; x < canvas.width; x++) {
+      const frequency = frequencyArray[x];
+      const gainValues = magResponses.map(magResponse => 20 * Math.log10(magResponse[x]));
+      const totalGain = gainValues.reduce((a, b) => a + b);
+      const y = canvas.height * (0.5 - 0.5 * totalGain / this.maxValue);
+      const ratio = this.getLogFrequencyRatio(frequency);
+      const x = canvas.width * ratio;
+      ctx.lineTo(x, y);
+    }
+
+    ctx.stroke();
   }
 
   render() {
     const eq = this.props.effect;
     const interval = this.maxFrequency - this.minFrequency;
-    const percentage = freq => (
-      100 * Math.log10(freq / this.minFrequency) / Math.log10(this.maxFrequency / this.minFrequency)
-    );
     const controls = eq.filters.map((filter, i) => (
       <Range
         key={i}
@@ -71,15 +139,16 @@ export default class Eq extends React.Component {
         >
           <div
             className="control"
+            onWheel={e => this.onWheel(e, i)}
             style={{
-              left: `${percentage(filter.frequency.value)}%`,
+              left: `${100 * this.getLogFrequencyRatio(filter.frequency.value)}%`,
               top: `${this.usesGain(filter) ? 50 - 50 * filter.gain.value / this.maxValue : 50}%`
             }}
           >
-            <div className={`text ${filter.gain.value > 15 ? 'low' : ''} ${filter.frequency.value > 13000 ? 'left' : ''} ${filter.frequency.value < 27.5 ? 'right' : ''}`}>
+            <div className={`text ${filter.gain.value > 15 ? 'low' : ''} ${filter.frequency.value > 13000 ? 'left' : ''} ${filter.frequency.value < 28 ? 'right' : ''}`}>
               {`${filter.gain.value.toFixed(2)} dB`}
             </div>
-            <div className={`text ${filter.gain.value < -15 ? 'high' : ''} ${filter.frequency.value > 13000 ? 'left' : ''} ${filter.frequency.value < 27.5 ? 'right' : ''}`}>
+            <div className={`text ${filter.gain.value < -15 ? 'high' : ''} ${filter.frequency.value > 13000 ? 'left' : ''} ${filter.frequency.value < 28 ? 'right' : ''}`}>
               {`${filter.frequency.value.toFixed(2)} Hz`}
             </div>
           </div>
@@ -120,6 +189,7 @@ export default class Eq extends React.Component {
         </Range>
         <div className="content">
           <div className="eq-display">
+            <canvas width="396" height="183" ref={canvas => this.canvas = canvas}/>
             {controls}
           </div>
         </div>
