@@ -116,7 +116,6 @@ export default class Eq extends React.Component {
 
   render() {
     const eq = this.props.effect;
-    const interval = this.maxFrequency - this.minFrequency;
     const controls = eq.filters.map((filter, i) => (
       <Range
         key={i}
