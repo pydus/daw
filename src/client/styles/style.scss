@@ -495,7 +495,7 @@ header {
   }
   .effect {
     width: 396px;
-    &:hover {
+    &:hover, &:active {
       padding: 0 10px;
       margin-right: 5px;
     }
