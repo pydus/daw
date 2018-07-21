@@ -214,6 +214,9 @@ export default class Eq extends React.Component {
           </div>
         </Range>
         <div className="content">
+          <div className="panel">
+            <div className="knob"></div>
+          </div>
           <div className="eq-display">
             <canvas width="396" height="183" ref={gridCanvas => this.gridCanvas = gridCanvas}/>
             <canvas width="396" height="183" ref={canvas => this.canvas = canvas}/>
