@@ -1,0 +1,210 @@
+.modules {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  margin-top: 100px;
+  .wrapper {
+    &.hidden {
+      visibility: hidden;
+      margin-top: 1px;
+      overflow: hidden;
+      height: 0;
+    }
+    canvas {
+      display: none;
+    }
+    &.open {
+      position: relative;
+      width: 100%;
+      .playlist {
+        background: $third;
+        box-shadow: 0 0 8px $shadow-color;
+        position: absolute;
+        border-radius: 4px;
+        margin: 12px;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        overflow: hidden;
+        .wrapper {
+          position: absolute;
+          height: 100%;
+          left: 192px;
+          right: 0;
+          canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            &:nth-of-type(2) {
+              position: absolute;
+              top: 0;
+            }
+          }
+          .scroll {
+            position: absolute;
+            overflow-x: scroll;
+            overflow-y: hidden;
+            bottom: 0;
+            width: 100%;
+            .widener {
+              height: 1px;
+            }
+            &::-webkit-scrollbar {
+              height: 16px;
+            }
+            &::-webkit-scrollbar-thumb {
+              background-color: $secondary;
+              border-radius: 2px;
+            }
+          }
+        }
+      }
+      .module {
+        float: left;
+      }
+    }
+  }
+  .module, .create, .effect {
+    cursor: default;
+    margin: 12px;
+    text-align: center;
+    background: $third;
+    box-shadow: 0 0 8px $shadow-color;
+    border-radius: 4px;
+    padding: 0 3px;
+    position: relative;
+    h1, input, input:focus {
+      max-width: 160px;
+      overflow: hidden;
+      white-space: nowrap;
+      font-weight: bold;
+      color: #fff;
+      font-size: .9em;
+      margin: 0 auto 10px auto;
+      min-height: 22px;
+    }
+    input {
+      text-align: center;
+      background: none;
+      border: none;
+      padding: 0;
+    }
+    .volume-wrapper {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 20px;
+      bottom: 0;
+      .volume {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        background: #12e6ba;
+        height: 100%;
+        border-radius: 4px;
+        z-index: 0;
+      }
+    }
+    .tags {
+      position: absolute;
+      top: 12px;
+      right: 0;
+      padding: 4px 0 4px 20px;
+      .tag {
+        margin: 2px 0;
+        height: 12px;
+        width: 3px;
+        border-radius: 1px;
+        background: #fff;
+        &:hover {
+          border-right: 2px solid #fff;
+          margin-right: -2px;
+        }
+      }
+      &:hover {
+        margin-right: -14px;
+        .tag {
+          width: 18px;
+        }
+      }
+    }
+    @import 'square';
+    &:hover:not(.create), &:active:not(.create) {
+      z-index: 3;
+      padding-left: 10px;
+      margin-left:  5px;
+      .volume {
+        border-radius: 2px 2px 4px 4px;
+      }
+    }
+  }
+  @import 'effect';
+  .create {
+    background: $main;
+    font-size: 3em;
+    color: $main;
+    &:active {
+      transform: scale(0.98);
+    }
+    &:hover {
+    }
+    &::before {
+      content: '+';
+      background: $main;
+      color: #12e6ba;
+      box-sizing: border-box;
+      display: block;
+      position: relative;
+      z-index: 1;
+      border-radius: 4px;
+      height: 183px;
+      width: 183px;
+      padding-top: 53px;
+    }
+  }
+  &.playing {
+    .wrapper {
+      .playlist {
+        background: $main;
+        .wrapper {
+          .scroll {
+            &::-webkit-scrollbar-thumb {
+              background-color: $third;
+            }
+          }
+        }
+      }
+      .module {
+        .square {
+          background: $main;
+          .effects {
+            .slot {
+              background: none;
+            }
+          }
+          .circle {
+            background: $background;
+          }
+        }
+        .panel {
+          background: none;
+          > div {
+            &:hover, &:active {
+              background: none;
+            }
+            &.pressed {
+              background: #151d31;
+            }
+          }
+        }
+      }
+    }
+    .effect {
+      .content {
+        background: $main;
+      }
+    }
+  }
+}
