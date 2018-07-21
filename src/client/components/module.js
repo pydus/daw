@@ -4,11 +4,9 @@ import EffectSection from './effect-section';
 import Playlist from './playlist';
 import Range from './range';
 import Meter from './meter';
+import Panel from './panel';
 import {
   setVolume,
-  muteModule,
-  soloModule,
-  addClip,
   unroute,
   renameModule
 } from '../actions';
@@ -23,7 +21,6 @@ export default class Module extends React.Component {
       volumePercentage: 100
     };
     this.toggle = this.toggle.bind(this);
-    this.onSourceChange = this.onSourceChange.bind(this);
     this.unroute = this.unroute.bind(this);
     this.onMouseDown = this.onMouseDown.bind(this);
     this.onMouseUp = this.onMouseUp.bind(this);
@@ -35,8 +32,6 @@ export default class Module extends React.Component {
     this.open = this.open.bind(this);
     this.openEffect = this.openEffect.bind(this);
     this.onVolumeChange = this.onVolumeChange.bind(this);
-    this.solo = this.solo.bind(this);
-    this.mute = this.mute.bind(this);
     this.onViewChange = this.onViewChange.bind(this);
   }
 
@@ -54,14 +49,6 @@ export default class Module extends React.Component {
         this.open();
       }
     }
-  }
-
-  solo() {
-    this.props.dispatch(soloModule(this.props.module.id));
-  }
-
-  mute() {
-    this.props.dispatch(muteModule(this.props.module.id));
   }
 
   onVolumeChange(value) {
@@ -83,13 +70,6 @@ export default class Module extends React.Component {
 
   openEffect() {
     this.props.onOpenEffect(this.wrapper, this.props.module.id);
-  }
-
-  onSourceChange(e) {
-    const file = e.target.files[0];
-    if (file) {
-      this.props.dispatch(addClip(this.props.module.id, file));
-    }
   }
 
   unroute(source, destination) {
@@ -134,10 +114,7 @@ export default class Module extends React.Component {
   }
 
   render() {
-    const isMaster = this.props.module.id === 0;
-    const isDestination = this.props.module.sources.length > 0;
     const circleStyle = {background: this.props.module.color};
-    const panelTagStyle = isDestination ? {background: this.props.module.color} : {};
     const tags = this.props.destinationModules.map(el => (
       <div
         key={el.id}
@@ -146,19 +123,6 @@ export default class Module extends React.Component {
         style={{background: el.color}}
       ></div>
     ));
-    const clipIcon = (
-      <svg viewBox="0 0 120 120">
-        <line x1="0" x2="0" y1="55" y2="65" strokeWidth="5" strokeLinecap="round"/>
-        <line x1="15" x2="15" y1="25" y2="95" strokeWidth="5" strokeLinecap="round"/>
-        <line x1="30" x2="30" y1="35" y2="85" strokeWidth="5" strokeLinecap="round"/>
-        <line x1="45" x2="45" y1="25" y2="95" strokeWidth="5" strokeLinecap="round"/>
-        <line x1="60" x2="60" y1="40" y2="80" strokeWidth="5" strokeLinecap="round"/>
-        <line x1="75" x2="75" y1="25" y2="95" strokeWidth="5" strokeLinecap="round"/>
-        <line x1="90" x2="90" y1="35" y2="85" strokeWidth="5" strokeLinecap="round"/>
-        <line x1="105" x2="105" y1="25" y2="95" strokeWidth="5" strokeLinecap="round"/>
-        <line x1="120" x2="120" y1="55" y2="65" strokeWidth="5" strokeLinecap="round"/>
-      </svg>
-    );
 
     return (
       <div
@@ -233,37 +197,10 @@ export default class Module extends React.Component {
                   effects={this.props.module.effects}
                   onOpen={this.openEffect}
                 />
-                <div className="panel">
-                  <div
-                    title="Solo"
-                    onClick={this.solo}
-                    className={this.props.module.isSoloed ? 'pressed' : ''}
-                  >
-                  S
-                  </div>
-                  <div>
-                    {this.props.module.clips.length === 0 &&
-                      <div
-                        className={isMaster || isDestination ? 'tag' : 'tag none'}
-                        style={panelTagStyle}
-                      ></div>
-                    }
-                    {this.props.module.clips.length > 0 && clipIcon
-                    }
-                    {!isMaster && !isDestination &&
-                      <label>
-                        <input type="file" accept="audio/*" onChange={this.onSourceChange}/>
-                      </label>
-                    }
-                  </div>
-                  <div
-                    title="Mute"
-                    onClick={this.mute}
-                    className={this.props.module.isMuted ? 'pressed' : ''}
-                  >
-                  M
-                  </div>
-                </div>
+                <Panel
+                  module={this.props.module}
+                  dispatch={this.props.dispatch}
+                />
               </div>
             }
             {this.props.isHighlighted &&
