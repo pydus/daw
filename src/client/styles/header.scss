@@ -1,0 +1,88 @@
+header {
+  font-size: 14px;
+  font-weight: bold;
+  padding: inherit;
+  z-index: 4;
+  background: $background;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  max-width: inherit;
+  .main {
+    overflow: hidden;
+    padding: 12px;
+    margin-bottom: 10px;
+    .left {
+      float: left;
+    }
+    .center {
+      position: absolute;
+      left: 0;
+      right: 0;
+      margin: auto; 
+      .play {
+        cursor: pointer;
+        display: block;
+        margin: auto;
+        width: 16px;
+        padding: 6px;
+      }
+    }
+    .right {
+      position: relative;
+      z-index: 1;
+      float: right;
+      .button {
+        text-transform: uppercase;
+        height: 17px;
+        cursor:  pointer;
+        background: $dark-green;
+        border-radius: 2px;
+        padding: 5px 8px 6px 8px;
+        box-shadow: 0 0 8px $shadow-color;
+        text-shadow: 0 0 8px #a0a0a0;
+        &:active {
+          transform: scale(0.97);
+        }
+      }
+    }
+  }
+  .song-position {
+    padding: inherit;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: $song-position-height;
+    .bar {
+      background: $secondary;
+      box-shadow: 0 0 8px $shadow-color;
+      position: relative;
+      border-radius: 2px;
+      overflow: hidden;
+      &, .position {
+        height: $song-position-height;
+      }
+      .position {
+        border-radius: 2px;
+        background: $light-grey;
+        background: $reverse-gradient;
+        width: 400px;
+      }
+    }
+    &:hover {
+      .bar, .position {
+        height: $song-position-height + 4px;
+      }
+      .position {
+        background: $lighter-grey;
+        background: $reverse-gradient;
+      }
+      .bar {
+        top: -2px;
+      }
+    }
+  }
+}
