@@ -1,6 +1,7 @@
 'use strict';
 import React from 'react';
 import Menu from './menu';
+import EffectIcon from './effect-icon';
 
 export default class Slot extends React.Component {
   constructor(props) {
@@ -40,11 +41,11 @@ export default class Slot extends React.Component {
   }
 
   render() {
-    const slotStyle = this.props.effect ? {background: '#12e6ba'} : {};
-
     return (
       <div onMouseLeave={this.handleMouseLeave}>
-        <div onClick={this.handleClick} className="slot" style={slotStyle}></div>
+        <div onClick={this.handleClick} className="slot">
+          {this.props.effect && <EffectIcon type={this.props.effect.type}/>}
+        </div>
         {this.state.menu && <Menu onSelect={this.onSelect}/>}
       </div>
     );
