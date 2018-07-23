@@ -146,41 +146,51 @@ export default class Eq extends React.Component {
 
   render() {
     const eq = this.props.effect;
-    const controls = eq.filters.map((filter, i) => (
-      <Range
-        key={i}
-        onChange={value => this.onFrequencyChange(value, i)}
-        max={this.maxFrequency}
-        min={this.minFrequency}
-        default={eq.initialFrequencies[i]}
-        value={filter.frequency.value}
-        direction="horizontal"
-      >
+    const leftMargin = 28;
+    const rightMargin = 13000;
+    const topMargin = 15;
+    const bottomMargin = -15;
+    const controls = eq.filters.map((filter, i) => {
+      const topGuard = filter.gain.value > topMargin ? 'low' : '';
+      const rightGuard = filter.frequency.value > rightMargin ? 'left' : '';
+      const leftGuard = filter.frequency.value < leftMargin ? 'right' : '';
+      const bottomGuard = filter.gain.value < bottomMargin ? 'high' : '';
+      return (
         <Range
-          onChange={value => this.onGainChange(value, i)}
-          max={this.maxValue}
-          min={-this.maxValue}
-          default={0}
-          value={filter.gain.value}
+          key={i}
+          onChange={value => this.onFrequencyChange(value, i)}
+          max={this.maxFrequency}
+          min={this.minFrequency}
+          default={eq.initialFrequencies[i]}
+          value={filter.frequency.value}
+          direction="horizontal"
         >
-          <div
-            className="control"
-            onWheel={e => this.onWheel(e, i)}
-            style={{
-              left: `${100 * this.getLogFrequencyRatio(filter.frequency.value)}%`,
-              top: `${this.usesGain(filter) ? 50 - 50 * filter.gain.value / this.maxValue : 50}%`
-            }}
+          <Range
+            onChange={value => this.onGainChange(value, i)}
+            max={this.maxValue}
+            min={-this.maxValue}
+            default={0}
+            value={filter.gain.value}
           >
-            <div className={`text ${filter.gain.value > 15 ? 'low' : ''} ${filter.frequency.value > 13000 ? 'left' : ''} ${filter.frequency.value < 28 ? 'right' : ''}`}>
-              {`${filter.gain.value.toFixed(2)} dB`}
+            <div
+              className="control"
+              onWheel={e => this.onWheel(e, i)}
+              style={{
+                left: `${100 * this.getLogFrequencyRatio(filter.frequency.value)}%`,
+                top: `${this.usesGain(filter) ? 50 - 50 * filter.gain.value / this.maxValue : 50}%`
+              }}
+            >
+              <div className={`text ${topGuard} ${rightGuard} ${leftGuard}`}>
+                {`${filter.gain.value.toFixed(2)} dB`}
+              </div>
+              <div className={`text ${bottomGuard} ${rightGuard} ${leftGuard}`}>
+                {`${filter.frequency.value.toFixed(2)} Hz`}
+              </div>
             </div>
-            <div className={`text ${filter.gain.value < -15 ? 'high' : ''} ${filter.frequency.value > 13000 ? 'left' : ''} ${filter.frequency.value < 28 ? 'right' : ''}`}>
-              {`${filter.frequency.value.toFixed(2)} Hz`}
-            </div>
-          </div>
+          </Range>
         </Range>
-      </Range>
-    ));
+      );
+    });
     return (
       <div>
         <Range
