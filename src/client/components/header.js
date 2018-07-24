@@ -1,42 +1,30 @@
 'use strict';
 import React from 'react';
 import {connect} from 'react-redux';
-import {setPosition, setPlaying, savePosition, cut} from '../actions';
+import {setPosition, savePosition, cut} from '../actions';
+import PlayButton from './play-button';
 
 export default connect((state) => ({
   song: state.song
 }))(class Header extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {rect: null, position: 0, isHoldingSpace: false};
+    this.state = {rect: null, position: 0};
     this.onMouseMove = this.onMouseMove.bind(this);
     this.onMouseDown = this.onMouseDown.bind(this);
     this.onMouseUp = this.onMouseUp.bind(this);
-    this.togglePlay = this.togglePlay.bind(this);
     this.onKeyDown = this.onKeyDown.bind(this);
-    this.onKeyUp = this.onKeyUp.bind(this);
   }
 
   componentDidMount() {
     window.addEventListener('mouseup', this.onMouseUp);
     window.addEventListener('mousemove', this.onMouseMove);
     window.addEventListener('keydown', this.onKeyDown);
-    window.addEventListener('keyup', this.onKeyUp);
   }
 
   onKeyDown(e) {
-    if (e.key === ' ' && !this.state.isHoldingSpace) {
-      e.preventDefault();
-      this.togglePlay();
-      this.setState({isHoldingSpace: true});
-    } else if (e.key === 'Delete') {
+    if (e.key === 'Delete') {
       this.props.dispatch(cut(this.props.song.position));
-    }
-  }
-
-  onKeyUp(e) {
-    if (e.key === ' ') {
-      this.setState({isHoldingSpace: false});
     }
   }
 
@@ -62,10 +50,6 @@ export default connect((state) => ({
     this.setState({rect: null});
   }
 
-  togglePlay() {
-    this.props.dispatch(setPlaying(!this.props.song.isPlaying));
-  }
-
   render() {
     const width = this.props.song.position / this.props.song.beats * 100 + '%';
 
@@ -76,10 +60,7 @@ export default connect((state) => ({
             <div className="button">RENDER</div>
           </div>
           <div className="center">
-            <svg viewBox="0 0 200 200" className="play" onClick={this.togglePlay}>
-              {!this.props.song.isPlaying && <polygon points="0,0 0,200 173.2,100" fill="#fff"></polygon>}
-              {this.props.song.isPlaying && <polygon points="0,0 0,200 200,200 200,0" fill="#fff"></polygon>}
-            </svg>
+            <PlayButton controlKey=" "/>
           </div>
         </div>
         <div className="song-position">
