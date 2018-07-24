@@ -98,7 +98,8 @@ export default class Compressor extends React.Component {
               default={defaultCompressor.ratio}
               value={compressor.ratio.value}
               min="1"
-              max="20" onChange={this.onRatioChange}
+              max="20"
+              onChange={this.onRatioChange}
             />
             <Knob
               label="Knee"
