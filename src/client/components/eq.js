@@ -1,6 +1,7 @@
 'use strict';
 import React from 'react';
 import Range from './range';
+import EqPanel from './eq-panel';
 import {LIGHT_GRAY} from '../settings';
 
 export default class Eq extends React.Component {
@@ -224,9 +225,15 @@ export default class Eq extends React.Component {
           </div>
         </Range>
         <div className="content">
-          <div className="panel">
-            <div className="knob"></div>
-          </div>
+          <EqPanel
+            filters={eq.filters}
+            initialFrequencies={eq.initialFrequencies}
+            onFrequencyChange={this.onFrequencyChange}
+            onGainChange={this.onGainChange}
+            maxFrequency={this.maxFrequency}
+            minFrequency={this.minFrequency}
+            maxValue={this.maxValue}
+          />
           <div className="eq-display">
             <canvas width="396" height="183" ref={gridCanvas => this.gridCanvas = gridCanvas}/>
             <canvas width="396" height="183" ref={canvas => this.canvas = canvas}/>
