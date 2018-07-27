@@ -51,11 +51,15 @@ export default connect((state) => ({
   }
 
   render() {
+    const {tempo} = this.props.song;
     const width = this.props.song.position / this.props.song.beats * 100 + '%';
 
     return (
       <header>
         <div className="main">
+          <div className="left">
+            <div className="tempo">{tempo}</div>
+          </div>
           <div className="right">
             <div className="button">RENDER</div>
           </div>

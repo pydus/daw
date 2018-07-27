@@ -16,6 +16,9 @@ header {
     margin-bottom: 10px;
     .left {
       float: left;
+      > div {
+        padding: 6px;
+      }
     }
     .center {
       position: absolute;
