@@ -3,7 +3,7 @@ import React from 'react';
 import Range from './range';
 import EqPanel from './eq-panel';
 import Grid from './grid';
-import {LIGHT_GRAY} from '../settings';
+import Curve from './curve';
 
 export default class Eq extends React.Component {
   constructor(props) {
@@ -24,10 +24,6 @@ export default class Eq extends React.Component {
     this.QStepPercentage = 12;
   }
 
-  componentDidMount() {
-    this.drawCurve();
-  }
-
   usesGain(filter) {
     return ['highshelf', 'lowshelf', 'peaking'].indexOf(filter.type) !== -1;
   }
@@ -40,16 +36,6 @@ export default class Eq extends React.Component {
     return (
       Math.log10(frequency / this.minFrequency) /
       Math.log10(this.maxFrequency / this.minFrequency)
-    );
-  }
-
-  getFrequencyAtX(x) {
-    return (
-      this.minFrequency *
-      Math.pow(
-        10,
-        x / this.canvas.width * Math.log10(this.maxFrequency / this.minFrequency)
-      )
     );
   }
 
@@ -69,13 +55,12 @@ export default class Eq extends React.Component {
 
   onFrequencyChange(frequency, index) {
     this.edit({frequency, index});
-    this.drawCurve();
   }
 
   onGainChange(gain, index) {
     if (this.usesGain(this.props.effect.filters[index])) {
       this.edit({gain, index});
-      this.drawCurve();
+
     }
   }
 
@@ -84,37 +69,6 @@ export default class Eq extends React.Component {
     const sign = Math.abs(e.deltaY) / (e.deltaY || 1);
     const Q = this.props.effect.filters[index].Q.value * (1 + sign * this.QStepPercentage / 100);
     this.edit({Q, index});
-    this.drawCurve();
-  }
-
-  drawCurve() {
-    const canvas = this.canvas;
-    const ctx = canvas.getContext('2d');
-    const length = Math.floor(canvas.width);
-    const frequencyArray = new Float32Array(length).map(
-      (el, x) => this.getFrequencyAtX(x)
-    );
-    const filters = this.props.effect.filters;
-    const magResponses = filters.map(filter => {
-      const magResponse = new Float32Array(length);
-      const phaseResponse = new Float32Array(length);
-      filter.getFrequencyResponse(frequencyArray, magResponse, phaseResponse);
-      return magResponse;
-    });
-
-    ctx.lineWidth = 1.5;
-    ctx.strokeStyle = LIGHT_GRAY;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.beginPath();
-
-    frequencyArray.forEach((frequency, x) => {
-      const gainValues = magResponses.map(magResponse => 20 * Math.log10(magResponse[x]));
-      const totalGain = gainValues.reduce((a, b) => a + b);
-      const y = canvas.height * (0.5 - 0.5 * totalGain / this.maxValue);
-      ctx.lineTo(x, y);
-    });
-
-    ctx.stroke();
   }
 
   render() {
@@ -208,7 +162,14 @@ export default class Eq extends React.Component {
           />
           <div className="eq-display">
             <Grid width="396" height="183" getLogFrequencyRatio={this.getLogFrequencyRatio}/>
-            <canvas width="396" height="183" ref={canvas => this.canvas = canvas}/>
+            <Curve
+              width="396"
+              height="183"
+              filters={this.props.effect.filters}
+              minFrequency={this.minFrequency}
+              maxFrequency={this.maxFrequency}
+              maxValue={this.maxValue}
+            />
             {controls}
           </div>
         </div>
