@@ -2,6 +2,7 @@
 import React from 'react';
 import Range from './range';
 import EqPanel from './eq-panel';
+import Grid from './grid';
 import {LIGHT_GRAY} from '../settings';
 
 export default class Eq extends React.Component {
@@ -23,7 +24,6 @@ export default class Eq extends React.Component {
   }
 
   componentDidMount() {
-    this.drawGrid();
     this.drawCurve();
   }
 
@@ -112,35 +112,6 @@ export default class Eq extends React.Component {
       const y = canvas.height * (0.5 - 0.5 * totalGain / this.maxValue);
       ctx.lineTo(x, y);
     });
-
-    ctx.stroke();
-  }
-
-  drawGrid() {
-    const gridCanvas = this.gridCanvas;
-    const ctx = gridCanvas.getContext('2d');
-    ctx.lineWidth = 1;
-    ctx.strokeStyle = '#1e2e4d';
-    ctx.beginPath();
-
-    for (let i = 10; i < 10000; i *= 10) {
-      for (let j = 1; j < 10; j++) {
-        const frequency = i * (j + 1);
-        const ratio = this.getLogFrequencyRatio(frequency);
-        const x = gridCanvas.width * ratio;
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, gridCanvas.height);
-      }
-    }
-
-    const drawHorizontalLine = y => {
-      ctx.moveTo(0, y);
-      ctx.lineTo(gridCanvas.width, y);
-    };
-
-    for (let i = 0; i < 7; i++) {
-      drawHorizontalLine((i + 1) * gridCanvas.height / 8);
-    }
 
     ctx.stroke();
   }
@@ -235,7 +206,7 @@ export default class Eq extends React.Component {
             maxValue={this.maxValue}
           />
           <div className="eq-display">
-            <canvas width="396" height="183" ref={gridCanvas => this.gridCanvas = gridCanvas}/>
+            <Grid width="396" height="183" minFrequency={this.minFrequency} maxFrequency={this.maxFrequency}/>
             <canvas width="396" height="183" ref={canvas => this.canvas = canvas}/>
             {controls}
           </div>
