@@ -9,13 +9,6 @@ export default class Grid extends Component {
     this.draw();
   }
 
-  getLogFrequencyRatio(frequency) {
-    return (
-      Math.log10(frequency / this.props.minFrequency) /
-      Math.log10(this.props.maxFrequency / this.props.minFrequency)
-    );
-  }
-
   draw() {
     const canvas = this.canvas;
     const ctx = canvas.getContext('2d');
@@ -26,7 +19,7 @@ export default class Grid extends Component {
     for (let i = 10; i < 10000; i *= 10) {
       for (let j = 1; j < 10; j++) {
         const frequency = i * (j + 1);
-        const ratio = this.getLogFrequencyRatio(frequency);
+        const ratio = this.props.getLogFrequencyRatio(frequency);
         const x = canvas.width * ratio;
         ctx.moveTo(x, 0);
         ctx.lineTo(x, canvas.height);

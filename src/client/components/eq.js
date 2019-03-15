@@ -17,6 +17,7 @@ export default class Eq extends React.Component {
     this.onFrequencyChange = this.onFrequencyChange.bind(this);
     this.onGainChange = this.onGainChange.bind(this);
     this.onWheel = this.onWheel.bind(this);
+    this.getLogFrequencyRatio = this.getLogFrequencyRatio.bind(this);
     this.minFrequency = 20;
     this.maxFrequency = 20000;
     this.maxValue = 20;
@@ -206,7 +207,7 @@ export default class Eq extends React.Component {
             maxValue={this.maxValue}
           />
           <div className="eq-display">
-            <Grid width="396" height="183" minFrequency={this.minFrequency} maxFrequency={this.maxFrequency}/>
+            <Grid width="396" height="183" getLogFrequencyRatio={this.getLogFrequencyRatio}/>
             <canvas width="396" height="183" ref={canvas => this.canvas = canvas}/>
             {controls}
           </div>
