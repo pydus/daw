@@ -129,14 +129,14 @@ export default connect((state) => ({
   }
 
   sortClosedModules() {
-    const closedModules = this.props.modules.filter(el => (
-      !this.props.modulesById[el].isOpen && this.props.modulesById[el].openEffect === -1
+    const closedModules = this.props.modules.filter(id => (
+      !this.props.modulesById[id].isOpen && this.props.modulesById[id].openEffect === -1
     ));
     this.setState((prevState) => {
       const visibleModules = [];
-      prevState.visibleModules.forEach(el => {
-        if (this.props.modulesById[el].isOpen || this.props.modulesById[el].openEffect !== -1) {
-          visibleModules.push(el);
+      prevState.visibleModules.forEach(id => {
+        if (this.props.modulesById[id].isOpen || this.props.modulesById[id].openEffect !== -1) {
+          visibleModules.push(id);
         } else {
           const nextClosedModule = closedModules.shift();
           visibleModules.push(nextClosedModule);
