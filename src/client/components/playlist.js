@@ -3,10 +3,11 @@ import React from 'react';
 import {setPosition, savePosition, moveClip, cut} from '../actions';
 import {connect} from 'react-redux';
 import {SECOND_COLOR, LIGHT_GRAY} from '../settings';
+import withCanvas from './with-canvas';
 
 export default connect((state) => ({
   song: state.song
-}))(class Playlist extends React.Component {
+}))(withCanvas(class Playlist extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -41,10 +42,8 @@ export default connect((state) => ({
     window.addEventListener('mouseup', this.onMouseUp);
   }
 
-  clearCanvas() {
-    const canvas = this.canvas;
-    const ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  getContext() {
+    return this.canvas.getContext('2d');
   }
 
   clearPositionCanvas() {
@@ -54,7 +53,7 @@ export default connect((state) => ({
   }
 
   redraw() {
-    this.clearCanvas();
+    this.props.clearCanvas(this.canvas);
     this.clearPositionCanvas();
     this.drawWaveforms();
     this.drawPosition();
@@ -199,39 +198,15 @@ export default connect((state) => ({
     }
   }
 
-  setLine(width, color) {
-    const canvas = this.canvas;
-    const positionCanvas = this.positionCanvas;
-    const ctx = canvas.getContext('2d');
-    const posCtx = positionCanvas.getContext('2d');
-    ctx.strokeStyle = color;
-    ctx.lineWidth = width;
-    posCtx.strokeStyle = color;
-    posCtx.lineWidth = width;
-  }
-
-  drawLine(fromX, fromY, toX, toY, context) {
-    const canvas = this.canvas;
-    const ctx = context || canvas.getContext('2d');
-    ctx.beginPath();
-    ctx.moveTo(fromX, fromY);
-    ctx.lineTo(toX, toY);
-    ctx.stroke();
-  }
-
-  fillRect(x, y, width, height, context) {
-    const canvas = this.canvas;
-    const ctx = context || canvas.getContext('2d');
-    ctx.fillRect(x, y, width, height);
-  }
-
   drawSegment(n, value, offset) {
     const canvas = this.canvas;
+    const ctx = canvas.getContext('2d');
     const scale = this.segmentScale;
     const x = this.segmentWidth * n + offset - this.scrollLeft;
-    this.drawLine(
+    this.props.drawLine(
       x, canvas.height / 2 - value * scale * canvas.height,
-      x, canvas.height / 2 + value * scale * canvas.height
+      x, canvas.height / 2 + value * scale * canvas.height,
+      ctx
     );
   }
 
@@ -276,7 +251,8 @@ export default connect((state) => ({
     const firstIndex = Math.round(firstPosition * step);
     const lastIndex = Math.min(Math.round(lastPosition * step) + 1, waveform.length);
 
-    this.setLine(this.segmentWidth - this.segmentPadding, SECOND_COLOR);
+    const ctx = this.getContext();
+    this.props.setLine(this.segmentWidth - this.segmentPadding, SECOND_COLOR, ctx);
 
     let n = firstPosition;
     let firstOfChunk = {n: firstPosition, index: firstIndex};
@@ -305,11 +281,12 @@ export default connect((state) => ({
     const ctx = this.canvas.getContext('2d');
     ctx.fillStyle = this.props.song.isPlaying ? 'rgba(64,101,168,0.07)' : 'rgba(80,121,190,0.07)';
     const offset = position / this.props.song.beats * this.width;
-    this.fillRect(
+    this.props.fillRect(
       Math.round(offset - this.scrollLeft),
       0,
       numberOfSegments * this.segmentWidth,
-      this.canvas.height
+      this.canvas.height,
+      ctx
     );
   }
 
@@ -341,9 +318,9 @@ export default connect((state) => ({
     const positionCanvas = this.positionCanvas;
     const posCtx = positionCanvas.getContext('2d');
     const beat = this.props.song.position;
-    this.setLine(2, LIGHT_GRAY);
+    this.props.setLine(2, LIGHT_GRAY, posCtx);
     const x = this.width * beat / this.props.song.beats - this.scrollLeft;
-    this.drawLine(x, 0, x, positionCanvas.height, posCtx);
+    this.props.drawLine(x, 0, x, positionCanvas.height, posCtx);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -426,7 +403,7 @@ export default connect((state) => ({
       this.state.willDrawWaveform ||
       this.drawOnOpen && this.props.module.isOpen
     ) {
-      this.clearCanvas();
+      this.props.clearCanvas(this.canvas);
       this.drawWaveforms();
       this.setState({willDrawWaveform: false});
       if (this.drawOnOpen && this.props.module.isOpen) {
@@ -481,4 +458,4 @@ export default connect((state) => ({
       </div>
     );
   }
-});
+}));
