@@ -4,8 +4,7 @@ import EqPanel from './eq-panel';
 import Grid from './grid';
 import Curve from './curve';
 import ModuleBar from './module-bar';
-import TwoDimensionalRange from './two-dimensional-range';
-import {getLogFrequencyRatio} from '../audio-tools';
+import EqControl from './eq-control';
 
 export default class Eq extends React.Component {
   constructor(props) {
@@ -15,7 +14,6 @@ export default class Eq extends React.Component {
     this.onFrequencyChange = this.onFrequencyChange.bind(this);
     this.onGainChange = this.onGainChange.bind(this);
     this.onWheel = this.onWheel.bind(this);
-    this.getLogFrequencyRatio = this.getLogFrequencyRatio.bind(this);
     this.minFrequency = 20;
     this.maxFrequency = 20000;
     this.maxValue = 20;
@@ -28,10 +26,6 @@ export default class Eq extends React.Component {
 
   getBandwidth(filter) {
     return 2 / Math.log(2) * Math.asinh(1 / (2 * filter.Q.value));
-  }
-
-  getLogFrequencyRatio(frequency) {
-    return getLogFrequencyRatio(frequency, this.minFrequency, this.maxFrequency);
   }
 
   edit(settings) {
@@ -53,7 +47,6 @@ export default class Eq extends React.Component {
   onGainChange(gain, index) {
     if (this.usesGain(this.props.effect.filters[index])) {
       this.edit({gain, index});
-
     }
   }
 
@@ -66,47 +59,23 @@ export default class Eq extends React.Component {
 
   render() {
     const eq = this.props.effect;
-    const leftMargin = 28;
-    const rightMargin = 13000;
-    const topMargin = 15;
-    const bottomMargin = -15;
     const controls = eq.filters.map((filter, i) => {
-      const topGuard = filter.gain.value > topMargin ? 'low' : '';
-      const rightGuard = filter.frequency.value > rightMargin ? 'left' : '';
-      const leftGuard = filter.frequency.value < leftMargin ? 'right' : '';
-      const bottomGuard = filter.gain.value < bottomMargin ? 'high' : '';
       return (
-        <TwoDimensionalRange
+        <EqControl
           key={i}
-          onChangeX={value => this.onFrequencyChange(value, i)}
-          xMax={this.maxFrequency}
-          xMin={this.minFrequency}
-          xDefault={eq.initialFrequencies[i]}
-          xValue={filter.frequency.value}
-          onChangeY={value => this.onGainChange(value, i)}
-          yMax={this.maxValue}
-          yMin={-this.maxValue}
-          yDefault={0}
-          yValue={filter.gain.value}
-        >
-          {(frequencyValue, gainValue) => (
-            <div
-              className="control"
-              onWheel={e => this.onWheel(e, i)}
-              style={{
-                left: `${100 * this.getLogFrequencyRatio(frequencyValue)}%`,
-                top: `${this.usesGain(filter) ? 50 - 50 * gainValue / this.maxValue : 50}%`
-              }}
-            >
-              <div className={`text ${topGuard} ${rightGuard} ${leftGuard}`}>
-                {`${gainValue.toFixed(2)} dB`}
-              </div>
-              <div className={`text ${bottomGuard} ${rightGuard} ${leftGuard}`}>
-                {`${frequencyValue.toFixed(2)} Hz`}
-              </div>
-            </div>
-          )}
-        </TwoDimensionalRange>
+          filter={filter}
+          maxFrequency={this.maxFrequency}
+          minFrequency={this.minFrequency}
+          defaultFrequency={eq.initialFrequencies[i]}
+          frequencyValue={filter.frequency.value}
+          maxGain={this.maxValue}
+          minGain={-this.maxValue}
+          defaultGain={0}
+          gainValue={filter.gain.value}
+          onFrequencyChange={value => this.onFrequencyChange(value, i)}
+          onGainChange={value => this.onGainChange(value, i)}
+          usesGain={this.usesGain(filter)}
+        />
       );
     });
     return (
