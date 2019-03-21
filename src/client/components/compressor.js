@@ -1,9 +1,9 @@
 'use strict';
 import React from 'react';
 import Knob from './knob';
-import Range from './range';
 import Meter from './meter';
 import CompressorDisplay from './compressor-display';
+import ModuleBar from './module-bar';
 import {defaultCompressor} from '../settings';
 
 export default class Compressor extends React.Component {
@@ -54,40 +54,22 @@ export default class Compressor extends React.Component {
     const compressor = this.props.effect.compressor;
     return (
       <div>
-        <Range
-          display="block"
+        <ModuleBar
+          side="left"
           onChange={this.onInputGainChange}
           min="0"
           max="2"
           default="1"
           value={this.props.effect.inputGain.gain.value}
-        >
-          {value => (
-            <div className="volume-wrapper">
-              <div
-                className="volume"
-                style={{height: `${value / 2 * 100}%`}}
-              ></div>
-            </div>
-          )}
-        </Range>
-        <Range
-          display="block"
+        />
+        <ModuleBar
+          side="right"
           onChange={this.onOutputGainChange}
           min="0"
           max="2"
           default="1"
           value={this.props.effect.outputGain.gain.value}
-        >
-          {value => (
-            <div className="volume-wrapper right">
-              <div
-                className="volume"
-                style={{height: `${value / 2 * 100}%`}}
-              ></div>
-            </div>
-          )}
-        </Range>
+        />
         <div className="content">
           <div className="left">
             <Knob

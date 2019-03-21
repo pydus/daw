@@ -2,9 +2,9 @@
 import React from 'react';
 import EffectSection from './effect-section';
 import Playlist from './playlist';
-import Range from './range';
 import Meter from './meter';
 import Panel from './panel';
+import ModuleBar from './module-bar';
 import {
   setVolume,
   unroute,
@@ -134,23 +134,13 @@ export default class Module extends React.Component {
           onViewChange={this.onViewChange}
         />
         <div className="module" onClick={this.toggle}>
-          <Range
-            display="block"
+          <ModuleBar
+            side="left"
             onChange={this.onVolumeChange}
             min="0"
             max="1.15"
             default="1"
-          >
-            {value => (
-              <div className="volume-wrapper">
-                <div
-                  className="volume"
-                  style={{height: `${100 * value * 0.87}%`}}
-                >
-                </div>
-              </div>
-            )}
-          </Range>
+          />
           <div className="tags">
             {tags}
           </div>
