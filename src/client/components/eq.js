@@ -4,6 +4,7 @@ import Range from './range';
 import EqPanel from './eq-panel';
 import Grid from './grid';
 import Curve from './curve';
+import {getLogFrequencyRatio} from '../audio-tools';
 
 export default class Eq extends React.Component {
   constructor(props) {
@@ -29,10 +30,7 @@ export default class Eq extends React.Component {
   }
 
   getLogFrequencyRatio(frequency) {
-    return (
-      Math.log10(frequency / this.minFrequency) /
-      Math.log10(this.maxFrequency / this.minFrequency)
-    );
+    return getLogFrequencyRatio(frequency, this.minFrequency, this.maxFrequency);
   }
 
   edit(settings) {
