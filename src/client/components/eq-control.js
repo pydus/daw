@@ -7,8 +7,8 @@ export default props => {
 
   const leftMargin = 28;
   const rightMargin = 13000;
-  const topMargin = 15;
-  const bottomMargin = -15;
+  const topMargin = 14;
+  const bottomMargin = -14;
 
   const topGuard = filter.gain.value > topMargin ? 'low' : '';
   const rightGuard = filter.frequency.value > rightMargin ? 'left' : '';
