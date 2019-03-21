@@ -99,15 +99,15 @@ export default class Eq extends React.Component {
                   className="control"
                   onWheel={e => this.onWheel(e, i)}
                   style={{
-                    left: `${100 * this.getLogFrequencyRatio(filter.frequency.value)}%`,
-                    top: `${this.usesGain(filter) ? 50 - 50 * filter.gain.value / this.maxValue : 50}%`
+                    left: `${100 * this.getLogFrequencyRatio(frequencyValue)}%`,
+                    top: `${this.usesGain(filter) ? 50 - 50 * gainValue / this.maxValue : 50}%`
                   }}
                 >
                   <div className={`text ${topGuard} ${rightGuard} ${leftGuard}`}>
-                    {`${filter.gain.value.toFixed(2)} dB`}
+                    {`${gainValue.toFixed(2)} dB`}
                   </div>
                   <div className={`text ${bottomGuard} ${rightGuard} ${leftGuard}`}>
-                    {`${filter.frequency.value.toFixed(2)} Hz`}
+                    {`${frequencyValue.toFixed(2)} Hz`}
                   </div>
                 </div>
               )}
