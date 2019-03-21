@@ -8,10 +8,6 @@ import Curve from './curve';
 export default class Eq extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      inputGain: props.effect.inputGain.gain.value,
-      outputGain: props.effect.outputGain.gain.value
-    };
     this.onInputGainChange = this.onInputGainChange.bind(this);
     this.onOutputGainChange = this.onOutputGainChange.bind(this);
     this.onFrequencyChange = this.onFrequencyChange.bind(this);
@@ -44,12 +40,10 @@ export default class Eq extends React.Component {
   }
 
   onInputGainChange(value) {
-    this.setState({inputGain: value});
     this.edit({inputGain: value});
   }
 
   onOutputGainChange(value) {
-    this.setState({outputGain: value});
     this.edit({outputGain: value});
   }
 
@@ -92,29 +86,33 @@ export default class Eq extends React.Component {
           value={filter.frequency.value}
           direction="horizontal"
         >
-          <Range
-            onChange={value => this.onGainChange(value, i)}
-            max={this.maxValue}
-            min={-this.maxValue}
-            default={0}
-            value={filter.gain.value}
-          >
-            <div
-              className="control"
-              onWheel={e => this.onWheel(e, i)}
-              style={{
-                left: `${100 * this.getLogFrequencyRatio(filter.frequency.value)}%`,
-                top: `${this.usesGain(filter) ? 50 - 50 * filter.gain.value / this.maxValue : 50}%`
-              }}
+          {frequencyValue => (
+            <Range
+              onChange={value => this.onGainChange(value, i)}
+              max={this.maxValue}
+              min={-this.maxValue}
+              default={0}
+              value={filter.gain.value}
             >
-              <div className={`text ${topGuard} ${rightGuard} ${leftGuard}`}>
-                {`${filter.gain.value.toFixed(2)} dB`}
-              </div>
-              <div className={`text ${bottomGuard} ${rightGuard} ${leftGuard}`}>
-                {`${filter.frequency.value.toFixed(2)} Hz`}
-              </div>
-            </div>
-          </Range>
+              {gainValue => (
+                <div
+                  className="control"
+                  onWheel={e => this.onWheel(e, i)}
+                  style={{
+                    left: `${100 * this.getLogFrequencyRatio(filter.frequency.value)}%`,
+                    top: `${this.usesGain(filter) ? 50 - 50 * filter.gain.value / this.maxValue : 50}%`
+                  }}
+                >
+                  <div className={`text ${topGuard} ${rightGuard} ${leftGuard}`}>
+                    {`${filter.gain.value.toFixed(2)} dB`}
+                  </div>
+                  <div className={`text ${bottomGuard} ${rightGuard} ${leftGuard}`}>
+                    {`${filter.frequency.value.toFixed(2)} Hz`}
+                  </div>
+                </div>
+              )}
+            </Range>
+          )}
         </Range>
       );
     });
@@ -126,14 +124,16 @@ export default class Eq extends React.Component {
           min="0"
           max="2"
           default="1"
-          value={this.state.inputGain}
+          value={this.props.effect.inputGain.gain.value}
         >
-          <div className="volume-wrapper">
-            <div
-              className="volume"
-              style={{height: `${this.state.inputGain / 2 * 100}%`}}
-            ></div>
-          </div>
+          {value => (
+            <div className="volume-wrapper">
+              <div
+                className="volume"
+                style={{height: `${value / 2 * 100}%`}}
+              ></div>
+            </div>
+          )}
         </Range>
         <Range
           display="block"
@@ -141,14 +141,16 @@ export default class Eq extends React.Component {
           min="0"
           max="2"
           default="1"
-          value={this.state.outputGain}
+          value={this.props.effect.outputGain.gain.value}
         >
-          <div className="volume-wrapper right">
-            <div
-              className="volume"
-              style={{height: `${this.state.outputGain / 2 * 100}%`}}
-            ></div>
-          </div>
+          {value => (
+            <div className="volume-wrapper right">
+              <div
+                className="volume"
+                style={{height: `${value / 2 * 100}%`}}
+              ></div>
+            </div>
+          )}
         </Range>
         <div className="content">
           <EqPanel

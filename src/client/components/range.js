@@ -61,7 +61,7 @@ export default class Range extends React.Component {
         onDoubleClick={this.reset}
         style={{display: this.props.display || 'inline-block'}}
       >
-        {this.props.children}
+        {this.props.children(this.state.value)}
       </div>
     );
   }

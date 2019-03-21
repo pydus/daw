@@ -17,8 +17,7 @@ export default class Module extends React.Component {
     this.state = {
       willStyleCircle: false,
       name: '',
-      isNaming: this.props.module.id !== 0,
-      volumePercentage: 100
+      isNaming: this.props.module.id !== 0
     };
     this.toggle = this.toggle.bind(this);
     this.unroute = this.unroute.bind(this);
@@ -52,7 +51,6 @@ export default class Module extends React.Component {
   }
 
   onVolumeChange(value) {
-    this.setState({volumePercentage: value * 100});
     this.props.dispatch(setVolume(this.props.module.id, value));
   }
 
@@ -143,13 +141,15 @@ export default class Module extends React.Component {
             max="1.15"
             default="1"
           >
-            <div className="volume-wrapper">
-              <div
-                className="volume"
-                style={{height: `${this.state.volumePercentage * 0.87}%`}}
-              >
+            {value => (
+              <div className="volume-wrapper">
+                <div
+                  className="volume"
+                  style={{height: `${100 * value * 0.87}%`}}
+                >
+                </div>
               </div>
-            </div>
+            )}
           </Range>
           <div className="tags">
             {tags}

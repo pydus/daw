@@ -7,28 +7,21 @@ export default class Knob extends React.Component {
   constructor(props) {
     super(props);
     const value = typeof props.value !== 'undefined' ? props.value : props.default;
-    this.state = {value: Number(value), percentage: 0};
     this.default = Number(props.default) || 0;
     this.max = Number(props.max) || 100;
     this.min = Number(props.min) || 0;
     this.onChange = this.onChange.bind(this);
   }
 
-  componentDidMount() {
-    this.calculatePercentage(this.state.value);
-  }
-
-  calculatePercentage(value) {
+  getPercentage(value) {
     const val = Math.abs(this.min - value);
     const interval = Math.abs(this.max -this.min);
     const percentage = Math.round(100 * val / interval);
-    this.setState({percentage});
+    return percentage;
   }
 
   onChange(value) {
     this.props.onChange(value);
-    this.setState({value});
-    this.calculatePercentage(value);
   }
 
   render() {
@@ -40,10 +33,12 @@ export default class Knob extends React.Component {
         default={this.default}
         value={this.props.value}
       >
-        <div className={`knob progress-${this.state.percentage}`}>
-          <UnitLabel value={this.state.value} unit={this.props.unit}/>
-          <div className="label">{this.props.label}</div>
-        </div>
+        {(value, percentage) => (
+          <div className={`knob progress-${this.getPercentage(value)}`}>
+            <UnitLabel value={value} unit={this.props.unit}/>
+            <div className="label">{this.props.label}</div>
+          </div>
+        )}
       </Range>
     );
   }

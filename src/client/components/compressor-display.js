@@ -8,8 +8,6 @@ export default class CompressorDisplay extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: props.effect.compressor.threshold.value,
-      percentage: 0,
       reductionHeights: [],
       waveform: []
     };
@@ -64,7 +62,6 @@ export default class CompressorDisplay extends React.Component {
   }
 
   componentDidMount() {
-    this.calculatePercentage(this.state.value);
     const canvas = this.canvas;
     const ctx = canvas.getContext('2d');
     ctx.strokeStyle = SECOND_COLOR;
@@ -79,17 +76,15 @@ export default class CompressorDisplay extends React.Component {
     window.requestAnimationFrame(draw);
   }
 
-  calculatePercentage(value) {
+  getPercentage(value) {
     const val = value - this.min;
     const interval = this.max - this.min;
     const percentage = 100 * val / interval;
-    this.setState({percentage});
+    return percentage;
   }
 
   onChange(value) {
     this.props.onChange(value);
-    this.setState({value});
-    this.calculatePercentage(value);
   }
 
   render() {
@@ -98,24 +93,26 @@ export default class CompressorDisplay extends React.Component {
         onChange={this.onChange}
         min={this.min}
         max={this.max > 0 ? 0 : this.max}
-        value={this.state.value}
+        value={this.props.effect.compressor.threshold.value}
         default={defaultCompressor.threshold}
       >
-        <div className="display">
-          <Meter
-            width={257}
-            height={183}
-            analyser={this.props.effect.analyserIn}
-            timeInterval={this.timeInterval}
-            color={LIGHT_GRAY}
-          />
-          <canvas width="257" height="183" ref={canvas => this.canvas = canvas}/>
-          <div
-            className="indicator"
-            style={{bottom: `${this.state.percentage}%`}}
-          >
+        {(value, percentage) => (
+          <div className="display">
+            <Meter
+              width={257}
+              height={183}
+              analyser={this.props.effect.analyserIn}
+              timeInterval={this.timeInterval}
+              color={LIGHT_GRAY}
+            />
+            <canvas width="257" height="183" ref={canvas => this.canvas = canvas}/>
+            <div
+              className="indicator"
+              style={{bottom: `${this.getPercentage(value)}%`}}
+            >
+            </div>
           </div>
-        </div>
+        )}
       </Range>
     );
   }

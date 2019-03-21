@@ -9,10 +9,6 @@ import {defaultCompressor} from '../settings';
 export default class Compressor extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      inputGain: props.effect.inputGain.gain.value,
-      outputGain: props.effect.outputGain.gain.value
-    };
     this.onInputGainChange = this.onInputGainChange.bind(this);
     this.onOutputGainChange = this.onOutputGainChange.bind(this);
     this.onRatioChange = this.onRatioChange.bind(this);
@@ -27,12 +23,10 @@ export default class Compressor extends React.Component {
   }
 
   onInputGainChange(value) {
-    this.setState({inputGain: value});
     this.edit({inputGain: value});
   }
 
   onOutputGainChange(value) {
-    this.setState({outputGain: value});
     this.edit({outputGain: value});
   }
 
@@ -66,14 +60,16 @@ export default class Compressor extends React.Component {
           min="0"
           max="2"
           default="1"
-          value={this.state.inputGain}
+          value={this.props.effect.inputGain.gain.value}
         >
-          <div className="volume-wrapper">
-            <div
-              className="volume"
-              style={{height: `${this.state.inputGain / 2 * 100}%`}}
-            ></div>
-          </div>
+          {value => (
+            <div className="volume-wrapper">
+              <div
+                className="volume"
+                style={{height: `${value / 2 * 100}%`}}
+              ></div>
+            </div>
+          )}
         </Range>
         <Range
           display="block"
@@ -81,14 +77,16 @@ export default class Compressor extends React.Component {
           min="0"
           max="2"
           default="1"
-          value={this.state.outputGain}
+          value={this.props.effect.outputGain.gain.value}
         >
-          <div className="volume-wrapper right">
-            <div
-              className="volume"
-              style={{height: `${this.state.outputGain / 2 * 100}%`}}
-            ></div>
-          </div>
+          {value => (
+            <div className="volume-wrapper right">
+              <div
+                className="volume"
+                style={{height: `${value / 2 * 100}%`}}
+              ></div>
+            </div>
+          )}
         </Range>
         <div className="content">
           <div className="left">
