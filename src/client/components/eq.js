@@ -161,7 +161,13 @@ export default class Eq extends React.Component {
             maxValue={this.maxValue}
           />
           <div className="eq-display">
-            <Grid width="396" height="183" getLogFrequencyRatio={this.getLogFrequencyRatio}/>
+            <Grid
+              width="396"
+              height="183"
+              maxValue={this.maxValue}
+              minFrequency={this.minFrequency}
+              maxFrequency={this.maxFrequency}
+            />
             <Curve
               width="396"
               height="183"
