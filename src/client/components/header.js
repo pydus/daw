@@ -4,6 +4,7 @@ import {connect} from 'react-redux';
 import {cut} from '../actions';
 import PlayButton from './play-button';
 import SongPositionBar from './song-position-bar';
+import Key from './key';
 
 export default connect((state) => ({
   song: state.song
@@ -13,18 +14,10 @@ export default connect((state) => ({
     this.onKeyDown = this.onKeyDown.bind(this);
   }
 
-  componentDidMount() {
-    window.addEventListener('keydown', this.onKeyDown);
-  }
-
   onKeyDown(e) {
     if (e.key === 'Delete') {
       this.props.dispatch(cut(this.props.song.position));
     }
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('keydown', this.onKeyDown);
   }
 
   render() {
@@ -32,6 +25,7 @@ export default connect((state) => ({
 
     return (
       <header>
+        <Key down={this.onKeyDown}/>
         <div className="main">
           <div style={{visibility: 'hidden'}}>
             <div className="left">
