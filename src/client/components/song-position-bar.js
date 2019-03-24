@@ -24,7 +24,7 @@ export default class SongPositionBar extends Component {
     const width = this.props.song.position / this.props.song.beats * 100 + '%';
 
     return (
-      <ClickAndDrag onChange={this.setSongPositionByRatio}>
+      <ClickAndDrag direction='x' onChange={this.setSongPositionByRatio}>
         <div className="bar" onMouseDown={this.onMouseDown}>
           <div className="position" style={{width}}></div>
         </div>

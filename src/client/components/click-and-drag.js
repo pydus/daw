@@ -6,7 +6,7 @@ export default withRect(class ClickAndDrag extends Component {
   constructor(props) {
     super(props);
     this.state = {isDragging: false};
-    this.direction = this.props.direction || 'vertical';
+    this.direction = this.props.direction || 'y';
     this.onMouseMove = this.onMouseMove.bind(this);
     this.onMouseDown = this.onMouseDown.bind(this);
     this.onMouseUp = this.onMouseUp.bind(this);
@@ -14,7 +14,10 @@ export default withRect(class ClickAndDrag extends Component {
 
   getRatio(e) {
     const rect = this.props.getRect();
-    return (e.clientX - rect.left) / rect.width;
+    if (this.direction === 'x') {
+      return (e.clientX - rect.left) / rect.width;
+    }
+    return (rect.bottom - e.clientY) / rect.height;
   }
 
   notifyListeners(ratio) {
