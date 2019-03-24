@@ -49,6 +49,12 @@ export default connect((state) => ({
     this.setState({rect: null});
   }
 
+  componentWillUnmount() {
+    window.removeEventListener('mouseup', this.onMouseUp);
+    window.removeEventListener('mousemove', this.onMouseMove);
+    window.removeEventListener('keydown', this.onKeyDown);
+  }
+
   render() {
     const {tempo} = this.props.song;
     const width = this.props.song.position / this.props.song.beats * 100 + '%';
