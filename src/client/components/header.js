@@ -9,7 +9,7 @@ export default connect((state) => ({
 }))(class Header extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {rect: null, position: 0};
+    this.state = {rect: null};
     this.onMouseMove = this.onMouseMove.bind(this);
     this.onMouseDown = this.onMouseDown.bind(this);
     this.onMouseUp = this.onMouseUp.bind(this);
@@ -31,7 +31,7 @@ export default connect((state) => ({
   onMouseDown(e) {
     const rect = e.currentTarget.getBoundingClientRect();
     const position = this.props.song.beats * (e.clientX - rect.left) / rect.width;
-    this.setState({rect: rect, position});
+    this.setState({rect: rect});
     this.props.dispatch(setPosition(position));
     this.props.dispatch(savePosition(position));
   }
@@ -40,7 +40,6 @@ export default connect((state) => ({
     if (this.state.rect) {
       const position = this.props.song.beats *
         (e.clientX - this.state.rect.left) / this.state.rect.width;
-      this.setState({position});
       this.props.dispatch(setPosition(position));
       this.props.dispatch(savePosition(position));
     }
