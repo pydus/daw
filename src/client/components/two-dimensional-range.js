@@ -8,7 +8,7 @@ export default props => (
     min={props.xMin}
     default={props.xDefault}
     value={props.xValue}
-    direction="horizontal"
+    direction="x"
   >
     {x => (
       <Range
