@@ -1,50 +1,34 @@
 import React, {Component} from 'react';
-import GlobalMouse from './global-mouse';
-import withRect from './with-rect';
+import ClickAndDrag from './click-and-drag';
 import {setPosition, savePosition} from '../actions';
 
-export default withRect(class SongPositionBar extends Component {
+export default class SongPositionBar extends Component {
   constructor(props) {
     super(props);
     this.state = {isSettingPosition: false};
-    this.onMouseMove = this.onMouseMove.bind(this);
-    this.onMouseDown = this.onMouseDown.bind(this);
-    this.onMouseUp = this.onMouseUp.bind(this);
+    this.setSongPosition = this.setSongPosition.bind(this);
+    this.setSongPositionByRatio = this.setSongPositionByRatio.bind(this);
   }
 
-  getMousePositionInSong(e) {
-    const rect = this.props.getRect();
-    return this.props.song.beats *
-      (e.clientX - rect.left) / rect.width;
+  setSongPosition(beat) {
+    this.props.dispatch(setPosition(beat));
+    this.props.dispatch(savePosition(beat));
   }
 
-  onMouseDown(e) {
-    const position = this.getMousePositionInSong(e);
-    this.setState({isSettingPosition: true});
-    this.props.dispatch(setPosition(position));
-    this.props.dispatch(savePosition(position));
-  }
-
-  onMouseMove(e) {
-    if (this.state.isSettingPosition) {
-      const position = this.getMousePositionInSong(e);
-      this.props.dispatch(setPosition(position));
-      this.props.dispatch(savePosition(position));
-    }
-  }
-
-  onMouseUp() {
-    this.setState({isSettingPosition: false});
+  setSongPositionByRatio(ratio) {
+    const beat = this.props.song.beats * ratio;
+    this.setSongPosition(beat);
   }
 
   render() {
     const width = this.props.song.position / this.props.song.beats * 100 + '%';
 
     return (
-      <div className="bar" onMouseDown={this.onMouseDown}>
-        <div className="position" style={{width}}></div>
-        <GlobalMouse up={this.onMouseUp} move={this.onMouseMove}/>
-      </div>
+      <ClickAndDrag onChange={this.setSongPositionByRatio}>
+        <div className="bar" onMouseDown={this.onMouseDown}>
+          <div className="position" style={{width}}></div>
+        </div>
+      </ClickAndDrag>
     );
   }
-});
+};
