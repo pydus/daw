@@ -26,6 +26,6 @@ export default class GlobalMouse extends Component {
   }
 
   render() {
-    return <div style={this.props.style}>{this.props.children}</div>;
+    return <div>{this.props.children}</div>;
   }
 };
