@@ -3,6 +3,7 @@ import React from 'react';
 import {connect} from 'react-redux';
 import {setPosition, savePosition, cut} from '../actions';
 import PlayButton from './play-button';
+import GlobalMouse from './global-mouse';
 
 export default connect((state) => ({
   song: state.song
@@ -17,8 +18,6 @@ export default connect((state) => ({
   }
 
   componentDidMount() {
-    window.addEventListener('mouseup', this.onMouseUp);
-    window.addEventListener('mousemove', this.onMouseMove);
     window.addEventListener('keydown', this.onKeyDown);
   }
 
@@ -50,8 +49,6 @@ export default connect((state) => ({
   }
 
   componentWillUnmount() {
-    window.removeEventListener('mouseup', this.onMouseUp);
-    window.removeEventListener('mousemove', this.onMouseMove);
     window.removeEventListener('keydown', this.onKeyDown);
   }
 
@@ -60,24 +57,30 @@ export default connect((state) => ({
     const width = this.props.song.position / this.props.song.beats * 100 + '%';
 
     return (
-      <header>
-        <div className="main">
-          <div className="left">
-            <div className="tempo">{tempo}</div>
+      <GlobalMouse
+        up={this.onMouseUp}
+        move={this.onMouseMove}
+        style={{maxWidth: 'inherit'}}
+      >
+        <header>
+          <div className="main">
+            <div className="left">
+              <div className="tempo">{tempo}</div>
+            </div>
+            <div className="right">
+              <div className="button">RENDER</div>
+            </div>
+            <div className="center">
+              <PlayButton controlKey=" "/>
+            </div>
           </div>
-          <div className="right">
-            <div className="button">RENDER</div>
+          <div className="song-position">
+            <div className="bar" onMouseDown={this.onMouseDown}>
+              <div className="position" style={{width}}></div>
+            </div>
           </div>
-          <div className="center">
-            <PlayButton controlKey=" "/>
-          </div>
-        </div>
-        <div className="song-position">
-          <div className="bar" onMouseDown={this.onMouseDown}>
-            <div className="position" style={{width}}></div>
-          </div>
-        </div>
-      </header>
+        </header>
+      </GlobalMouse>
     );
   }
 });
