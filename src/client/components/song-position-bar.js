@@ -3,7 +3,7 @@ import GlobalMouse from './global-mouse';
 import withRect from './with-rect';
 import {setPosition, savePosition} from '../actions';
 
-class SongPositionBar extends Component {
+export default withRect(class SongPositionBar extends Component {
   constructor(props) {
     super(props);
     this.state = {isSettingPosition: false};
@@ -41,14 +41,10 @@ class SongPositionBar extends Component {
     const width = this.props.song.position / this.props.song.beats * 100 + '%';
 
     return (
-        <div className="bar" onMouseDown={this.onMouseDown}>
-          <div className="position" style={{width}}></div>
-          <GlobalMouse up={this.onMouseUp} move={this.onMouseMove}/>
-        </div>
+      <div className="bar" onMouseDown={this.onMouseDown}>
+        <div className="position" style={{width}}></div>
+        <GlobalMouse up={this.onMouseUp} move={this.onMouseMove}/>
+      </div>
     );
   }
-}
-
-const SongPositionBarWithRect = withRect(SongPositionBar);
-
-export default SongPositionBarWithRect;
+});
