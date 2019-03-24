@@ -33,11 +33,13 @@ export default connect((state) => ({
     return (
       <header>
         <div className="main">
-          <div className="left">
-            <div className="tempo">{tempo}</div>
-          </div>
-          <div className="right">
-            <div className="button">RENDER</div>
+          <div style={{visibility: 'hidden'}}>
+            <div className="left">
+              <div className="tempo">{tempo}</div>
+            </div>
+            <div className="right">
+              <div className="button">RENDER</div>
+            </div>
           </div>
           <div className="center">
             <PlayButton controlKey=" "/>
