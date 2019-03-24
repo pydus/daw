@@ -18,62 +18,86 @@ export default class CompressorDisplay extends React.Component {
     this.willDraw = true;
   }
 
+  componentDidMount() {
+    this.initContext();
+    this.startDrawingLoop();
+  }
+
+  initContext() {
+    const canvas = this.canvas;
+    const ctx = canvas.getContext('2d');
+    ctx.strokeStyle = SECOND_COLOR;
+    ctx.lineWidth = 1;
+  }
+
+  startDrawingLoop() {
+    const canvas = this.canvas;
+    const ctx = canvas.getContext('2d');
+    const drawTick = time => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      this.drawReductionCurve(time);
+      if (this.willDraw) {
+        window.requestAnimationFrame(drawTick);
+      }
+    };
+    window.requestAnimationFrame(drawTick);
+  }
+
+  getReductionPosition(reductionHeight, dt, canvas) {
+    const xRatio = dt / this.timeInterval;
+    const x = canvas.width * (1 - xRatio);
+    const yRatio = (this.max - this.min) / this.max;
+    const y = 1 / yRatio * canvas.height + reductionHeight;
+    return [x, y];
+  }
+
   drawReductions() {
     const canvas = this.canvas;
     const ctx = canvas.getContext('2d');
+
     this.setState(prevState => {
       const reductionHeights = [];
-      const lastTime = prevState.reductionHeights[prevState.reductionHeights.length - 1].time;
+      const lastIndex = prevState.reductionHeights.length - 1;
+      const lastTime = prevState.reductionHeights[lastIndex].time;
+
       ctx.beginPath();
-      for (let i = 0; i < prevState.reductionHeights.length; i++) {
-        let obj = prevState.reductionHeights[i];
+
+      prevState.reductionHeights.forEach(obj => {
         let {reductionHeight, time} = obj;
         const dt = (lastTime - time) / 1000;
-        if (dt > this.timeInterval) continue;
-        const x = canvas.width - canvas.width * dt / this.timeInterval;
-        ctx.lineTo(x, this.max / (this.max - this.min) * canvas.height + reductionHeight);
+        if (dt > this.timeInterval) return;
+        const [x, y] = this.getReductionPosition(reductionHeight, dt, canvas);
+        ctx.lineTo(x, y);
         reductionHeights.push(obj);
-      }
+      });
+
       ctx.stroke();
+
       return {reductionHeights};
     });
   }
 
   drawReductionCurve(time) {
-    const canvas = this.canvas;
-    if (!canvas) return;
+    if (!this.canvas) return;
     const compressor = this.props.effect.compressor;
     const interval = this.max - this.min;
     let reduction = compressor.reduction;
+
     if (typeof reduction === 'object') {
       reduction = reduction.value;
     }
-    const reductionHeight = -1 * reduction / interval * canvas.height;
-    this.setState(prevState => {
-      return {
-        reductionHeights: [...prevState.reductionHeights, {reductionHeight, time}]
-      };
-    });
+
+    const reductionHeight = -1 * reduction / interval * this.canvas.height;
+
+    this.setState(prevState => ({
+      reductionHeights: [...prevState.reductionHeights, {reductionHeight, time}]
+    }));
+
     this.drawReductions();
   }
 
   componentWillUnmount() {
     this.willDraw = false;
-  }
-
-  componentDidMount() {
-    const canvas = this.canvas;
-    const ctx = canvas.getContext('2d');
-    ctx.strokeStyle = SECOND_COLOR;
-    ctx.lineWidth = 1;
-    const draw = (time) => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      this.drawReductionCurve(time);
-      if (this.willDraw) {
-        window.requestAnimationFrame(draw);
-      }
-    };
-    window.requestAnimationFrame(draw);
   }
 
   getPercentage(value) {
