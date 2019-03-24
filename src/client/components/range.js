@@ -12,6 +12,8 @@ export default class Range extends React.Component {
     this.max = typeof props.max !== undefined ? Number(props.max) : 100;
     this.min = Number(props.min) || 0;
     this.direction = props.direction || 'y';
+    this.xResistance = props.xResistance || 40;
+    this.yResistance = props.yResistance || 100;
     this.reset = this.reset.bind(this);
     this.onMouseDown = this.onMouseDown.bind(this);
     this.onMouseMove = this.onMouseMove.bind(this);
@@ -29,12 +31,14 @@ export default class Range extends React.Component {
     const delta = (isHorizontal ? -1 : 1) * (this.state.lastCursor - cursor);
     this.setState((prevState) => {
       const interval = this.max - this.min;
-      const stepValue = this.step * (isHorizontal ? prevState.value / 40 : interval / 100);
-      let value = prevState.value + stepValue * delta;
-      value = (value > this.max) ? this.max : value;
-      value = (value < this.min) ? this.min : value;
-      this.props.onChange(value);
-      return {value, lastCursor: cursor};
+      const yRatio = interval / this.yResistance;
+      const xRatio = prevState.value / this.xResistance;
+      const stepValue = this.step * (isHorizontal ? xRatio : yRatio);
+      const value = prevState.value + stepValue * delta;
+      const valueWithUpperBound = Math.min(this.max, value);
+      const boundValue = Math.max(this.min, valueWithUpperBound);
+      this.props.onChange(boundValue);
+      return {value: boundValue, lastCursor: cursor};
     });
   }
 
