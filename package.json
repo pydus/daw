@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "bundle": "webpack -p",
-    "dev": "webpack-dev-server --content-base public --hot",
+    "dev": "webpack-dev-server",
     "lint": "node_modules/.bin/eslint .; exit 0",
     "start": "node bin/www"
   },

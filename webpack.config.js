@@ -5,7 +5,8 @@ module.exports = {
   entry: './src/client/app.js',
   output: {
     path: path.join(__dirname, 'public'),
-    filename: 'bundle.js'
+    filename: 'bundle.js',
+    publicPath: '/public/'
   },
   module: {
     loaders: [{
@@ -22,6 +23,6 @@ module.exports = {
   ]},
   plugins: [],
   devServer: {
-    host: '127.0.0.1'
+    contentBase: path.join(__dirname, 'public')
   }
 };

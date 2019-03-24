@@ -7,6 +7,7 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const webpackConfig = require('./webpack.config');
 const host = webpackConfig.devServer.host || '127.0.0.1';
+const publicPath = webpackConfig.output.publicPath;
 
 //const api = require('./api/api');
 //const auth = require('./auth/routes');
@@ -29,7 +30,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('*', (req, res) => {
   res.render('index', {
-    cdn: app.get('env') === 'development' ? `http://${host}:8080/` : '/'
+    cdn: `${app.get('env') === 'development' ? `http://${host}:8080` : ''}${publicPath}`
   });
 });
 
