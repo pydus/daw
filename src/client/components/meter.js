@@ -76,27 +76,26 @@ export default connect((state) => ({
     });
   }
 
-  drawLevel(time) {
-    const canvas = this.canvas;
-    if (!canvas) return;
+  getPeak() {
     const analyser = this.props.analyser;
     const bufferLength = analyser.frequencyBinCount;
     const data = new Uint8Array(bufferLength);
 
     analyser.getByteTimeDomainData(data);
 
-    let peak = 0;
+    const peak = data.reduce((cur, val) => (
+      Math.max(cur, Math.abs(val - 128))
+    ), 0);
 
-    for (let i = 0; i < bufferLength; i++) {
-      const value = Math.abs(data[i] - 128);
-      if (value > peak) {
-        peak = value;
-      }
-    }
+    return peak;
+  }
 
+  drawLevel(time) {
+    if (!this.canvas) return;
+    const peak = this.getPeak();
     const levelRatio = Math.log10(1 + peak) / Math.log10(1 + 128);
     const interval = this.max - this.min;
-    const y = canvas.height * (1 - levelRatio * (1 - this.max / interval));
+    const y = this.canvas.height * (1 - levelRatio * (1 - this.max / interval));
 
     if (this.props.type === 'line') {
       this.drawLine(y);
